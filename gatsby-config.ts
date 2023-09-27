@@ -4,6 +4,10 @@ require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 })
 
+module.exports = {
+  pathPrefix: "/logcica-discover",
+}
+
 const config: GatsbyConfig = {
   siteMetadata: {
     title: `logCiCa discover`,
