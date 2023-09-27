@@ -1,8 +1,8 @@
 {
-  "name": "log-ci-ca-discover",
+  "name": "logcica-discover",
   "version": "1.0.0",
   "private": true,
-  "description": "log-ci-ca-discover",
+  "description": "logcica-discover",
   "author": "Olivier Wouters",
   "keywords": [
     "gatsby"
@@ -16,6 +16,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.11",
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
     "babel-plugin-styled-components": "^2.1.4",
     "gatsby": "^5.12.4",
     "gatsby-plugin-styled-components": "^6.12.0",
@@ -27,6 +31,10 @@
     "@types/node": "^20.3.3",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
+    "@types/styled-components": "^5.1.28",
     "typescript": "^5.1.6"
+  },
+  "resolutions": {
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest"
   }
 }
