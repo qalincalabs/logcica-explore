@@ -1,6 +1,7 @@
 import * as React from "react"
 import type { HeadFC, PageProps } from "gatsby"
 import Button from "@mui/material/Button";
+import AcUnitIcon from '@mui/icons-material/AcUnit';
 
 const pageStyles = {
   color: "#232129",
@@ -141,7 +142,7 @@ const IndexPage: React.FC<PageProps> = () => {
   return (
     <main style={pageStyles}>
       <h1 style={headingStyles}>
-        Coucou
+        Coucou <AcUnitIcon />
         <br />
         <span style={headingAccentStyles}>— you just made a Gatsby site! 🎉🎉🎉</span>
       </h1>
