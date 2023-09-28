@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { HeadFC, PageProps } from "gatsby";
-import { ProductCardList } from "../components/product-card";
+import { ProductCardList } from "../components/product-card-list";
 
 const pageStyles = {
   color: "#232129",
