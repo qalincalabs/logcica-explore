@@ -81,7 +81,13 @@ export function ProductCard({ item }: any) {
             />
           </Grid>
         ) : null}
-        <Grid item xs={12} sm={8} md={12} lg={9}>
+        <Grid
+          item
+          xs={12}
+          sm={item.img ? 8 : 12}
+          md={12}
+          lg={item.img ? 9 : 12}
+        >
           <CardHeader
             title="Shrimp and Chorizo Paella test"
             subheader={
@@ -98,6 +104,8 @@ export function ProductCard({ item }: any) {
               much longer text I think. To see how far I can go
             </Typography>
           </CardContent>
+        </Grid>
+        <Grid item xs={12}>
           <CardContent>
             <Stack direction="row" alignItems="center" gap={1}>
               <LocalDining />
@@ -114,8 +122,6 @@ export function ProductCard({ item }: any) {
               <Typography>ALC. 5,6% VOL.</Typography>
             </Stack>
           </CardContent>
-        </Grid>
-        <Grid item xs={12}>
           <CardContent>
             <Accordion
               expanded={expanded === "panel1"}
@@ -161,13 +167,14 @@ export function ProductCard({ item }: any) {
               </AccordionDetails>
             </Accordion>
           </CardContent>
-
+          {/*
           <CardActions>
             <IconButton>
               <AccessAlarm />
               <CalendarMonth />
             </IconButton>
           </CardActions>
+          */}
         </Grid>
       </Grid>
     </Card>

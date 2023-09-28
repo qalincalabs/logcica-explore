@@ -60,13 +60,13 @@ const itemData: Food[] = [
 
 export function ProductCardList() {
   // State for the list
-  const [list, setList] = React.useState<Food[]>([...itemData.slice(0, 5)]);
+  const [list, setList] = React.useState<Food[]>([...itemData.slice(0, 6)]);
 
   // State to trigger oad more
   const [loadMore, setLoadMore] = React.useState<boolean>(false);
 
   // State of whether there is more to load
-  const [hasMore, setHasMore] = React.useState<boolean>(itemData.length > 5);
+  const [hasMore, setHasMore] = React.useState<boolean>(itemData.length > 6);
 
   // Load more button click
   const handleLoadMore = () => {
@@ -79,7 +79,7 @@ export function ProductCardList() {
       const currentLength = list.length;
       const isMore = currentLength < itemData.length;
       const nextResults = isMore
-        ? itemData.slice(currentLength, currentLength + 10)
+        ? itemData.slice(currentLength, currentLength + 6)
         : [];
       setList([...list, ...nextResults]);
       setLoadMore(false);
