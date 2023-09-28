@@ -1,20 +1,13 @@
 import * as React from "react";
-import {Grid} from "@mui/material";
-import {ProductCard}  from "./product-card"
+import { Button, Grid } from "@mui/material";
+import { ProductCard } from "./product-card";
 
-export function ProductCardList(){
-  return (
-    <Grid container spacing={2}>
-      {itemData.map((item) => (
-        <Grid item xs={12} md={6}>
-          <ProductCard item={item} />
-        </Grid>
-      ))}
-    </Grid>
-  );
-};
+interface Food {
+  img?: string;
+  title?: string;
+}
 
-const itemData = [
+const itemData: Food[] = [
   {
     //img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
     title: "Breakfast",
@@ -64,3 +57,63 @@ const itemData = [
     title: "Bike",
   },
 ];
+
+export function ProductCardList() {
+  // State for the list
+  const [list, setList] = React.useState<Food[]>([...itemData.slice(0, 5)]);
+
+  // State to trigger oad more
+  const [loadMore, setLoadMore] = React.useState<boolean>(false);
+
+  // State of whether there is more to load
+  const [hasMore, setHasMore] = React.useState<boolean>(itemData.length > 5);
+
+  // Load more button click
+  const handleLoadMore = () => {
+    setLoadMore(true);
+  };
+
+  // Handle loading more articles
+  React.useEffect(() => {
+    if (loadMore && hasMore) {
+      const currentLength = list.length;
+      const isMore = currentLength < itemData.length;
+      const nextResults = isMore
+        ? itemData.slice(currentLength, currentLength + 10)
+        : [];
+      setList([...list, ...nextResults]);
+      setLoadMore(false);
+    }
+  }, [loadMore, hasMore]); //eslint-disable-line
+
+  //Check if there is more
+  React.useEffect(() => {
+    const isMore = list.length < itemData.length;
+    setHasMore(isMore);
+  }, [list]); //eslint-disable-line
+
+  return (
+    <Grid container spacing={2}>
+      {list.map((item: any): any => (
+        <Grid item xs={12} md={6}>
+          <ProductCard item={item} />
+        </Grid>
+      ))}
+      <Grid
+        item
+        xs={12}
+        style={{
+          textAlign: "center", // this does the magic
+        }}
+      >
+        {hasMore ? (
+          <Button onClick={handleLoadMore} variant="contained" fullWidth>
+            Load more
+          </Button>
+        ) : (
+          <p>No more results</p>
+        )}
+      </Grid>
+    </Grid>
+  );
+}
