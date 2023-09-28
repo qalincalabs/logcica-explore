@@ -10,45 +10,52 @@ import {
   Typography,
 } from "@mui/material";
 
-export const ProductCart = () => {
+export const ProductCard = ({ item }) => {
+  return (
+    <Card>
+      <Grid container>
+        {item.img ? (
+          <Grid item xs={12} sm={4} md={12} lg={3}>
+            <CardMedia
+              component="img"
+              image={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+              alt={item.title}
+              sx={{
+                objectFit: "contain",
+                maxHeight: 200,
+                ml: 0,
+                mr: "auto",
+              }}
+            />
+          </Grid>
+        ) : null}
+        <Grid item xs={12} sm={8} md={12} lg={9}>
+          <CardHeader
+            title="Shrimp and Chorizo Paella test"
+            subheader="September 14, 2016"
+          />
+          <CardContent>
+            <Typography>
+              This impressive paella is a perfect party dish and a fun meal to
+              cook together with your guests. Add 1 cup of frozen peas. I need a
+              much longer text I think. To see how far I can go
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button size="small">Learn More</Button>
+          </CardActions>
+        </Grid>
+      </Grid>
+    </Card>
+  );
+};
+
+export const ProductCardList = () => {
   return (
     <Grid container spacing={2}>
       {itemData.map((item) => (
         <Grid item xs={12} md={6}>
-          <Card>
-            <Grid container>
-              <Grid item xs={12} sm={4} md={12} lg={3}>
-                <CardMedia
-                  component="img"
-                  image={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                  alt={item.title}
-                  sx={{
-                    objectFit: "contain",
-                    maxHeight: 200,
-                    ml: 0,
-                    mr: "auto",
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={8} md={12} lg={9}>
-                <CardHeader
-                  title="Shrimp and Chorizo Paella"
-                  subheader="September 14, 2016"
-                />
-                <CardContent>
-                  <Typography>
-                    This impressive paella is a perfect party dish and a fun
-                    meal to cook together with your guests. Add 1 cup of frozen
-                    peas. I need a much longer text I think. To see how far I
-                    can go
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small">Learn More</Button>
-                </CardActions>
-              </Grid>
-            </Grid>
-          </Card>
+          <ProductCard item={item} />
         </Grid>
       ))}
     </Grid>
@@ -57,11 +64,11 @@ export const ProductCart = () => {
 
 const itemData = [
   {
-    img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
+    //img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
     title: "Breakfast",
   },
   {
-    img: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d",
+    // img: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d",
     title: "Burger",
   },
   {
