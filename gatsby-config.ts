@@ -1,11 +1,31 @@
 import type { GatsbyConfig } from "gatsby";
 
 require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`,
+  path: `.env`, // ${process.env.NODE_ENV}
 })
 
 module.exports = {
   pathPrefix: "/logcica-discover",
+}
+
+module.exports = {
+  plugins: [
+    /*
+     * Gatsby's data processing layer begins with “source” plugins. Here we
+     * setup the site to pull data from the "documents" collection in a local
+     * MongoDB instance
+     */
+    {
+      resolve: `gatsby-source-mongodb`,
+      options: { 
+        dbName: process.env.MONGO_DB_NAME, 
+        collection: `product`,
+        connectionString: process.env.MONGO_CONNECTION_STRING,
+        query: {}
+      },
+      //query: { documents: { as_of: { $gte: 1604397088013 } } },
+      },
+  ],
 }
 
 const config: GatsbyConfig = {
