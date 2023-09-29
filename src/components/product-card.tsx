@@ -89,7 +89,7 @@ export function ProductCard({ item }: any) {
           lg={item.img ? 9 : 12}
         >
           <CardHeader
-            title="Shrimp and Chorizo Paella test"
+            title={item.title}
             subheader={
               <Stack direction="row" alignItems="center" gap={1}>
                 <CalendarMonth />
