@@ -2,6 +2,7 @@ import * as React from "react";
 import { Button, Grid } from "@mui/material";
 import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const itemData = [
   {
@@ -183,9 +184,15 @@ export function ProductCardList() {
         }}
       >
         {hasMore ? (
-          <Button onClick={handleLoadMore} variant="contained" fullWidth>
-            Load more
-          </Button>
+          <LoadingButton
+          onClick={handleLoadMore}
+          loading={loadMore}
+          loadingPosition="end"
+          variant="contained"
+          fullWidth
+        >
+          Load more
+        </LoadingButton>
         ) : (
           <p>No more results</p>
         )}
