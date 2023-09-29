@@ -19,9 +19,6 @@ require("dotenv").config({
 
 module.exports = {
   pathPrefix: "/logcica-discover",
-};
-
-module.exports = {
   plugins: [
     /*
      * Gatsby's data processing layer begins with “source” plugins. Here we
