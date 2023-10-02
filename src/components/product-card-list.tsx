@@ -169,6 +169,8 @@ export function ProductCardList() {
     setHasMore(isMore);
   }, [list]); //eslint-disable-line
 
+  // TODO LoadingButton was for mobile but it's not really working
+
   return (
     <Grid container spacing={2}>
       {list.map((item: any): any => (

@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as moment from "moment";
 import {
   Grid,
   Card,
@@ -19,6 +20,14 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Breadcrumbs,
+  Link,
+  ListItem,
+  List,
+  Chip,
+  Box,
+  Paper,
+  Divider,
 } from "@mui/material";
 import {
   AccessAlarm,
@@ -26,6 +35,7 @@ import {
   LocalDining,
   CrisisAlert,
   WineBar,
+  BorderClear,
 } from "@mui/icons-material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -97,6 +107,40 @@ export function ProductCard({ item }: any) {
               </Stack>
             }
           />
+          <CardContent>
+            <Stack direction="row" flexWrap="wrap">
+              {moment.monthsShort().map((m) => (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    padding: "2px",
+                    margin: "2px",
+                    backgroundColor: m.includes("e") ? "#AFE1AF" : "default",
+                  }}
+                >
+                  <Typography variant="body2">{m}</Typography>
+                </Paper>
+              ))}
+            </Stack>
+          </CardContent>
+          <CardContent>
+            <Breadcrumbs maxItems={2} separator="›" aria-label="breadcrumb">
+              {item.categories?.map((c: any) => (
+                <Link underline="hover" color="inherit" href="#">
+                  {c.name}
+                </Link>
+              ))}
+              <Link underline="hover" color="inherit" href="#">
+                Légume
+              </Link>
+              <Link underline="hover" color="inherit" href="#">
+                Racine
+              </Link>
+              <Link underline="hover" color="inherit" href="#">
+                Poivron
+              </Link>
+            </Breadcrumbs>
+          </CardContent>
           <CardContent>
             <Typography>
               This impressive paella is a perfect party dish and a fun meal to
