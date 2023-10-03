@@ -99,7 +99,7 @@ export function ProductCard({ item }: any) {
             <Box sx={{ flexGrow: 1, maxWidth: 500 }}>
               <CardHeader
                 sx={{ paddingTop: 1, paddingBottom: 1 }}
-                title={item.name}
+                title={item?.name}
                 subheader={
                   <Stack>
                     <Breadcrumbs
