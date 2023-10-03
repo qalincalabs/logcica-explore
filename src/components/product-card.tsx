@@ -68,12 +68,12 @@ export function ProductCard({ item }: any) {
   return (
     <Card>
       <Grid container>
-        {item.img ? (
+        {item?.img ? (
           <Grid item xs={3} sm={4}>
             <CardMedia
               component="img"
-              image={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-              alt={item.title}
+              image={`${item?.img}?w=164&h=164&fit=crop&auto=format`}
+              alt={item?.name}
               sx={{
                 objectFit: "contain",
                 maxHeight: 200,
@@ -85,8 +85,8 @@ export function ProductCard({ item }: any) {
         ) : null}
         <Grid
           item
-          xs={item.img ? 9 : 12}
-          sm={item.img ? 8 : 12}
+          xs={item?.img ? 9 : 12}
+          sm={item?.img ? 8 : 12}
         >
           <Box
             sx={{

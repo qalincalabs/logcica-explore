@@ -116,12 +116,6 @@ export function ProductCardList() {
           }
         }
       }
-      allMongodbOrganisation {
-        nodes {
-          _id
-          name
-        }
-      }
     }
   `);
 
