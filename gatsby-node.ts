@@ -16,15 +16,20 @@ function capitalizeFirstLetter(string) {
 }
 
 exports.createSchemaCustomization = ({ actions }) => {
+  
   const { createTypes } = actions;
 
+  
   const mongoIdTypeDefs = mongoCollections.map((c) =>
     `type mongodb${capitalizeFirstLetter(c)} implements Node {
             _id: String @proxy(from: "mongodb_id")
         }`
   ).join("\n");
-
-  const typeDefs = mongoIdTypeDefs +
+  
+  createTypes(mongoIdTypeDefs);
+  
+  const typeDefs1 = 
+  //mongoIdTypeDefs +
     `
       type mongodbProductProducer implements Node {
         organisation: mongodbOrganisation @link(by: "mongodb_id")
@@ -35,5 +40,5 @@ exports.createSchemaCustomization = ({ actions }) => {
         categories: [mongodbCategory] @link(by: "mongodb_id")
       }
     `;
-  createTypes(typeDefs);
+  createTypes(typeDefs1);
 };
