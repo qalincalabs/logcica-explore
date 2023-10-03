@@ -16,6 +16,15 @@ const theme = createTheme({
       main: "#ffcb01",
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1440, // changed from 1536 to fit mac book pro
+    },
+  },
 });
 
 const IndexPage: React.FC<PageProps> = () => {

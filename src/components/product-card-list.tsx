@@ -137,13 +137,13 @@ export function ProductCardList() {
   const products = itemData;
 
   // State for the list
-  const [list, setList] = React.useState([...products.slice(0, 20)]);
+  const [list, setList] = React.useState([...products.slice(0, 24)]);
 
   // State to trigger oad more
   const [loadMore, setLoadMore] = React.useState<boolean>(false);
 
   // State of whether there is more to load
-  const [hasMore, setHasMore] = React.useState<boolean>(products.length > 20);
+  const [hasMore, setHasMore] = React.useState<boolean>(products.length > 24);
 
   // Load more button click
   const handleLoadMore = () => {
@@ -156,7 +156,7 @@ export function ProductCardList() {
       const currentLength = list.length;
       const isMore = currentLength < products.length;
       const nextResults = isMore
-        ? products.slice(currentLength, currentLength + 20)
+        ? products.slice(currentLength, currentLength + 24)
         : [];
       setList([...list, ...nextResults]);
       setLoadMore(false);
@@ -174,7 +174,7 @@ export function ProductCardList() {
   return (
     <Grid container spacing={2}>
       {list.map((item: any): any => (
-        <Grid item xs={12} md={6} key={item._id}>
+        <Grid item xs={12} md={6} xl={4} key={item._id}>
           <ProductCard item={item} />
         </Grid>
       ))}

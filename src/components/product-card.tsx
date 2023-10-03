@@ -21,6 +21,7 @@ import {
   Link,
   Box,
   Avatar,
+  Button,
 } from "@mui/material";
 import {
   CalendarMonth,
@@ -68,7 +69,7 @@ export function ProductCard({ item }: any) {
     <Card>
       <Grid container>
         {item.img ? (
-          <Grid item xs={12} sm={4} md={12} lg={3}>
+          <Grid item xs={3} sm={4}>
             <CardMedia
               component="img"
               image={`${item.img}?w=164&h=164&fit=crop&auto=format`}
@@ -84,10 +85,8 @@ export function ProductCard({ item }: any) {
         ) : null}
         <Grid
           item
-          xs={12}
+          xs={item.img ? 9 : 12}
           sm={item.img ? 8 : 12}
-          md={12}
-          lg={item.img ? 9 : 12}
         >
           <Box
             sx={{
@@ -99,9 +98,26 @@ export function ProductCard({ item }: any) {
             <Box sx={{ flexGrow: 1, maxWidth: 500 }}>
               <CardHeader
                 sx={{ paddingTop: 1, paddingBottom: 1 }}
-                title={item?.name}
+                title={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span>{item?.name}</span>
+                    <span>100gr</span>
+                  </Box>
+                }
                 subheader={
-                  <Stack>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Breadcrumbs
                       maxItems={2}
                       separator="›"
@@ -139,7 +155,7 @@ export function ProductCard({ item }: any) {
                         </Typography>
                       ))}
                     </Stack>
-                  </Stack>
+                  </Box>
                 }
               />
             </Box>
@@ -156,7 +172,8 @@ export function ProductCard({ item }: any) {
               </CardContent>
             </Box>
           </Box>
-          <CardContent
+        </Grid>
+        <CardContent
             sx={{ paddingTop: 1, paddingBottom: 1, "&:last-child": { pb: 0 } }}
           >
             <Typography>
@@ -164,71 +181,75 @@ export function ProductCard({ item }: any) {
               cook together with your guests. Add 1 cup of frozen peas. I need a
               much longer text I think. To see how far I can go
             </Typography>
-          </CardContent>
-        </Grid>
-        <Grid item xs={12}>
-          <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
-            <Stack direction="row" alignItems="center" gap={1}>
+        </CardContent>
+        <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+            }}
+            gap={1}
+          >
+            <Stack direction="row" gap={1} flexGrow={1}>
               <LocalDining />
               <Typography>
                 <b>Lait</b>, présure
               </Typography>
             </Stack>
-            <Stack direction="row" alignItems="center" gap={1}>
+            <Stack direction="row" gap={1} flexGrow={1}>
               <CrisisAlert />
               <Typography>Contient du lait</Typography>
             </Stack>
-            <Stack direction="row" alignItems="center" gap={1}>
-              <WineBar />
-              <Typography>ALC. 5,6% VOL.</Typography>
+            <Stack direction="row" gap={1} flexGrow={1}>
+                <WineBar />
+                <Typography>ALC. 5,6% VOL.</Typography>
             </Stack>
-          </CardContent>
-          <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
-            <Accordion
-              expanded={expanded === "panel1"}
-              onChange={handleChange("panel1")}
+          </Box>
+        </CardContent>
+        <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
+          <Accordion
+            expanded={expanded === "panel1"}
+            onChange={handleChange("panel1")}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1a-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1a-header"
-              >
-                <Typography>Utilisation</Typography>
-              </AccordionSummary>
-              <AccordionDetails>Il faut l'utiliser comme ceci</AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={expanded === "panel2"}
-              onChange={handleChange("panel2")}
+              <Typography>Utilisation</Typography>
+            </AccordionSummary>
+            <AccordionDetails>Il faut l'utiliser comme ceci</AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded === "panel2"}
+            onChange={handleChange("panel2")}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2-content"
+              id="panel1a-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2-content"
-                id="panel1a-header"
-              >
-                <Typography>Conservation</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                Il faut le conserver comme ceci
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={expanded === "panel3"}
-              onChange={handleChange("panel3")}
+              <Typography>Conservation</Typography>
+            </AccordionSummary>
+            <AccordionDetails>Il faut le conserver comme ceci</AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded === "panel3"}
+            onChange={handleChange("panel3")}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel3-content"
+              id="panel1a-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3-content"
-                id="panel1a-header"
-              >
-                <Typography>Nutriments</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <NutrimentsTable />
-              </AccordionDetails>
-            </Accordion>
-          </CardContent>
-          {/*
+              <Typography>Nutriments</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <NutrimentsTable />
+            </AccordionDetails>
+          </Accordion>
+        </CardContent>
+        {/*
           <CardActions>
             <IconButton>
               <AccessAlarm />
@@ -236,7 +257,6 @@ export function ProductCard({ item }: any) {
             </IconButton>
           </CardActions>
           */}
-        </Grid>
       </Grid>
     </Card>
   );
