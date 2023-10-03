@@ -22,13 +22,21 @@ import {
   Box,
   Avatar,
   Button,
+  Tab,
+  IconButton,
 } from "@mui/material";
 import {
   CalendarMonth,
   LocalDining,
   CrisisAlert,
   WineBar,
+  Delete,
+  VisibilityOff,
 } from "@mui/icons-material";
+
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -65,6 +73,16 @@ export function ProductCard({ item }: any) {
       setExpanded(isExpanded ? panel : false);
     };
 
+  const [tab, setTab] = React.useState("0");
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setTab(newValue);
+  };
+
+  const handleChange2 = (panel: string) => (event: React.SyntheticEvent) => {
+    setTab(panel);
+  };
+
   return (
     <Card>
       <Grid container>
@@ -83,11 +101,7 @@ export function ProductCard({ item }: any) {
             />
           </Grid>
         ) : null}
-        <Grid
-          item
-          xs={item?.img ? 9 : 12}
-          sm={item?.img ? 8 : 12}
-        >
+        <Grid item xs={item?.img ? 9 : 12} sm={item?.img ? 8 : 12}>
           <Box
             sx={{
               display: "flex",
@@ -95,7 +109,7 @@ export function ProductCard({ item }: any) {
               justifyContent: "space-between",
             }}
           >
-            <Box sx={{ flexGrow: 1, maxWidth: 500 }}>
+            <Box sx={{ flexGrow: 1 }}>
               <CardHeader
                 sx={{ paddingTop: 1, paddingBottom: 1 }}
                 title={
@@ -116,6 +130,7 @@ export function ProductCard({ item }: any) {
                       display: "flex",
                       flexWrap: "wrap",
                       justifyContent: "space-between",
+                      gap: 1,
                     }}
                   >
                     <Breadcrumbs
@@ -174,13 +189,13 @@ export function ProductCard({ item }: any) {
           </Box>
         </Grid>
         <CardContent
-            sx={{ paddingTop: 1, paddingBottom: 1, "&:last-child": { pb: 0 } }}
-          >
-            <Typography>
-              This impressive paella is a perfect party dish and a fun meal to
-              cook together with your guests. Add 1 cup of frozen peas. I need a
-              much longer text I think. To see how far I can go
-            </Typography>
+          sx={{ paddingTop: 1, paddingBottom: 1, "&:last-child": { pb: 0 } }}
+        >
+          <Typography>
+            This impressive paella is a perfect party dish and a fun meal to
+            cook together with your guests. Add 1 cup of frozen peas. I need a
+            much longer text I think. To see how far I can go
+          </Typography>
         </CardContent>
         <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
           <Box
@@ -201,53 +216,54 @@ export function ProductCard({ item }: any) {
               <Typography>Contient du lait</Typography>
             </Stack>
             <Stack direction="row" gap={1} flexGrow={1}>
-                <WineBar />
-                <Typography>ALC. 5,6% VOL.</Typography>
+              <WineBar />
+              <Typography>ALC. 5,6% VOL.</Typography>
             </Stack>
           </Box>
         </CardContent>
         <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
-          <Accordion
-            expanded={expanded === "panel1"}
-            onChange={handleChange("panel1")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1-content"
-              id="panel1a-header"
-            >
-              <Typography>Utilisation</Typography>
-            </AccordionSummary>
-            <AccordionDetails>Il faut l'utiliser comme ceci</AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel2"}
-            onChange={handleChange("panel2")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel2-content"
-              id="panel1a-header"
-            >
-              <Typography>Conservation</Typography>
-            </AccordionSummary>
-            <AccordionDetails>Il faut le conserver comme ceci</AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel3"}
-            onChange={handleChange("panel3")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel3-content"
-              id="panel1a-header"
-            >
-              <Typography>Nutriments</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
+          <TabContext value={tab}>
+            <Box>
+              <TabList
+                onChange={handleTabChange}
+                aria-label="lab API tabs example"
+                TabIndicatorProps={{ sx: { display: "none" } }}
+                sx={{
+                  width: "100%",
+                  "& .MuiTabs-flexContainer": {
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    width: "100%",
+                  },
+                }}
+              >
+                <Tab label="Hidden" value="0" sx={{ display: "none" }} />
+                <Tab
+                  label="Utilisation"
+                  value="1"
+                  sx={{ fontSize: "0.8rem" }}
+                />
+                <Tab
+                  label="Conservation"
+                  value="2"
+                  sx={{ fontSize: "0.8rem" }}
+                />
+                <Tab label="Nutriments" value="3" sx={{ fontSize: "0.8rem" }} />
+                <IconButton
+                  onClick={handleChange2("0")}
+                  sx={{ display: tab == "0" ? "none" : "block" }}
+                >
+                  <VisibilityOff fontSize="small" />
+                </IconButton>
+              </TabList>
+            </Box>
+            <TabPanel value="0" sx={{ display: "none" }}></TabPanel>
+            <TabPanel value="1">Il faut l'utiliser comme ceci</TabPanel>
+            <TabPanel value="2">Il faut le conserver comme ceci</TabPanel>
+            <TabPanel value="3">
               <NutrimentsTable />
-            </AccordionDetails>
-          </Accordion>
+            </TabPanel>
+          </TabContext>
         </CardContent>
         {/*
           <CardActions>
