@@ -6,8 +6,6 @@ import {
   CardMedia,
   CardContent,
   CardHeader,
-  CardActions,
-  IconButton,
   Typography,
   Stack,
   TableContainer,
@@ -16,26 +14,19 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  IconButtonProps,
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Breadcrumbs,
   Link,
-  ListItem,
-  List,
-  Chip,
   Box,
-  Paper,
-  Divider,
+  Avatar,
 } from "@mui/material";
 import {
-  AccessAlarm,
   CalendarMonth,
   LocalDining,
   CrisisAlert,
   WineBar,
-  BorderClear,
 } from "@mui/icons-material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -98,50 +89,76 @@ export function ProductCard({ item }: any) {
           md={12}
           lg={item.img ? 9 : 12}
         >
-          <CardHeader
-            title={item.name}
-            subheader={
-              <Stack direction="row" alignItems="center" gap={1}>
-                <CalendarMonth />
-                <Typography>Mars à Avril</Typography>
-              </Stack>
-            }
-          />
-          <CardContent>
-            <Stack direction="row" flexWrap="wrap">
-              {moment.monthsShort().map((m) => (
-                <Paper
-                  elevation={0}
-                  sx={{
-                    padding: "2px",
-                    margin: "2px",
-                    backgroundColor: m.includes("e") ? "#AFE1AF" : "default",
-                  }}
-                >
-                  <Typography variant="body2">{m}</Typography>
-                </Paper>
-              ))}
-            </Stack>
-          </CardContent>
-          <CardContent>
-            <Breadcrumbs maxItems={2} separator="›" aria-label="breadcrumb">
-              {item.categories?.map((c: any) => (
-                <Link underline="hover" color="inherit" href="#">
-                  {c.name}
-                </Link>
-              ))}
-              <Link underline="hover" color="inherit" href="#">
-                Légume
-              </Link>
-              <Link underline="hover" color="inherit" href="#">
-                Racine
-              </Link>
-              <Link underline="hover" color="inherit" href="#">
-                Poivron
-              </Link>
-            </Breadcrumbs>
-          </CardContent>
-          <CardContent>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box sx={{ flexGrow: 1, maxWidth: 500 }}>
+              <CardHeader
+                sx={{ paddingTop: 1, paddingBottom: 1 }}
+                title={item.name}
+                subheader={
+                  <Stack>
+                    <Breadcrumbs
+                      maxItems={2}
+                      separator="›"
+                      aria-label="breadcrumb"
+                    >
+                      {item.categories?.map((c: any) => (
+                        <Link underline="hover" color="inherit" href="#">
+                          {c.name}
+                        </Link>
+                      ))}
+                      <Link underline="hover" color="inherit" href="#">
+                        Légume
+                      </Link>
+                      <Link underline="hover" color="inherit" href="#">
+                        Racine
+                      </Link>
+                      <Link underline="hover" color="inherit" href="#">
+                        Poivron
+                      </Link>
+                    </Breadcrumbs>
+                    <Stack direction="row" flexWrap="wrap">
+                      <CalendarMonth />
+                      {moment.monthsShort().map((m) => (
+                        <Typography
+                          sx={{
+                            fontSize: "0.85rem",
+                            padding: "1px",
+                            margin: "1px",
+                            backgroundColor: m.includes("e")
+                              ? "#AFE1AF"
+                              : "default",
+                          }}
+                        >
+                          {m.charAt(0)}
+                        </Typography>
+                      ))}
+                    </Stack>
+                  </Stack>
+                }
+              />
+            </Box>
+            <Box sx={{ flexGrow: 1 }}>
+              <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
+                <Card>
+                  <CardHeader
+                    sx={{ paddingTop: 1, paddingBottom: 1 }}
+                    title="Les dingues du Marais"
+                    subheader="Maraîchage"
+                    avatar={<Avatar alt="Apple">N</Avatar>}
+                  />
+                </Card>
+              </CardContent>
+            </Box>
+          </Box>
+          <CardContent
+            sx={{ paddingTop: 1, paddingBottom: 1, "&:last-child": { pb: 0 } }}
+          >
             <Typography>
               This impressive paella is a perfect party dish and a fun meal to
               cook together with your guests. Add 1 cup of frozen peas. I need a
@@ -150,7 +167,7 @@ export function ProductCard({ item }: any) {
           </CardContent>
         </Grid>
         <Grid item xs={12}>
-          <CardContent>
+          <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
             <Stack direction="row" alignItems="center" gap={1}>
               <LocalDining />
               <Typography>
@@ -166,7 +183,7 @@ export function ProductCard({ item }: any) {
               <Typography>ALC. 5,6% VOL.</Typography>
             </Stack>
           </CardContent>
-          <CardContent>
+          <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
             <Accordion
               expanded={expanded === "panel1"}
               onChange={handleChange("panel1")}
