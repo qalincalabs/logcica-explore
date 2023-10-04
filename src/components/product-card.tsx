@@ -24,6 +24,9 @@ import {
   Button,
   Tab,
   IconButton,
+  Chip,
+  Popper,
+  Paper,
 } from "@mui/material";
 import {
   CalendarMonth,
@@ -32,18 +35,19 @@ import {
   WineBar,
   Delete,
   VisibilityOff,
+  Agriculture,
+  Blender,
+  Inventory,
 } from "@mui/icons-material";
 
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
 export function NutrimentsTable() {
   return (
     <TableContainer>
-      <Table>
+      <Table size="small" sx={{ maxWidth: 400 }}>
         <TableHead>
           <TableRow>
             <TableCell></TableCell>
@@ -52,11 +56,31 @@ export function NutrimentsTable() {
         </TableHead>
         <TableBody>
           <TableRow key={1}>
+            <TableCell>Énergie</TableCell>
+            <TableCell align="right">100kJ / 30kcal</TableCell>
+          </TableRow>
+          <TableRow key={1}>
+            <TableCell>Matières grasses</TableCell>
+            <TableCell align="right">20gr</TableCell>
+          </TableRow>
+          <TableRow key={2}>
+            <TableCell>&nbsp;&nbsp;dont acides gras saturés</TableCell>
+            <TableCell align="right">20gr</TableCell>
+          </TableRow>
+          <TableRow key={2}>
             <TableCell>Glucides</TableCell>
             <TableCell align="right">20gr</TableCell>
           </TableRow>
           <TableRow key={2}>
+            <TableCell>&nbsp;&nbsp;dont sucres</TableCell>
+            <TableCell align="right">20gr</TableCell>
+          </TableRow>
+          <TableRow key={2}>
             <TableCell>Protéines</TableCell>
+            <TableCell align="right">20gr</TableCell>
+          </TableRow>
+          <TableRow key={2}>
+            <TableCell>Sel</TableCell>
             <TableCell align="right">20gr</TableCell>
           </TableRow>
         </TableBody>
@@ -81,6 +105,12 @@ export function ProductCard({ item }: any) {
 
   const handleChange2 = (panel: string) => (event: React.SyntheticEvent) => {
     setTab(panel);
+  };
+
+  const [isAddressVisible, setIsAddressVisible] = React.useState<boolean>(false);
+
+  const handleSetIsAddressVisible = () => (event: React.SyntheticEvent) => {
+    setIsAddressVisible(!isAddressVisible);
   };
 
   return (
@@ -175,14 +205,44 @@ export function ProductCard({ item }: any) {
               />
             </Box>
             <Box sx={{ flexGrow: 1 }}>
-              <CardContent sx={{ paddingTop: 1, paddingBottom: 1 }}>
+              <CardContent
+                onClick={handleSetIsAddressVisible()}
+                sx={{ paddingTop: 1, paddingBottom: 1 }}
+              >
                 <Card>
-                  <CardHeader
-                    sx={{ paddingTop: 1, paddingBottom: 1 }}
-                    title="Les dingues du Marais"
-                    subheader="Maraîchage"
-                    avatar={<Avatar alt="Apple">N</Avatar>}
-                  />
+                  <Stack direction="row">
+                    <CardHeader
+                      sx={{
+                        paddingTop: 1,
+                        paddingBottom: 1,
+                        width: "100%",
+                        "& .MuiCardHeader-subheader": {
+                          width: "100%",
+                        },
+                      }}
+                      title="Les dingues du Marais"
+                      subheader={
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          gap={3}
+                        >
+                          <span>Maraîchage</span>
+                          <Stack direction="row" gap={1}>
+                            <Agriculture />
+                            <Blender />
+                            <Inventory />
+                          </Stack>
+                        </Box>
+                      }
+                      avatar={<Avatar alt="Apple">N</Avatar>}
+                    />
+                  </Stack>
+                  <CardContent sx={{display:isAddressVisible ? "block": "none" }}>
+                  7 rue des cueilleurs,
+                  6060 Gilly,
+                  Belgique
+                  </CardContent>
                 </Card>
               </CardContent>
             </Box>
