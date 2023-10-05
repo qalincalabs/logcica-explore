@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as moment from "moment";
+import Markdown from "markdown-to-jsx";
 import {
   Grid,
   Card,
@@ -38,11 +39,14 @@ import {
   Agriculture,
   Blender,
   Inventory,
+  SquareFoot,
 } from "@mui/icons-material";
 
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+
+const Strong = ({ children }: any) => <strong>{children}</strong>
 
 export function NutrimentsTable() {
   return (
@@ -89,6 +93,15 @@ export function NutrimentsTable() {
   );
 }
 
+export function ProductDimensionsText(dimension: any) {
+  const list = [];
+  if (dimension.length)
+    list.push(dimension.length.value + dimension.length.unit);
+  list.push(dimension.width.value + dimension.width.unit);
+  list.push(dimension.height.value + dimension.height.unit);
+  return list.join(" x ");
+}
+
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
 
@@ -107,7 +120,8 @@ export function ProductCard({ item }: any) {
     setTab(panel);
   };
 
-  const [isAddressVisible, setIsAddressVisible] = React.useState<boolean>(false);
+  const [isAddressVisible, setIsAddressVisible] =
+    React.useState<boolean>(false);
 
   const handleSetIsAddressVisible = () => (event: React.SyntheticEvent) => {
     setIsAddressVisible(!isAddressVisible);
@@ -238,25 +252,23 @@ export function ProductCard({ item }: any) {
                       avatar={<Avatar alt="Apple">N</Avatar>}
                     />
                   </Stack>
-                  <CardContent sx={{display:isAddressVisible ? "block": "none" }}>
-                  7 rue des cueilleurs,
-                  6060 Gilly,
-                  Belgique
+                  <CardContent
+                    sx={{ display: isAddressVisible ? "block" : "none" }}
+                  >
+                    7 rue des cueilleurs, 6060 Gilly, Belgique
                   </CardContent>
                 </Card>
               </CardContent>
             </Box>
           </Box>
         </Grid>
-        <CardContent
-          sx={{ paddingTop: 1, paddingBottom: 1, "&:last-child": { pb: 0 } }}
-        >
-          <Typography>
-            This impressive paella is a perfect party dish and a fun meal to
-            cook together with your guests. Add 1 cup of frozen peas. I need a
-            much longer text I think. To see how far I can go
-          </Typography>
-        </CardContent>
+        {item.description?.short && (
+          <CardContent
+            sx={{ paddingTop: 1, paddingBottom: 1, "&:last-child": { pb: 0 } }}
+          >
+            <Markdown>{item.description.short.markdown}</Markdown>
+          </CardContent>
+        )}
         <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
           <Box
             sx={{
@@ -265,20 +277,40 @@ export function ProductCard({ item }: any) {
             }}
             gap={1}
           >
-            <Stack direction="row" gap={1} flexGrow={1}>
-              <LocalDining />
-              <Typography>
-                <b>Lait</b>, présure
-              </Typography>
-            </Stack>
+            {item.ingredientStatement?.short && (
+              <Stack direction="row" gap={1} flexGrow={1}>
+                <LocalDining />
+                <Markdown
+                  options={{
+                    overrides: {
+                      em: {
+                        component: Strong
+                      },
+                    },
+                  }}
+                >
+                  {item.ingredientStatement.short.markdown}
+                </Markdown>
+              </Stack>
+            )}
             <Stack direction="row" gap={1} flexGrow={1}>
               <CrisisAlert />
               <Typography>Contient du lait</Typography>
             </Stack>
-            <Stack direction="row" gap={1} flexGrow={1}>
-              <WineBar />
-              <Typography>ALC. 5,6% VOL.</Typography>
-            </Stack>
+            {item.alcoholPercentage != null && (
+              <Stack direction="row" gap={1} flexGrow={1}>
+                <WineBar />
+                <Typography>ALC. {item.alcoholPercentage}% VOL.</Typography>
+              </Stack>
+            )}
+            {item.dimensions && (
+              <Stack direction="row" gap={1} flexGrow={1}>
+                <SquareFoot />
+                <Typography>
+                  {ProductDimensionsText(item.dimensions)}
+                </Typography>
+              </Stack>
+            )}
           </Box>
         </CardContent>
         <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
@@ -298,16 +330,20 @@ export function ProductCard({ item }: any) {
                 }}
               >
                 <Tab label="Hidden" value="0" sx={{ display: "none" }} />
-                <Tab
-                  label="Utilisation"
-                  value="1"
-                  sx={{ fontSize: "0.8rem" }}
-                />
-                <Tab
-                  label="Conservation"
-                  value="2"
-                  sx={{ fontSize: "0.8rem" }}
-                />
+                {item.consumerUsageInstructions?.short && (
+                  <Tab
+                    label="Utilisation"
+                    value="1"
+                    sx={{ fontSize: "0.8rem" }}
+                  />
+                )}
+                {item.consumerStorageInstructions?.short && (
+                  <Tab
+                    label="Conservation"
+                    value="2"
+                    sx={{ fontSize: "0.8rem" }}
+                  />
+                )}
                 <Tab label="Nutriments" value="3" sx={{ fontSize: "0.8rem" }} />
                 <IconButton
                   onClick={handleChange2("0")}
@@ -318,8 +354,22 @@ export function ProductCard({ item }: any) {
               </TabList>
             </Box>
             <TabPanel value="0" sx={{ display: "none" }}></TabPanel>
-            <TabPanel value="1">Il faut l'utiliser comme ceci</TabPanel>
-            <TabPanel value="2">Il faut le conserver comme ceci</TabPanel>
+            {item.consumerUsageInstructions?.short && (
+              <TabPanel value="1">
+                <Markdown>
+                  {item.consumerUsageInstructions?.short.markdown}
+                </Markdown>
+              </TabPanel>
+            )}
+            {item.consumerStorageInstructions?.short && (
+              <TabPanel value="2">
+                <Typography>
+                  <Markdown>
+                    {item.consumerStorageInstructions?.short.markdown}
+                  </Markdown>
+                </Typography>
+              </TabPanel>
+            )}
             <TabPanel value="3">
               <NutrimentsTable />
             </TabPanel>

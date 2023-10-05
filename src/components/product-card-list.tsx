@@ -2,12 +2,12 @@ import * as React from "react";
 import { Button, Grid } from "@mui/material";
 import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
-import LoadingButton from '@mui/lab/LoadingButton';
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const itemData = [
   {
     _id: "1",
-    //img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
+    img: "https://images.unsplash.com/photo-1601459427108-47e20d579a35",
     name: "Breakfast",
   },
   {
@@ -88,9 +88,30 @@ export function ProductCardList() {
               name
             }
           }
+          description {
+            short {
+              markdown
+            }
+          }
+          ingredientStatement {
+            short {
+              markdown
+            }
+          }
           allergenList {
             allergenKey
             containmentLevelKey
+          }
+          alcoholPercentage
+          consumerUsageInstructions {
+            short {
+              markdown
+            }
+          }
+          consumerStorageInstructions {
+            short {
+              markdown
+            }
           }
           categories {
             _id
@@ -125,6 +146,7 @@ export function ProductCardList() {
     for (const i of data.allMongodbProduct.nodes) {
       itemData.push(i);
     }
+    itemData.reverse();
     setLoaded(true);
   }
 
@@ -181,14 +203,14 @@ export function ProductCardList() {
       >
         {hasMore ? (
           <LoadingButton
-          onClick={handleLoadMore}
-          loading={loadMore}
-          loadingPosition="end"
-          variant="contained"
-          fullWidth
-        >
-          Load more
-        </LoadingButton>
+            onClick={handleLoadMore}
+            loading={loadMore}
+            loadingPosition="end"
+            variant="contained"
+            fullWidth
+          >
+            Load more
+          </LoadingButton>
         ) : (
           <p>No more results</p>
         )}
