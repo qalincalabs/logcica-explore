@@ -4,69 +4,6 @@ import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-const itemData = [
-  {
-    _id: "1",
-    img: "https://images.unsplash.com/photo-1601459427108-47e20d579a35",
-    name: "Breakfast",
-  },
-  {
-    _id: "2",
-    // img: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d",
-    name: "Burger",
-  },
-  {
-    _id: "3",
-    img: "https://images.unsplash.com/photo-1522770179533-24471fcdba45",
-    name: "Camera",
-  },
-  {
-    _id: "4",
-    img: "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c",
-    name: "Coffee",
-  },
-  {
-    _id: "5",
-    img: "https://images.unsplash.com/photo-1533827432537-70133748f5c8",
-    name: "Hats",
-  },
-  {
-    _id: "6",
-    img: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62",
-    name: "Honey",
-  },
-  {
-    _id: "7",
-    img: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6",
-    name: "Basketball",
-  },
-  {
-    _id: "8",
-    img: "https://images.unsplash.com/photo-1518756131217-31eb79b20e8f",
-    name: "Fern",
-  },
-  {
-    _id: "9",
-    img: "https://images.unsplash.com/photo-1597645587822-e99fa5d45d25",
-    name: "Mushrooms",
-  },
-  {
-    _id: "10",
-    img: "https://images.unsplash.com/photo-1567306301408-9b74779a11af",
-    name: "Tomato basil",
-  },
-  {
-    _id: "11",
-    img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1",
-    name: "Sea star",
-  },
-  {
-    _id: "12",
-    img: "https://images.unsplash.com/photo-1589118949245-7d38baf380d6",
-    name: "Bike",
-  },
-];
-
 export function ProductCardList() {
   const data = useStaticQuery(graphql`
     query {
@@ -74,7 +11,7 @@ export function ProductCardList() {
         nodes {
           _id
           name
-          producer {
+          owner {
             organisation {
               _id
               name
@@ -88,9 +25,20 @@ export function ProductCardList() {
               name
             }
           }
+          ownerRoles
           description {
             short {
               markdown
+            }
+          }
+          mainImage {
+            url
+          }
+          availabilities {
+            season {
+              year {
+                months
+              }
             }
           }
           ingredientStatement {
@@ -140,17 +88,7 @@ export function ProductCardList() {
     }
   `);
 
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-
-  if (loaded == false) {
-    for (const i of data.allMongodbProduct.nodes) {
-      itemData.push(i);
-    }
-    itemData.reverse();
-    setLoaded(true);
-  }
-
-  const products = itemData;
+  const products = data.allMongodbProduct.nodes
 
   // State for the list
   const [list, setList] = React.useState([...products.slice(0, 24)]);

@@ -29,15 +29,18 @@ exports.createSchemaCustomization = ({ actions }) => {
   createTypes(mongoIdTypeDefs);
   
   const typeDefs1 = 
-  //mongoIdTypeDefs +
     `
-      type mongodbProductProducer implements Node {
+      type mongodbProductOwner implements Node {
         organisation: mongodbOrganisation @link(by: "mongodb_id")
         workspace: mongodbWorkspace @link(by: "mongodb_id")
         activity: mongodbActivity @link(by: "mongodb_id")
       }
       type mongodbProduct implements Node {
         categories: [mongodbCategory] @link(by: "mongodb_id")
+        availabilities: [mongodbAvailability] @link(by: "mongodb_id")
+      }
+      type mongodbAvailability implements Node {
+        season: mongodbSeasonAvailability @link(by: "mongodb_id")
       }
     `;
   createTypes(typeDefs1);

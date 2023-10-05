@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as moment from "moment";
+import moment from "moment";
 import Markdown from "markdown-to-jsx";
 import {
   Grid,
@@ -46,7 +46,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
-const Strong = ({ children }: any) => <strong>{children}</strong>
+const Strong = ({ children }: any) => <strong>{children}</strong>;
 
 export function NutrimentsTable() {
   return (
@@ -130,22 +130,28 @@ export function ProductCard({ item }: any) {
   return (
     <Card>
       <Grid container>
-        {item?.img ? (
-          <Grid item xs={3} sm={4}>
+        {item.mainImage && (
+          <Grid item xs={3} sm={2} md={3}>
             <CardMedia
               component="img"
-              image={`${item?.img}?w=164&h=164&fit=crop&auto=format`}
-              alt={item?.name}
+              image={item.mainImage.url} // {`${item?.img}?w=164&h=164&fit=crop&auto=format`}
+              alt={item.name}
               sx={{
                 objectFit: "contain",
-                maxHeight: 200,
+                maxHeight: "150px",
+                maxWidth: "150px",
                 ml: 0,
                 mr: "auto",
               }}
             />
           </Grid>
-        ) : null}
-        <Grid item xs={item?.img ? 9 : 12} sm={item?.img ? 8 : 12}>
+        )}
+        <Grid
+          item
+          xs={item.mainImage ? 9 : 12}
+          sm={item.mainImage ? 10 : 12}
+          md={item.mainImage ? 9 : 12}
+        >
           <Box
             sx={{
               display: "flex",
@@ -164,7 +170,7 @@ export function ProductCard({ item }: any) {
                       justifyContent: "space-between",
                     }}
                   >
-                    <span>{item?.name}</span>
+                    <span>{item.name}</span>
                     <span>100gr</span>
                   </Box>
                 }
@@ -177,88 +183,96 @@ export function ProductCard({ item }: any) {
                       gap: 1,
                     }}
                   >
-                    <Breadcrumbs
-                      maxItems={2}
-                      separator="›"
-                      aria-label="breadcrumb"
-                    >
-                      {item.categories?.map((c: any) => (
-                        <Link underline="hover" color="inherit" href="#">
-                          {c.name}
+                    {item.categories?.[0] && (
+                      <Breadcrumbs
+                        maxItems={2}
+                        separator="›"
+                        aria-label="breadcrumb"
+                      >
+                        <Link underline="hover" color="inherit">
+                          {item.categories[0].name}
                         </Link>
-                      ))}
-                      <Link underline="hover" color="inherit" href="#">
-                        Légume
-                      </Link>
-                      <Link underline="hover" color="inherit" href="#">
-                        Racine
-                      </Link>
-                      <Link underline="hover" color="inherit" href="#">
-                        Poivron
-                      </Link>
-                    </Breadcrumbs>
-                    <Stack direction="row" flexWrap="wrap">
-                      <CalendarMonth />
-                      {moment.monthsShort().map((m) => (
-                        <Typography
-                          sx={{
-                            fontSize: "0.85rem",
-                            padding: "1px",
-                            margin: "1px",
-                            backgroundColor: m.includes("e")
-                              ? "#AFE1AF"
-                              : "default",
-                          }}
-                        >
-                          {m.charAt(0)}
-                        </Typography>
-                      ))}
-                    </Stack>
+                      </Breadcrumbs>
+                    )}
+                    {item.availabilities?.[0]?.season?.year?.months && (
+                      <Stack direction="row" flexWrap="wrap">
+                        <CalendarMonth />
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(
+                          (monthNumber) => (
+                            <Typography
+                              sx={{
+                                fontSize: "0.85rem",
+                                padding: "1px",
+                                margin: "1px",
+                                backgroundColor:
+                                  item.availabilities?.[0]?.season?.year?.months.includes(
+                                    monthNumber + 1
+                                  )
+                                    ? "#AFE1AF"
+                                    : "default",
+                              }}
+                            >
+                              {moment(monthNumber, "M").format("MMM").charAt(0)}
+                            </Typography>
+                          )
+                        )}
+                      </Stack>
+                    )}
                   </Box>
                 }
               />
             </Box>
             <Box sx={{ flexGrow: 1 }}>
-              <CardContent
-                onClick={handleSetIsAddressVisible()}
-                sx={{ paddingTop: 1, paddingBottom: 1 }}
-              >
-                <Card>
-                  <Stack direction="row">
-                    <CardHeader
-                      sx={{
-                        paddingTop: 1,
-                        paddingBottom: 1,
-                        width: "100%",
-                        "& .MuiCardHeader-subheader": {
+              {item.owner && (
+                <CardContent
+                  onClick={handleSetIsAddressVisible()}
+                  sx={{ paddingTop: 1, paddingBottom: 1 }}
+                >
+                  <Card>
+                    <Stack direction="row">
+                      <CardHeader
+                        sx={{
+                          paddingTop: 1,
+                          paddingBottom: 1,
                           width: "100%",
-                        },
-                      }}
-                      title="Les dingues du Marais"
-                      subheader={
-                        <Box
-                          display="flex"
-                          justifyContent="space-between"
-                          gap={3}
-                        >
-                          <span>Maraîchage</span>
-                          <Stack direction="row" gap={1}>
-                            <Agriculture />
-                            <Blender />
-                            <Inventory />
-                          </Stack>
-                        </Box>
-                      }
-                      avatar={<Avatar alt="Apple">N</Avatar>}
-                    />
-                  </Stack>
-                  <CardContent
-                    sx={{ display: isAddressVisible ? "block" : "none" }}
-                  >
-                    7 rue des cueilleurs, 6060 Gilly, Belgique
-                  </CardContent>
-                </Card>
-              </CardContent>
+                          "& .MuiCardHeader-subheader": {
+                            width: "100%",
+                          },
+                        }}
+                        title={item.owner.organisation?.name}
+                        subheader={
+                          <Box
+                            display="flex"
+                            justifyContent="space-between"
+                            gap={3}
+                          >
+                            <span>{item.owner.activity?.name}</span>
+                            {item.ownerRoles && (
+                              <Stack direction="row" gap={1}>
+                                {item.ownerRoles.includes("producer") && (
+                                  <Agriculture />
+                                )}
+                                {item.ownerRoles.includes("transformer") && (
+                                  <Blender />
+                                )}
+                                {item.ownerRoles.includes("packer") && (
+                                  <Inventory />
+                                )}
+                              </Stack>
+                            )}
+                          </Box>
+                        }
+                        avatar={<Avatar alt="Apple">N</Avatar>}
+                      />
+                    </Stack>
+                    <CardContent
+                      sx={{ display: isAddressVisible ? "block" : "none" }}
+                    >
+                      7 rue des cueilleurs, 6060 Gilly, Belgique
+                    </CardContent>
+                  </Card>
+                </CardContent>
+              )}
             </Box>
           </Box>
         </Grid>
@@ -284,7 +298,7 @@ export function ProductCard({ item }: any) {
                   options={{
                     overrides: {
                       em: {
-                        component: Strong
+                        component: Strong,
                       },
                     },
                   }}
