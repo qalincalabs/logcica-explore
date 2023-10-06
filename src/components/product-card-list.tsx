@@ -15,6 +15,17 @@ export function ProductCardList() {
             organisation {
               _id
               name
+              mainImage {
+                url
+              }
+              place {
+                address {
+                  street
+                  locality
+                  postalCode
+                  country
+                }
+              }
             }
             workspace {
               _id
@@ -47,10 +58,24 @@ export function ProductCardList() {
             }
           }
           allergenList {
-            allergenKey
-            containmentLevelKey
+            allergenKey {
+              name
+            }
+            containmentLevelKey {
+              name
+            }
           }
           alcoholPercentage
+          nutrientList {
+            nutrientKey {
+              _id
+              name
+            }
+            quantity {
+              value
+              unit
+            }
+          }
           consumerUsageInstructions {
             short {
               markdown
@@ -88,7 +113,7 @@ export function ProductCardList() {
     }
   `);
 
-  const products = data.allMongodbProduct.nodes
+  const products = data.allMongodbProduct.nodes.reverse();
 
   // State for the list
   const [list, setList] = React.useState([...products.slice(0, 24)]);

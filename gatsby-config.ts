@@ -11,6 +11,7 @@ const mongoCollections: string[] = [
   "seasonAvailability",
   "code",
   "codeList",
+  "place"
 ];
 
 require("dotenv").config({

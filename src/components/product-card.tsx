@@ -48,7 +48,17 @@ import TabPanel from "@mui/lab/TabPanel";
 
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
-export function NutrimentsTable() {
+function addressText(address: any) {
+  const list = [];
+  if (address.street) list.push(address.street);
+  if (address.locality) list.push(address.locality);
+  if (address.postalCode) list.push(address.postalCode);
+  if (address.country) list.push(address.country);
+
+  return list.join(", ");
+}
+
+export function NutrientListTable({ nutrientList }: any) {
   return (
     <TableContainer>
       <Table size="small" sx={{ maxWidth: 400 }}>
@@ -59,34 +69,14 @@ export function NutrimentsTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow key={1}>
-            <TableCell>Énergie</TableCell>
-            <TableCell align="right">100kJ / 30kcal</TableCell>
-          </TableRow>
-          <TableRow key={1}>
-            <TableCell>Matières grasses</TableCell>
-            <TableCell align="right">20gr</TableCell>
-          </TableRow>
-          <TableRow key={2}>
-            <TableCell>&nbsp;&nbsp;dont acides gras saturés</TableCell>
-            <TableCell align="right">20gr</TableCell>
-          </TableRow>
-          <TableRow key={2}>
-            <TableCell>Glucides</TableCell>
-            <TableCell align="right">20gr</TableCell>
-          </TableRow>
-          <TableRow key={2}>
-            <TableCell>&nbsp;&nbsp;dont sucres</TableCell>
-            <TableCell align="right">20gr</TableCell>
-          </TableRow>
-          <TableRow key={2}>
-            <TableCell>Protéines</TableCell>
-            <TableCell align="right">20gr</TableCell>
-          </TableRow>
-          <TableRow key={2}>
-            <TableCell>Sel</TableCell>
-            <TableCell align="right">20gr</TableCell>
-          </TableRow>
+          {nutrientList.map((productNutrient: any) => (
+            <TableRow key={1}>
+              <TableCell>{productNutrient.nutrientKey.name}</TableCell>
+              <TableCell align="right">
+                {productNutrient.quantity.value + productNutrient.quantity.unit}
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>
@@ -171,7 +161,12 @@ export function ProductCard({ item }: any) {
                     }}
                   >
                     <span>{item.name}</span>
-                    <span>100gr</span>
+                    {item.netWeight && (
+                      <span>
+                        {item.netWeight.value}
+                        {item.netWeight.unit}
+                      </span>
+                    )}
                   </Box>
                 }
                 subheader={
@@ -262,14 +257,26 @@ export function ProductCard({ item }: any) {
                             )}
                           </Box>
                         }
-                        avatar={<Avatar alt="Apple">N</Avatar>}
+                        avatar={
+                          item.owner.organisation?.mainImage?.url ? (
+                            <Avatar
+                              src={item.owner.organisation?.mainImage?.url}
+                            />
+                          ) : (
+                            <Avatar>
+                              item.owner.organisation?.name?.charAt(0)
+                            </Avatar>
+                          )
+                        }
                       />
                     </Stack>
-                    <CardContent
-                      sx={{ display: isAddressVisible ? "block" : "none" }}
-                    >
-                      7 rue des cueilleurs, 6060 Gilly, Belgique
-                    </CardContent>
+                    {item.owner?.organisation?.place?.address && (
+                      <CardContent
+                        sx={{ display: isAddressVisible ? "block" : "none" }}
+                      >
+                        {addressText(item.owner.organisation.place.address)}
+                      </CardContent>
+                    )}
                   </Card>
                 </CardContent>
               )}
@@ -307,10 +314,17 @@ export function ProductCard({ item }: any) {
                 </Markdown>
               </Stack>
             )}
-            <Stack direction="row" gap={1} flexGrow={1}>
-              <CrisisAlert />
-              <Typography>Contient du lait</Typography>
-            </Stack>
+            {item.allergenList &&
+              item.allergenList.map((productAllergen: any) => (
+                <Stack direction="row" gap={1} flexGrow={1}>
+                  <CrisisAlert />
+                  <Typography>
+                    {productAllergen.containmentLevelKey.name +
+                      " " +
+                      productAllergen.allergenKey.name?.toLowerCase()}
+                  </Typography>
+                </Stack>
+              ))}
             {item.alcoholPercentage != null && (
               <Stack direction="row" gap={1} flexGrow={1}>
                 <WineBar />
@@ -327,68 +341,80 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </CardContent>
-        <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
-          <TabContext value={tab}>
-            <Box>
-              <TabList
-                onChange={handleTabChange}
-                aria-label="lab API tabs example"
-                TabIndicatorProps={{ sx: { display: "none" } }}
-                sx={{
-                  width: "100%",
-                  "& .MuiTabs-flexContainer": {
-                    flexWrap: "wrap",
-                    justifyContent: "center",
+        {(item.consumerUsageInstructions?.short ||
+          item.consumerStorageInstructions?.short ||
+          item.nutrientList) && (
+          <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
+            <TabContext value={tab}>
+              <Box>
+                <TabList
+                  onChange={handleTabChange}
+                  aria-label="lab API tabs example"
+                  TabIndicatorProps={{ sx: { display: "none" } }}
+                  sx={{
                     width: "100%",
-                  },
-                }}
-              >
-                <Tab label="Hidden" value="0" sx={{ display: "none" }} />
-                {item.consumerUsageInstructions?.short && (
-                  <Tab
-                    label="Utilisation"
-                    value="1"
-                    sx={{ fontSize: "0.8rem" }}
-                  />
-                )}
-                {item.consumerStorageInstructions?.short && (
-                  <Tab
-                    label="Conservation"
-                    value="2"
-                    sx={{ fontSize: "0.8rem" }}
-                  />
-                )}
-                <Tab label="Nutriments" value="3" sx={{ fontSize: "0.8rem" }} />
-                <IconButton
-                  onClick={handleChange2("0")}
-                  sx={{ display: tab == "0" ? "none" : "block" }}
+                    "& .MuiTabs-flexContainer": {
+                      flexWrap: "wrap",
+                      justifyContent: "center",
+                      width: "100%",
+                    },
+                  }}
                 >
-                  <VisibilityOff fontSize="small" />
-                </IconButton>
-              </TabList>
-            </Box>
-            <TabPanel value="0" sx={{ display: "none" }}></TabPanel>
-            {item.consumerUsageInstructions?.short && (
-              <TabPanel value="1">
-                <Markdown>
-                  {item.consumerUsageInstructions?.short.markdown}
-                </Markdown>
-              </TabPanel>
-            )}
-            {item.consumerStorageInstructions?.short && (
-              <TabPanel value="2">
-                <Typography>
+                  <Tab label="Hidden" value="0" sx={{ display: "none" }} />
+                  {item.consumerUsageInstructions?.short && (
+                    <Tab
+                      label="Utilisation"
+                      value="1"
+                      sx={{ fontSize: "0.8rem" }}
+                    />
+                  )}
+                  {item.consumerStorageInstructions?.short && (
+                    <Tab
+                      label="Conservation"
+                      value="2"
+                      sx={{ fontSize: "0.8rem" }}
+                    />
+                  )}
+                  {item.nutrientList && (
+                    <Tab
+                      label="Nutriments"
+                      value="3"
+                      sx={{ fontSize: "0.8rem" }}
+                    />
+                  )}
+                  <IconButton
+                    onClick={handleChange2("0")}
+                    sx={{ display: tab == "0" ? "none" : "block" }}
+                  >
+                    <VisibilityOff fontSize="small" />
+                  </IconButton>
+                </TabList>
+              </Box>
+              <TabPanel value="0" sx={{ display: "none" }}></TabPanel>
+              {item.consumerUsageInstructions?.short && (
+                <TabPanel value="1">
                   <Markdown>
-                    {item.consumerStorageInstructions?.short.markdown}
+                    {item.consumerUsageInstructions?.short.markdown}
                   </Markdown>
-                </Typography>
-              </TabPanel>
-            )}
-            <TabPanel value="3">
-              <NutrimentsTable />
-            </TabPanel>
-          </TabContext>
-        </CardContent>
+                </TabPanel>
+              )}
+              {item.consumerStorageInstructions?.short && (
+                <TabPanel value="2">
+                  <Typography>
+                    <Markdown>
+                      {item.consumerStorageInstructions?.short.markdown}
+                    </Markdown>
+                  </Typography>
+                </TabPanel>
+              )}
+              {item.nutrientList && (
+                <TabPanel value="3">
+                  <NutrientListTable nutrientList={item.nutrientList} />
+                </TabPanel>
+              )}
+            </TabContext>
+          </CardContent>
+        )}
         {/*
           <CardActions>
             <IconButton>

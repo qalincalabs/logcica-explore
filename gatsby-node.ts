@@ -9,6 +9,7 @@ const mongoCollections: string[] = [
   "seasonAvailability",
   "code",
   "codeList",
+  "place"
 ];
 
 function capitalizeFirstLetter(string) {
@@ -28,6 +29,7 @@ exports.createSchemaCustomization = ({ actions }) => {
   
   createTypes(mongoIdTypeDefs);
   
+  // TODO rename allergenKey to allergen and containmentLevel ...
   const typeDefs1 = 
     `
       type mongodbProductOwner implements Node {
@@ -41,6 +43,16 @@ exports.createSchemaCustomization = ({ actions }) => {
       }
       type mongodbAvailability implements Node {
         season: mongodbSeasonAvailability @link(by: "mongodb_id")
+      }
+      type mongodbOrganisation implements Node {
+        place: mongodbPlace @link(by: "mongodb_id")
+      }
+      type mongodbProductAllergenList implements Node {
+        allergenKey: mongodbCode @link(by: "mongodb_id")
+        containmentLevelKey: mongodbCode @link(by: "mongodb_id")
+      }
+      type mongodbProductNutrientList{
+        nutrientKey: mongodbCode @link(by: "mongodb_id")
       }
     `;
   createTypes(typeDefs1);
