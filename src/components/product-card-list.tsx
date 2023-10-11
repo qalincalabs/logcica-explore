@@ -69,6 +69,7 @@ export function ProductCardList() {
           nutrientList {
             nutrientKey {
               _id
+              code
               name
             }
             quantity {
@@ -124,7 +125,7 @@ export function ProductCardList() {
     }
   `);
 
-  const products = data.allMongodbProduct.nodes;
+  const products = data.allMongodbProduct.nodes.sort((a: any, b: any) => (a.name?.length < b.name?.length) ? 1 : -1);
 
   // State for the list
   const [list, setList] = React.useState([...products.slice(0, 24)]);

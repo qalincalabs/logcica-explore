@@ -13,11 +13,11 @@ const mongoCollections: string[] = [
   "unit"
 ];
 
-function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter(string: String) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-exports.createSchemaCustomization = ({ actions }) => {
+exports.createSchemaCustomization = ({ actions } : any) => {
   
   const { createTypes } = actions;
 

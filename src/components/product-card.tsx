@@ -58,6 +58,17 @@ function addressText(address: any) {
   return list.join(", ");
 }
 
+const nutrientOrder = [
+  "energy",
+  "fat",
+  "saturatedFat",
+  "carbohydrates",
+  "sugars",
+  "fibres",
+  "protein",
+  "salt",
+];
+
 export function NutrientListTable({ nutrientList }: any) {
   return (
     <TableContainer>
@@ -69,9 +80,14 @@ export function NutrientListTable({ nutrientList }: any) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {nutrientList.map((productNutrient: any) => (
+          {nutrientOrder.map(n => nutrientList.find((i: any) => i.nutrientKey.code == n)).filter(n => n != null).map((productNutrient: any) => (
             <TableRow key={1}>
-              <TableCell>{productNutrient.nutrientKey.name}</TableCell>
+              <TableCell>
+                {["saturatedFat", "sugars"].includes(
+                  productNutrient.nutrientKey.code
+                ) && <span>&nbsp;&nbsp;</span>}
+                {productNutrient.nutrientKey.name}
+              </TableCell>
               <TableCell align="right">
                 {productNutrient.quantity.value + productNutrient.quantity.unit}
               </TableCell>
@@ -152,76 +168,75 @@ export function ProductCard({ item }: any) {
           md={item.mainImage ? 9 : 12}
         >
           <Box
-            
             sx={{
               display: "flex",
               flexWrap: "wrap",
-              justifyContent: "space-between"
+              justifyContent: "space-between",
             }}
           >
-              <CardHeader
-                sx={{ paddingTop: 1, paddingBottom: 1, flexGrow: 1 }}
-                title={
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 1,
-                      flexGrow: 1,
-                    }}
-                  >
-                    <span>{item.name}</span>
-                    <span>{netContentsText(item)}</span>
-                  </Box>
-                }
-                subheader={
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      justifyContent: "space-between",
-                      gap: 1,
-                    }}
-                  >
-                    {item.categories?.[0] && (
-                      <Breadcrumbs
-                        maxItems={2}
-                        separator="›"
-                        aria-label="breadcrumb"
-                      >
-                        <Link underline="hover" color="inherit">
-                          {item.categories[0].name}
-                        </Link>
-                      </Breadcrumbs>
-                    )}
-                    {item.availabilities?.[0]?.season?.year?.months && (
-                      <Stack direction="row" flexWrap="wrap">
-                        <CalendarMonth />
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(
-                          (monthNumber) => (
-                            <Typography
-                              sx={{
-                                fontSize: "0.85rem",
-                                padding: "1px",
-                                margin: "1px",
-                                backgroundColor:
-                                  item.availabilities?.[0]?.season?.year?.months.includes(
-                                    monthNumber + 1
-                                  )
-                                    ? "#AFE1AF"
-                                    : "default",
-                              }}
-                            >
-                              {moment(monthNumber, "M").format("MMM").charAt(0)}
-                            </Typography>
-                          )
-                        )}
-                      </Stack>
-                    )}
-                  </Box>
-                }
-              />
-            
+            <CardHeader
+              sx={{ paddingTop: 1, paddingBottom: 1, flexGrow: 1 }}
+              title={
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 1,
+                    flexGrow: 1,
+                  }}
+                >
+                  <span>{item.name}</span>
+                  <span>{netContentsText(item)}</span>
+                </Box>
+              }
+              subheader={
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    gap: 1,
+                  }}
+                >
+                  {item.categories?.[0] && (
+                    <Breadcrumbs
+                      maxItems={2}
+                      separator="›"
+                      aria-label="breadcrumb"
+                    >
+                      <Link underline="hover" color="inherit">
+                        {item.categories[0].name}
+                      </Link>
+                    </Breadcrumbs>
+                  )}
+                  {item.availabilities?.[0]?.season?.year?.months && (
+                    <Stack direction="row" flexWrap="wrap">
+                      <CalendarMonth />
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(
+                        (monthNumber) => (
+                          <Typography
+                            sx={{
+                              fontSize: "0.85rem",
+                              padding: "1px",
+                              margin: "1px",
+                              backgroundColor:
+                                item.availabilities?.[0]?.season?.year?.months.includes(
+                                  monthNumber + 1
+                                )
+                                  ? "#AFE1AF"
+                                  : "default",
+                            }}
+                          >
+                            {moment(monthNumber, "M").format("MMM").charAt(0)}
+                          </Typography>
+                        )
+                      )}
+                    </Stack>
+                  )}
+                </Box>
+              }
+            />
+
             {item.owner && (
               <Box sx={{ flexGrow: 1 }}>
                 <CardContent
