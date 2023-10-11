@@ -92,6 +92,15 @@ export function ProductDimensionsText(dimension: any) {
   return list.join(" x ");
 }
 
+function netContentsText(item: any) {
+  const list = [];
+  if (item.netWeight) list.push(item.netWeight.value + item.netWeight.unit);
+  if (item.netVolume) list.push(item.netVolume.value + item.netVolume.unit);
+  if (item.netContent)
+    list.push(item.netContent.value + " " + item.netContent.unit?.name);
+  return list.join(" | ");
+}
+
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
 
@@ -143,30 +152,26 @@ export function ProductCard({ item }: any) {
           md={item.mainImage ? 9 : 12}
         >
           <Box
+            
             sx={{
               display: "flex",
               flexWrap: "wrap",
-              justifyContent: "space-between",
+              justifyContent: "space-between"
             }}
           >
-            <Box sx={{ flexGrow: 1 }}>
               <CardHeader
-                sx={{ paddingTop: 1, paddingBottom: 1 }}
+                sx={{ paddingTop: 1, paddingBottom: 1, flexGrow: 1 }}
                 title={
                   <Box
                     sx={{
                       display: "flex",
-                      flexWrap: "wrap",
                       justifyContent: "space-between",
+                      gap: 1,
+                      flexGrow: 1,
                     }}
                   >
                     <span>{item.name}</span>
-                    {item.netWeight && (
-                      <span>
-                        {item.netWeight.value}
-                        {item.netWeight.unit}
-                      </span>
-                    )}
+                    <span>{netContentsText(item)}</span>
                   </Box>
                 }
                 subheader={
@@ -216,9 +221,9 @@ export function ProductCard({ item }: any) {
                   </Box>
                 }
               />
-            </Box>
-            <Box sx={{ flexGrow: 1 }}>
-              {item.owner && (
+            
+            {item.owner && (
+              <Box sx={{ flexGrow: 1 }}>
                 <CardContent
                   onClick={handleSetIsAddressVisible()}
                   sx={{ paddingTop: 1, paddingBottom: 1 }}
@@ -279,8 +284,8 @@ export function ProductCard({ item }: any) {
                     )}
                   </Card>
                 </CardContent>
-              )}
-            </Box>
+              </Box>
+            )}
           </Box>
         </Grid>
         {item.description?.short && (

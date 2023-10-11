@@ -9,5 +9,6 @@ export const mongoCollections: string[] = [
   "seasonAvailability",
   "code",
   "codeList",
-  "place"
+  "place",
+  "unit"
 ];

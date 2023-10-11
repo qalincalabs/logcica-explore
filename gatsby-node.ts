@@ -9,7 +9,8 @@ const mongoCollections: string[] = [
   "seasonAvailability",
   "code",
   "codeList",
-  "place"
+  "place",
+  "unit"
 ];
 
 function capitalizeFirstLetter(string) {
@@ -53,6 +54,9 @@ exports.createSchemaCustomization = ({ actions }) => {
       }
       type mongodbProductNutrientList{
         nutrientKey: mongodbCode @link(by: "mongodb_id")
+      }
+      type mongodbProductNetContent{
+        unit: mongodbUnit @link(by: "mongodb_id")
       }
     `;
   createTypes(typeDefs1);

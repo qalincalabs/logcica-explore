@@ -94,6 +94,17 @@ export function ProductCardList() {
             unit
             value
           }
+          netVolume {
+            unit
+            value
+          }
+          netContent {
+            unit {
+              _id
+              name
+            }
+            value
+          }
           dimensions {
             length {
               value
@@ -113,7 +124,7 @@ export function ProductCardList() {
     }
   `);
 
-  const products = data.allMongodbProduct.nodes.reverse();
+  const products = data.allMongodbProduct.nodes;
 
   // State for the list
   const [list, setList] = React.useState([...products.slice(0, 24)]);
