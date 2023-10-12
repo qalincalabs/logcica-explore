@@ -120,12 +120,18 @@ export function ProductCardList() {
               unit
             }
           }
+          references {
+            number
+            platformKey
+          }
         }
       }
     }
   `);
 
-  const products = data.allMongodbProduct.nodes.sort((a: any, b: any) => (a.name?.length < b.name?.length) ? 1 : -1);
+  const products = data.allMongodbProduct.nodes.sort((a: any, b: any) =>
+    a.name?.length < b.name?.length ? 1 : -1
+  );
 
   // State for the list
   const [list, setList] = React.useState([...products.slice(0, 24)]);

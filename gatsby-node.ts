@@ -10,7 +10,8 @@ const mongoCollections: string[] = [
   "code",
   "codeList",
   "place",
-  "unit"
+  "unit",
+  "reference"
 ];
 
 function capitalizeFirstLetter(string: String) {
@@ -41,6 +42,7 @@ exports.createSchemaCustomization = ({ actions } : any) => {
       type mongodbProduct implements Node {
         categories: [mongodbCategory] @link(by: "mongodb_id")
         availabilities: [mongodbAvailability] @link(by: "mongodb_id")
+        references: [mongodbReference] @link(by: "mongodb_id")
       }
       type mongodbAvailability implements Node {
         season: mongodbSeasonAvailability @link(by: "mongodb_id")

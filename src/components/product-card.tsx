@@ -28,6 +28,8 @@ import {
   Chip,
   Popper,
   Paper,
+  CardActions,
+  Fab,
 } from "@mui/material";
 import {
   CalendarMonth,
@@ -80,19 +82,23 @@ export function NutrientListTable({ nutrientList }: any) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {nutrientOrder.map(n => nutrientList.find((i: any) => i.nutrientKey.code == n)).filter(n => n != null).map((productNutrient: any) => (
-            <TableRow key={1}>
-              <TableCell>
-                {["saturatedFat", "sugars"].includes(
-                  productNutrient.nutrientKey.code
-                ) && <span>&nbsp;&nbsp;</span>}
-                {productNutrient.nutrientKey.name}
-              </TableCell>
-              <TableCell align="right">
-                {productNutrient.quantity.value + productNutrient.quantity.unit}
-              </TableCell>
-            </TableRow>
-          ))}
+          {nutrientOrder
+            .map((n) => nutrientList.find((i: any) => i.nutrientKey.code == n))
+            .filter((n) => n != null)
+            .map((productNutrient: any) => (
+              <TableRow key={1}>
+                <TableCell>
+                  {["saturatedFat", "sugars"].includes(
+                    productNutrient.nutrientKey.code
+                  ) && <span>&nbsp;&nbsp;</span>}
+                  {productNutrient.nutrientKey.name}
+                </TableCell>
+                <TableCell align="right">
+                  {productNutrient.quantity.value +
+                    productNutrient.quantity.unit}
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>
@@ -303,64 +309,97 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </Grid>
-        {item.description?.short && (
-          <CardContent
-            sx={{ paddingTop: 1, paddingBottom: 1, "&:last-child": { pb: 0 } }}
-          >
-            <Markdown>{item.description.short.markdown}</Markdown>
-          </CardContent>
-        )}
-        <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-            }}
-            gap={1}
-          >
-            {item.ingredientStatement?.short && (
-              <Stack direction="row" gap={1} flexGrow={1}>
-                <LocalDining />
-                <Markdown
-                  options={{
-                    overrides: {
-                      em: {
-                        component: Strong,
-                      },
-                    },
-                  }}
-                >
-                  {item.ingredientStatement.short.markdown}
-                </Markdown>
-              </Stack>
+        {(item.references?.find((r: any) => r.platformKey == "be/openbatra") ||
+          item.description?.short) && (
+          <Box display="flex" width="100%">
+            {item.description?.short && (
+              <CardContent
+                sx={{
+                  paddingTop: 1,
+                  paddingBottom: 1,
+                  "&:last-child": { pb: 0 },
+                  flexGrow: 1,
+                }}
+              >
+                <Markdown>{item.description.short.markdown}</Markdown>
+              </CardContent>
             )}
-            {item.allergenList &&
-              item.allergenList.map((productAllergen: any) => (
+            <CardActions>
+              <a
+                href={
+                  "https://www.batra.link/batra2.0/productFull.html?gtin=" +
+                  encodeURIComponent(
+                    item.references.find(
+                      (r: any) => r.platformKey == "be/openbatra"
+                    ).number
+                  )
+                }
+              >
+                <Avatar
+                  alt="Batra"
+                  src="https://www.batra.link/apple-touch-icon.png"
+                  sx={{ width: 28, height: 28 }}
+                />
+              </a>
+            </CardActions>
+          </Box>
+        )}
+        {(item.ingredientStatement ||
+          item.allergenList ||
+          item.alcoholPercentage ||
+          item.dimensions) && (
+          <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+              gap={1}
+            >
+              {item.ingredientStatement?.short && (
                 <Stack direction="row" gap={1} flexGrow={1}>
-                  <CrisisAlert />
+                  <LocalDining />
+                  <Markdown
+                    options={{
+                      overrides: {
+                        em: {
+                          component: Strong,
+                        },
+                      },
+                    }}
+                  >
+                    {item.ingredientStatement.short.markdown}
+                  </Markdown>
+                </Stack>
+              )}
+              {item.allergenList &&
+                item.allergenList.map((productAllergen: any) => (
+                  <Stack direction="row" gap={1} flexGrow={1}>
+                    <CrisisAlert />
+                    <Typography>
+                      {productAllergen.containmentLevelKey.name +
+                        " " +
+                        productAllergen.allergenKey.name?.toLowerCase()}
+                    </Typography>
+                  </Stack>
+                ))}
+              {item.alcoholPercentage != null && (
+                <Stack direction="row" gap={1} flexGrow={1}>
+                  <WineBar />
+                  <Typography>ALC. {item.alcoholPercentage}% VOL.</Typography>
+                </Stack>
+              )}
+              {item.dimensions && (
+                <Stack direction="row" gap={1} flexGrow={1}>
+                  <SquareFoot />
                   <Typography>
-                    {productAllergen.containmentLevelKey.name +
-                      " " +
-                      productAllergen.allergenKey.name?.toLowerCase()}
+                    {ProductDimensionsText(item.dimensions)}
                   </Typography>
                 </Stack>
-              ))}
-            {item.alcoholPercentage != null && (
-              <Stack direction="row" gap={1} flexGrow={1}>
-                <WineBar />
-                <Typography>ALC. {item.alcoholPercentage}% VOL.</Typography>
-              </Stack>
-            )}
-            {item.dimensions && (
-              <Stack direction="row" gap={1} flexGrow={1}>
-                <SquareFoot />
-                <Typography>
-                  {ProductDimensionsText(item.dimensions)}
-                </Typography>
-              </Stack>
-            )}
-          </Box>
-        </CardContent>
+              )}
+            </Box>
+          </CardContent>
+        )}
         {(item.consumerUsageInstructions?.short ||
           item.consumerStorageInstructions?.short ||
           item.nutrientList) && (
