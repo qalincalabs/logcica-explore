@@ -324,24 +324,28 @@ export function ProductCard({ item }: any) {
                 <Markdown>{item.description.short.markdown}</Markdown>
               </CardContent>
             )}
-            <CardActions>
-              <a
-                href={
-                  "https://www.batra.link/batra2.0/productFull.html?gtin=" +
-                  encodeURIComponent(
-                    item.references.find(
-                      (r: any) => r.platformKey == "be/openbatra"
-                    ).number
-                  )
-                }
-              >
-                <Avatar
-                  alt="Batra"
-                  src="https://www.batra.link/apple-touch-icon.png"
-                  sx={{ width: 28, height: 28 }}
-                />
-              </a>
-            </CardActions>
+            {item.references?.find(
+              (r: any) => r.platformKey == "be/openbatra"
+            ) && (
+              <CardActions>
+                <a
+                  href={
+                    "https://www.batra.link/batra2.0/productFull.html?gtin=" +
+                    encodeURIComponent(
+                      item.references.find(
+                        (r: any) => r.platformKey == "be/openbatra"
+                      ).number
+                    )
+                  }
+                >
+                  <Avatar
+                    alt="Batra"
+                    src="https://www.batra.link/apple-touch-icon.png"
+                    sx={{ width: 28, height: 28 }}
+                  />
+                </a>
+              </CardActions>
+            )}
           </Box>
         )}
         {(item.ingredientStatement ||
