@@ -12,5 +12,6 @@ export const mongoCollections: string[] = [
   "place",
   "unit",
   "reference",
-  "counter"
+  "counter",
+  "catalog",
 ];

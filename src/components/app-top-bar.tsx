@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { CssBaseline, AppBar, Box } from "@mui/material";
+import { CssBaseline, AppBar, Box, Stack } from "@mui/material";
 
 export default function AppTopBar() {
   return (
@@ -14,9 +14,14 @@ export default function AppTopBar() {
           logCiCa discover
         </Typography>
         <Typography textAlign="center" sx={{ flex: 1 }}>
-          <strong>PRODUITS</strong>
+          <Stack direction="row" gap={2}>
+            <strong>PRODUITS</strong>
+            <strong>MARCHÉS</strong>
+          </Stack>
         </Typography>
-        <Typography sx={{ flex: 1, display:{xs:"none", sm:"block"} }}></Typography>
+        <Typography
+          sx={{ flex: 1, display: { xs: "none", sm: "block" } }}
+        ></Typography>
       </Toolbar>
     </AppBar>
   );

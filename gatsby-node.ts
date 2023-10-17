@@ -1,4 +1,4 @@
-import path from "path"
+import path from "path";
 
 const mongoCollections: string[] = [
   "product",
@@ -14,30 +14,40 @@ const mongoCollections: string[] = [
   "place",
   "unit",
   "reference",
-  "counter"
+  "counter",
+  "catalog",
 ];
 
 function capitalizeFirstLetter(string: String) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-exports.createSchemaCustomization = ({ actions } : any) => {
-  
+exports.createSchemaCustomization = ({ actions }: any) => {
   const { createTypes } = actions;
 
-  
   const mongoIdTypeDefs = mongoCollections.map((c) =>
     `type mongodb${capitalizeFirstLetter(c)} implements Node {
             _id: String @proxy(from: "mongodb_id")
         }`
   ).join("\n");
-  
+
   createTypes(mongoIdTypeDefs);
-  
+
   // TODO rename allergenKey to allergen and containmentLevel ...
-  const typeDefs1 = 
-    `
+  const typeDefs1 = `
+      type mongodbActivity implements Node {
+        place: mongodbPlace @link(by: "mongodb_id")
+      }
+      type mongodbCounter implements Node {
+        catalog: mongodbCatalog @link(by: "mongodb_id")
+        place: mongodbPlace @link(by: "mongodb_id")
+      }
       type mongodbProductOwner implements Node {
+        organisation: mongodbOrganisation @link(by: "mongodb_id")
+        workspace: mongodbWorkspace @link(by: "mongodb_id")
+        activity: mongodbActivity @link(by: "mongodb_id")
+      }
+      type mongodbCounterOwner implements Node {
         organisation: mongodbOrganisation @link(by: "mongodb_id")
         workspace: mongodbWorkspace @link(by: "mongodb_id")
         activity: mongodbActivity @link(by: "mongodb_id")
@@ -67,7 +77,6 @@ exports.createSchemaCustomization = ({ actions } : any) => {
   createTypes(typeDefs1);
 };
 
-
 exports.createPages = async function ({ actions, graphql }: any) {
   const { data } = await graphql(`
     query {
@@ -78,18 +87,15 @@ exports.createPages = async function ({ actions, graphql }: any) {
         }
       }
     }
-  `)
+  `);
   data.allMongodbCounter.nodes.forEach((node: any) => {
-    const _id = node._id
-    const component = path.resolve(`./src/templates/marketplace.tsx`)
-    
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/marketplace.tsx`);
+
     actions.createPage({
       path: "/marketplace/" + _id,
       component: component,
-      context: {id: _id},
-    })
-    
-  })
-  
-}
-
+      context: { id: _id },
+    });
+  });
+};

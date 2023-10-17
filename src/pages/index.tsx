@@ -14,7 +14,7 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#ffcb01",
-    },
+    }
   },
   breakpoints: {
     values: {

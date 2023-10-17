@@ -14,7 +14,8 @@ const mongoCollections: string[] = [
   "place",
   "unit",
   "reference",
-  "counter"
+  "counter",
+  "catalog",
 ];
 
 require("dotenv").config({
