@@ -1,3 +1,5 @@
+import path from "path"
+
 const mongoCollections: string[] = [
   "product",
   "organisation",
@@ -11,7 +13,8 @@ const mongoCollections: string[] = [
   "codeList",
   "place",
   "unit",
-  "reference"
+  "reference",
+  "counter"
 ];
 
 function capitalizeFirstLetter(string: String) {
@@ -63,3 +66,30 @@ exports.createSchemaCustomization = ({ actions } : any) => {
     `;
   createTypes(typeDefs1);
 };
+
+
+exports.createPages = async function ({ actions, graphql }: any) {
+  const { data } = await graphql(`
+    query {
+      allMongodbCounter(filter: {type: {eq: "marketplace"}}) {
+        nodes {
+          _id
+          name
+        }
+      }
+    }
+  `)
+  data.allMongodbCounter.nodes.forEach((node: any) => {
+    const _id = node._id
+    const component = path.resolve(`./src/templates/marketplace.tsx`)
+    
+    actions.createPage({
+      path: "/marketplace/" + _id,
+      component: component,
+      context: {id: _id},
+    })
+    
+  })
+  
+}
+

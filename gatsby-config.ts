@@ -12,7 +12,9 @@ const mongoCollections: string[] = [
   "code",
   "codeList",
   "place",
-  "unit"
+  "unit",
+  "reference",
+  "counter"
 ];
 
 require("dotenv").config({
