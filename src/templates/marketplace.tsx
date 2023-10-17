@@ -46,7 +46,7 @@ export default function MarketplaceTemplate({ data }: any) {
           <AppTopBar />
           <Toolbar />
           <Box>
-            <Typography align="center" variant="h2" component="h2">
+            <Typography align="center" variant="h3" component="h3">
               {marketplace.name}
             </Typography>
             <Paper variant="outlined" sx={{ p: 1, m: 1 }}>
@@ -55,7 +55,7 @@ export default function MarketplaceTemplate({ data }: any) {
                 {marketplace.place.address.locality}
               </Typography>
             </Paper>
-            <Typography variant="h3" component="h3">
+            <Typography variant="h4" component="h4">
               Producteurs
             </Typography>
             <Grid container spacing={2}>
