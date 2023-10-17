@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Grid,
   Paper,
   ThemeProvider,
   Toolbar,
@@ -37,7 +38,7 @@ const theme = createTheme({
 
 export default function MarketplaceTemplate({ data }: any) {
   const marketplace = data.marketplace;
-  const stalls = data.stalls.nodes;
+  const stalls = data.stalls.nodes.sort((a:any,b:any)=>a.name.localeCompare(b.name));
   return (
     <main style={pageStyles}>
       <ThemeProvider theme={theme}>
@@ -57,9 +58,10 @@ export default function MarketplaceTemplate({ data }: any) {
             <Typography variant="h3" component="h3">
               Producteurs
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Grid container spacing={2}>
               {stalls.map((stall: any) => (
-                <Paper sx={{ p: 1 }}>
+                <Grid item xs={12} sm={6} md={4} xl={3}>
+                <Paper sx={{ p: 1}}>
                   <Typography variant="h6">
                     {stall.owner.activity.name}
                   </Typography>
@@ -70,8 +72,9 @@ export default function MarketplaceTemplate({ data }: any) {
                     {stall.catalog.description.short.markdown}
                   </Typography>
                 </Paper>
+                </Grid>
               ))}
-            </Box>
+              </Grid>
           </Box>
         </Box>
       </ThemeProvider>
