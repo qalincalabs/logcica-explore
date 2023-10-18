@@ -3,16 +3,20 @@ import { graphql } from "gatsby";
 import AppTopBar from "../components/app-top-bar";
 import {
   Box,
+  Button,
   Card,
   CardContent,
   CardHeader,
   Grid,
   Paper,
+  Stack,
   ThemeProvider,
   Toolbar,
   Typography,
   createTheme,
 } from "@mui/material";
+import { CalendarMonth, Facebook, Place } from "@mui/icons-material";
+import Markdown from "markdown-to-jsx";
 
 const pageStyles = {
   // color: "black",
@@ -38,7 +42,11 @@ const theme = createTheme({
 
 export default function MarketplaceTemplate({ data }: any) {
   const marketplace = data.marketplace;
-  const stalls = data.stalls.nodes.sort((a:any,b:any)=>a.name.localeCompare(b.name));
+  const stalls = data.stalls.nodes.sort((a: any, b: any) =>
+    a.name.localeCompare(b.name)
+  );
+  const marketplaceFacebookProfile = marketplace.profiles?.find((p: any) => p.type == "facebook")
+  
   return (
     <main style={pageStyles}>
       <ThemeProvider theme={theme}>
@@ -50,13 +58,34 @@ export default function MarketplaceTemplate({ data }: any) {
               {marketplace.name}
             </Typography>
             <Paper variant="outlined" sx={{ p: 1, m: 1 }}>
-            <Typography>
-                Disponibilité: {marketplace.availabilityStatement.short.markdown}
-              </Typography>
-              <Typography>
-                Adresse: {marketplace.place.address.street} à{" "}
-                {marketplace.place.address.locality}
-              </Typography>
+              {marketplace.availabilityStatement && (
+                <Stack direction="row" gap={1} flexGrow={1}>
+                  <CalendarMonth />
+                  <Typography>
+                    {marketplace.availabilityStatement.short.markdown}
+                  </Typography>
+                </Stack>
+              )}
+              {marketplace.place && (
+                <Stack direction="row" gap={1} flexGrow={1}>
+                  <Place />
+                  <Typography>
+                    {marketplace.place.address.street} à{" "}
+                    {marketplace.place.address.locality}
+                  </Typography>
+                </Stack>
+              )}
+              {marketplaceFacebookProfile && (
+                <a
+                  href={
+                    "https://www.facebook.com/" + marketplaceFacebookProfile.key
+                  }
+                >
+                  <Button startIcon={<Facebook />}>
+                    {marketplaceFacebookProfile.key}
+                  </Button>
+                </a>
+              )}
             </Paper>
             <Typography variant="h4" component="h4">
               Producteurs
@@ -64,20 +93,20 @@ export default function MarketplaceTemplate({ data }: any) {
             <Grid container spacing={2}>
               {stalls.map((stall: any) => (
                 <Grid item xs={12} sm={6} md={4} xl={3}>
-                <Paper sx={{ p: 1}}>
-                  <Typography variant="h6">
-                    {stall.owner.activity.name}
-                  </Typography>
-                  <Typography variant="subtitle1">
-                    {stall.owner.activity.place.name}
-                  </Typography>
-                  <Typography variant="body2">
-                    {stall.catalog.description.short.markdown}
-                  </Typography>
-                </Paper>
+                  <Paper sx={{ p: 1 }}>
+                    <Typography variant="h6">
+                      {stall.owner.activity.name}
+                    </Typography>
+                    <Typography variant="subtitle1">
+                      {stall.owner.activity.place.name}
+                    </Typography>
+                    <Typography variant="body2">
+                      {stall.catalog.description.short.markdown}
+                    </Typography>
+                  </Paper>
                 </Grid>
               ))}
-              </Grid>
+            </Grid>
           </Box>
         </Box>
       </ThemeProvider>
@@ -100,6 +129,10 @@ export const query = graphql`
         short {
           markdown
         }
+      }
+      profiles {
+        key
+        type
       }
     }
     stalls: allMongodbCounter(filter: { marketplace: { eq: $id } }) {

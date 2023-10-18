@@ -14,4 +14,5 @@ export const mongoCollections: string[] = [
   "reference",
   "counter",
   "catalog",
+  "profile"
 ];

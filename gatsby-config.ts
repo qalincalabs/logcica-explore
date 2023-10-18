@@ -16,6 +16,7 @@ const mongoCollections: string[] = [
   "reference",
   "counter",
   "catalog",
+  "profile"
 ];
 
 require("dotenv").config({
