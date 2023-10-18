@@ -8,6 +8,7 @@ import {
   CardContent,
   CardHeader,
   Grid,
+  IconButton,
   Paper,
   Stack,
   ThemeProvider,
@@ -15,7 +16,7 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
-import { CalendarMonth, Facebook, Place } from "@mui/icons-material";
+import { CalendarMonth, Facebook, Language, Place } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 
 const pageStyles = {
@@ -40,13 +41,23 @@ const theme = createTheme({
   },
 });
 
+export function ProfileExternalLink({ profile }: any) {
+  return (
+    <a href={"https://www.facebook.com/" + profile.key}>
+      <Button startIcon={<Facebook />}>{profile.key}</Button>
+    </a>
+  );
+}
+
 export default function MarketplaceTemplate({ data }: any) {
   const marketplace = data.marketplace;
   const stalls = data.stalls.nodes.sort((a: any, b: any) =>
     a.name.localeCompare(b.name)
   );
-  const marketplaceFacebookProfile = marketplace.profiles?.find((p: any) => p.type == "facebook")
-  
+  const marketplaceFacebookProfile = marketplace.profiles?.find(
+    (p: any) => p.type == "facebook"
+  );
+
   return (
     <main style={pageStyles}>
       <ThemeProvider theme={theme}>
@@ -76,15 +87,7 @@ export default function MarketplaceTemplate({ data }: any) {
                 </Stack>
               )}
               {marketplaceFacebookProfile && (
-                <a
-                  href={
-                    "https://www.facebook.com/" + marketplaceFacebookProfile.key
-                  }
-                >
-                  <Button startIcon={<Facebook />}>
-                    {marketplaceFacebookProfile.key}
-                  </Button>
-                </a>
+                <ProfileExternalLink profile={marketplaceFacebookProfile} />
               )}
             </Paper>
             <Typography variant="h4" component="h4">
@@ -94,9 +97,42 @@ export default function MarketplaceTemplate({ data }: any) {
               {stalls.map((stall: any) => (
                 <Grid item xs={12} sm={6} md={4} xl={3}>
                   <Paper sx={{ p: 1 }}>
-                    <Typography variant="h6">
-                      {stall.owner.activity.name}
-                    </Typography>
+                    <Stack direction="row">
+                      <Typography variant="h6">
+                        {stall.owner.activity.name}
+                      </Typography>
+                      {stall.owner.activity.profiles?.find(
+                        (p: any) => p.type == "facebook"
+                      ) && (
+                        <a
+                          href={
+                            "https://www.facebook.com/" +
+                            stall.owner.activity.profiles.find(
+                              (p: any) => p.type == "facebook"
+                            ).key
+                          }
+                        >
+                          <IconButton size="small">
+                            <Facebook />
+                          </IconButton>
+                        </a>
+                      )}
+                      {stall.owner.activity.profiles?.find(
+                        (p: any) => p.type == "website"
+                      ) && 
+                        <a
+                          href={
+                            stall.owner.activity.profiles.find(
+                              (p: any) => p.type == "website"
+                            ).link
+                          }
+                        >
+                          <IconButton size="small">
+                            <Language/>
+                          </IconButton>
+                        </a>
+                      }
+                    </Stack>
                     <Typography variant="subtitle1">
                       {stall.owner.activity.place.name}
                     </Typography>
@@ -133,6 +169,7 @@ export const query = graphql`
       profiles {
         key
         type
+        link
       }
     }
     stalls: allMongodbCounter(filter: { marketplace: { eq: $id } }) {
@@ -152,6 +189,11 @@ export const query = graphql`
             place {
               _id
               name
+            }
+            profiles {
+              key
+              type
+              link
             }
           }
         }

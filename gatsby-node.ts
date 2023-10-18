@@ -38,6 +38,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
   const typeDefs1 = `
       type mongodbActivity implements Node {
         place: mongodbPlace @link(by: "mongodb_id")
+        profiles: [mongodbProfile] @link(by: "mongodb_id")
       }
       type mongodbCounter implements Node {
         catalog: mongodbCatalog @link(by: "mongodb_id")
