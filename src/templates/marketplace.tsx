@@ -50,6 +50,9 @@ export default function MarketplaceTemplate({ data }: any) {
               {marketplace.name}
             </Typography>
             <Paper variant="outlined" sx={{ p: 1, m: 1 }}>
+            <Typography>
+                Disponibilité: {marketplace.availabilityStatement.short.markdown}
+              </Typography>
               <Typography>
                 Adresse: {marketplace.place.address.street} à{" "}
                 {marketplace.place.address.locality}
@@ -91,6 +94,11 @@ export const query = graphql`
         address {
           street
           locality
+        }
+      }
+      availabilityStatement {
+        short {
+          markdown
         }
       }
     }
