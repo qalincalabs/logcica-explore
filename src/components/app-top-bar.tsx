@@ -2,9 +2,8 @@ import * as React from "react";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import { CssBaseline, AppBar, Box, Stack } from "@mui/material";
+import { AppBar, Stack } from "@mui/material";
+import { navigate } from "gatsby";
 
 export default function AppTopBar() {
   return (
@@ -15,8 +14,18 @@ export default function AppTopBar() {
         </Typography>
         <Typography textAlign="center" sx={{ flex: 1 }}>
           <Stack direction="row" gap={2}>
-            <strong>PRODUITS</strong>
-            <strong>MARCHÉS</strong>
+            <Button
+              sx={{ color: "black" }}
+              onClick={() => navigate("/product")}
+            >
+              PRODUITS
+            </Button>
+            <Button
+              sx={{ color: "black" }}
+              onClick={() => navigate("/marketplace")}
+            >
+              MARCHÉS
+            </Button>
           </Stack>
         </Typography>
         <Typography

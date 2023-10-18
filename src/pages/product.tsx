@@ -3,7 +3,7 @@ import type { HeadFC, PageProps } from "gatsby";
 import { ProductCardList } from "../components/product-card-list";
 import Layout from "../components/layout";
 
-const IndexPage: React.FC<PageProps> = () => {
+const ProductPage: React.FC<PageProps> = () => {
   return (
     <Layout>
       <ProductCardList />
@@ -11,6 +11,6 @@ const IndexPage: React.FC<PageProps> = () => {
   );
 };
 
-export default IndexPage;
+export default ProductPage;
 
-export const Head: HeadFC = () => <title>Home Page</title>;
+export const Head: HeadFC = () => <title>Produits</title>;
