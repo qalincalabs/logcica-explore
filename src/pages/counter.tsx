@@ -13,13 +13,12 @@ import {
 } from "@mui/material";
 import Layout from "../components/layout";
 import { Store } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
 
-const MarketplacePage = ({ data }: any) => {
+const CounterPage = ({ data }: any) => {
   return (
     <Layout>
       <Typography align="center" variant="h3">
-        Marchés
+        Comptoirs
       </Typography>
       <Box display="flex" justifyContent="center" alignItems="center">
         <List>
@@ -33,16 +32,7 @@ const MarketplacePage = ({ data }: any) => {
                 </ListItemAvatar>
                 <ListItemText
                   primary={m.name}
-                  secondary={
-                    <Stack>
-                      <Typography>
-                        {m.availabilityStatement.short.markdown}
-                      </Typography>
-                      {m.description && (
-                        <Markdown>{m.description.short.markdown}</Markdown>
-                      )}
-                    </Stack>
-                  }
+                  secondary={m.availabilityStatement?.short?.markdown}
                 />
               </ListItemButton>
             </ListItem>
@@ -53,21 +43,16 @@ const MarketplacePage = ({ data }: any) => {
   );
 };
 
-export default MarketplacePage;
+export default CounterPage;
 
 export const Head: HeadFC = () => <title>Marchés</title>;
 
 export const query = graphql`
   query {
-    marketplaces: allMongodbCounter(filter: { type: { eq: "marketplace" } }) {
+    marketplaces: allMongodbCounter(filter: { type: { ne: "marketplace" }, marketplace: { eq: null } }) {
       nodes {
         _id
         name
-        description {
-          short {
-            markdown
-          }
-        }
         place {
           address {
             street
