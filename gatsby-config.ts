@@ -16,7 +16,9 @@ const mongoCollections: string[] = [
   "reference",
   "counter",
   "catalog",
-  "profile"
+  "profile",
+  "partnership",
+  "contribution",
 ];
 
 require("dotenv").config({
@@ -50,6 +52,16 @@ const config: GatsbyConfig = {
   siteMetadata: {
     title: `logCiCa discover`,
     siteUrl: `https://www.yourdomain.tld`,
+    menuLinks: [
+      {
+        name: `Produits`,
+        url: `/product`,
+      },
+      {
+        name: `Marchés`,
+        url: `/marketplace`,
+      },
+    ],
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
   // If you use VSCode you can also use the GraphQL plugin

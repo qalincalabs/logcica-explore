@@ -16,7 +16,9 @@ const mongoCollections: string[] = [
   "reference",
   "counter",
   "catalog",
-  "profile"
+  "profile",
+  "partnership",
+  "contribution",
 ];
 
 function capitalizeFirstLetter(string: String) {
@@ -26,11 +28,14 @@ function capitalizeFirstLetter(string: String) {
 exports.createSchemaCustomization = ({ actions }: any) => {
   const { createTypes } = actions;
 
-  const mongoIdTypeDefs = mongoCollections.map((c) =>
-    `type mongodb${capitalizeFirstLetter(c)} implements Node {
+  const mongoIdTypeDefs = mongoCollections
+    .map(
+      (c) =>
+        `type mongodb${capitalizeFirstLetter(c)} implements Node {
             _id: String @proxy(from: "mongodb_id")
         }`
-  ).join("\n");
+    )
+    .join("\n");
 
   createTypes(mongoIdTypeDefs);
 
@@ -76,14 +81,20 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       type mongodbProductNetContent{
         unit: mongodbUnit @link(by: "mongodb_id")
       }
+      type mongodbContributionContributor{
+        activity: mongodbActivity @link(by: "mongodb_id")
+      }
+      type mongodbContributionSubject{
+        partnership: mongodbPartnership @link(by: "mongodb_id")
+      }
     `;
   createTypes(typeDefs1);
 };
 
 exports.createPages = async function ({ actions, graphql }: any) {
-  const { data } = await graphql(`
+  const { data: marketplacesQuery } = await graphql(`
     query {
-      allMongodbCounter(filter: {type: {eq: "marketplace"}}) {
+      allMongodbCounter(filter: { type: { eq: "marketplace" } }) {
         nodes {
           _id
           name
@@ -91,12 +102,33 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  data.allMongodbCounter.nodes.forEach((node: any) => {
+  marketplacesQuery.allMongodbCounter.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/marketplace.tsx`);
 
     actions.createPage({
       path: "/marketplace/" + _id,
+      component: component,
+      context: { id: _id },
+    });
+  });
+
+  const { data } = await graphql(`
+    query {
+      allMongodbPartnership {
+        nodes {
+          _id
+          name
+        }
+      }
+    }
+  `);
+  data.allMongodbPartnership.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/partnership.tsx`);
+
+    actions.createPage({
+      path: "/partnership/" + _id,
       component: component,
       context: { id: _id },
     });
