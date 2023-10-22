@@ -26,6 +26,12 @@ export default function AppTopBar() {
             >
               MARCHÉS
             </Button>
+            <Button
+              sx={{ color: "black" }}
+              onClick={() => navigate("/partnership")}
+            >
+              GROUPEMENTS
+            </Button>
             {/*
             <Button
               sx={{ color: "black" }}
