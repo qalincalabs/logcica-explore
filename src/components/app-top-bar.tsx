@@ -10,7 +10,7 @@ export default function AppTopBar() {
     <AppBar position="fixed">
       <Toolbar>
         <Typography variant="h6" sx={{ flex: 1 }}>
-          logCiCa discover
+          logCiCa explore
         </Typography>
         <Typography textAlign="center" sx={{ flex: 1 }}>
           <Stack direction="row" gap={2}>
