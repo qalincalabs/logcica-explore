@@ -26,7 +26,7 @@ require("dotenv").config({
 });
 
 module.exports = {
-  pathPrefix: "/logcica-discover",
+  //pathPrefix: "/logcica-discover",
   plugins: [
     /*
      * Gatsby's data processing layer begins with “source” plugins. Here we
@@ -50,8 +50,8 @@ module.exports = {
 
 const config: GatsbyConfig = {
   siteMetadata: {
-    title: `logCiCa discover`,
-    siteUrl: `https://www.yourdomain.tld`,
+    title: `logCiCa explore`,
+    siteUrl: `https://explore.logcica.org`,
     menuLinks: [
       {
         name: `Produits`,
