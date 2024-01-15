@@ -71,15 +71,15 @@ export default function MarketplaceTemplate({ data }: any) {
               <Paper sx={{ p: 1 }}>
                 <Stack direction="row">
                   <Typography variant="h6">
-                    {stall.owner.activity.name}
+                    {stall.manager.activity.name}
                   </Typography>
-                  {stall.owner.activity.profiles?.find(
+                  {stall.manager.activity.profiles?.find(
                     (p: any) => p.type == "facebook"
                   ) && (
                     <a
                       href={
                         "https://www.facebook.com/" +
-                        stall.owner.activity.profiles.find(
+                        stall.manager.activity.profiles.find(
                           (p: any) => p.type == "facebook"
                         ).key
                       }
@@ -89,12 +89,12 @@ export default function MarketplaceTemplate({ data }: any) {
                       </IconButton>
                     </a>
                   )}
-                  {stall.owner.activity.profiles?.find(
+                  {stall.manager.activity.profiles?.find(
                     (p: any) => p.type == "website"
                   ) && (
                     <a
                       href={
-                        stall.owner.activity.profiles.find(
+                        stall.manager.activity.profiles.find(
                           (p: any) => p.type == "website"
                         ).link
                       }
@@ -106,7 +106,7 @@ export default function MarketplaceTemplate({ data }: any) {
                   )}
                 </Stack>
                 <Typography variant="subtitle1">
-                  {stall.owner.activity.place.name}
+                  {stall.manager.activity.place.name}
                 </Typography>
                 <Typography variant="body2">
                   {stall.catalog.description.short.markdown}
@@ -153,7 +153,7 @@ export const query = graphql`
             }
           }
         }
-        owner {
+        manager {
           activity {
             name
             place {

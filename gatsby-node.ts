@@ -55,7 +55,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         workspace: mongodbWorkspace @link(by: "mongodb_id")
         activity: mongodbActivity @link(by: "mongodb_id")
       }
-      type mongodbCounterOwner implements Node {
+      type mongodbCounterManager implements Node {
         organisation: mongodbOrganisation @link(by: "mongodb_id")
         workspace: mongodbWorkspace @link(by: "mongodb_id")
         activity: mongodbActivity @link(by: "mongodb_id")
