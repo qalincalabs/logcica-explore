@@ -122,7 +122,10 @@ export function ProductCardList() {
           }
           references {
             number
-            platformKey
+            system {
+              _id
+              key
+            }
           }
         }
       }

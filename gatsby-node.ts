@@ -6,13 +6,13 @@ const mongoCollections: string[] = [
   "workspace",
   "activity",
   "category",
-  "reference",
   "availability",
   "seasonAvailability",
   "code",
   "codeList",
   "place",
   "unit",
+  "informationSystem",
   "reference",
   "counter",
   "catalog",
@@ -59,6 +59,9 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         organisation: mongodbOrganisation @link(by: "mongodb_id")
         workspace: mongodbWorkspace @link(by: "mongodb_id")
         activity: mongodbActivity @link(by: "mongodb_id")
+      }
+      type mongodbReference implements Node {
+        system: mongodbInformationSystem @link(by: "mongodb_id")
       }
       type mongodbProduct implements Node {
         categories: [mongodbCategory] @link(by: "mongodb_id")

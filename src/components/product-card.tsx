@@ -309,7 +309,7 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </Grid>
-        {(item.references?.find((r: any) => r.platformKey == "be/openbatra") ||
+        {(item.references?.find((r: any) => r.system?.key == "be/openbatra") ||
           item.description?.short) && (
           <Box display="flex" width="100%">
             {item.description?.short && (
@@ -325,7 +325,7 @@ export function ProductCard({ item }: any) {
               </CardContent>
             )}
             {item.references?.find(
-              (r: any) => r.platformKey == "be/openbatra"
+              (r: any) => r.system?.key == "be/openbatra"
             ) && (
               <CardActions>
                 <a
@@ -333,7 +333,7 @@ export function ProductCard({ item }: any) {
                     "https://www.batra.link/batra2.0/productFull.html?gtin=" +
                     encodeURIComponent(
                       item.references.find(
-                        (r: any) => r.platformKey == "be/openbatra"
+                        (r: any) => r.system?.key == "be/openbatra"
                       ).number
                     )
                   }
