@@ -63,7 +63,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       type mongodbProduct implements Node {
         categories: [mongodbCategory] @link(by: "mongodb_id")
         availabilities: [mongodbAvailability] @link(by: "mongodb_id")
-        references: [mongodbReference] @link(by: "mongodb_id")
+        references: [mongodbReference] @link(by:"target", from: "mongodb_id")
       }
       type mongodbAvailability implements Node {
         season: mongodbSeasonAvailability @link(by: "mongodb_id")
