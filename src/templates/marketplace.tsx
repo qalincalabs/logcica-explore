@@ -8,12 +8,13 @@ import {
   CardContent,
   CardHeader,
   Grid,
+  Icon,
   IconButton,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
-import { CalendarMonth, Facebook, Language, Place } from "@mui/icons-material";
+import { CalendarMonth, Facebook, Language, Place, ShoppingBasket } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 import Layout from "../components/layout";
 
@@ -104,6 +105,13 @@ export default function MarketplaceTemplate({ data }: any) {
                       </IconButton>
                     </a>
                   )}
+                  {stall.actions?.map((a: any) => 
+                      <a href={a.url}>
+                      <IconButton size="small" sx={{ color: "black" }}>
+                        <ShoppingBasket />
+                      </IconButton>
+                    </a>
+                  )}
                 </Stack>
                 <Typography variant="subtitle1">
                   {stall.manager.activity.place.name}
@@ -152,6 +160,11 @@ export const query = graphql`
               markdown
             }
           }
+        }
+        actions {
+          name
+          fontAwesomeIcon
+          url
         }
         manager {
           activity {

@@ -19,6 +19,7 @@ const mongoCollections: string[] = [
   "profile",
   "partnership",
   "contribution",
+  "action"
 ];
 
 require("dotenv").config({

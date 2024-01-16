@@ -19,6 +19,7 @@ const mongoCollections: string[] = [
   "profile",
   "partnership",
   "contribution",
+  "action"
 ];
 
 function capitalizeFirstLetter(string: String) {
@@ -49,6 +50,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         catalog: mongodbCatalog @link(by: "mongodb_id")
         place: mongodbPlace @link(by: "mongodb_id")
         profiles: [mongodbProfile] @link(by: "mongodb_id")
+        actions: [mongodbAction] @link(by:"subject.counter", from: "mongodb_id")
       }
       type mongodbProductOwner implements Node {
         organisation: mongodbOrganisation @link(by: "mongodb_id")
