@@ -37,7 +37,10 @@ export default function PartnershipTemplate({ data }: any) {
     <Layout>
       <Box>
         <Typography align="center" variant="h3" component="h3">
-          {partnership.name}
+          {partnership.name} 
+          {partnership.mainOrganisation?.legalFormShort && (
+            <span> ({partnership.mainOrganisation?.legalFormShort})</span>
+          )}
         </Typography>
         <Typography variant="h4" component="h4">
           Producteurs
@@ -95,6 +98,9 @@ export const query = graphql`
     partnership: mongodbPartnership(_id: { eq: $id }) {
       _id
       name
+      mainOrganisation {
+        legalFormShort
+      }
     }
     producerContributions: allMongodbContribution(
       filter: { subject: { partnership: { _id: { eq: $id } } } }
