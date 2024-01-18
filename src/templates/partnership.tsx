@@ -23,6 +23,8 @@ export default function PartnershipTemplate({ data }: any) {
     .map((c: any) => c.contributor.activity)
     .filter((p: any) => p != null);
 
+  const mainOrganisation = data.partnership?.mainOrganisation
+
   /*
   const stalls = data.stalls.nodes.sort((a: any, b: any) =>
     a.name.localeCompare(b.name)
@@ -37,11 +39,33 @@ export default function PartnershipTemplate({ data }: any) {
     <Layout>
       <Box>
         <Typography align="center" variant="h3" component="h3">
-          {partnership.name} 
-          {partnership.mainOrganisation?.legalFormShort && (
-            <span> ({partnership.mainOrganisation?.legalFormShort})</span>
-          )}
+          {partnership.name}
         </Typography>
+        {mainOrganisation && (
+          <Paper  sx={{ p: 1 }}>
+                <Box>
+                  <Box>
+                    {mainOrganisation.legalName ?? mainOrganisation.name}
+                    {mainOrganisation.legalFormShort && (
+                        <span> ({mainOrganisation?.legalFormShort})</span>
+                    )}
+                  </Box>
+                  {mainOrganisation.number && (
+                  <Box>
+                      <span>Numéro d'entreprise : </span>
+                      <a target="_blank" href= {"https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=" + mainOrganisation.number.replace(/\D/g,'')} >
+                        <span>{mainOrganisation.number}</span>
+                      </a>
+                  </Box>
+                  )}
+                  <Box>
+                    {mainOrganisation.bankAccountNumber && (
+                          <span>{"Numéro de compte : " + mainOrganisation?.bankAccountNumber}</span>
+                      )}
+                  </Box>
+                </Box>
+          </Paper>
+        )}
         <Typography variant="h4" component="h4">
           Producteurs
         </Typography>
@@ -99,7 +123,11 @@ export const query = graphql`
       _id
       name
       mainOrganisation {
+        number
+        name
         legalFormShort
+        legalName
+        bankAccountNumber
       }
     }
     producerContributions: allMongodbContribution(
