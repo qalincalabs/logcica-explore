@@ -23,20 +23,30 @@ const PartnershipPage = ({ data }: any) => {
       </Typography>
       <Box display="flex" justifyContent="center" alignItems="center">
         <List>
-          {data.partnerships.nodes.map((m: any) => (
+          {data.partnerships.nodes.map((p: any) => (
             <ListItem>
-              <ListItemButton onClick={() => navigate("/partnership/" + m._id)}>
+              <ListItemButton onClick={() => navigate("/partnership/" + p._id)}>
                 <ListItemAvatar>
                   <Avatar>
                     <Store />
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={m.name}
+                  primary={p.name}
                   secondary={
                     <Stack>
-                      {m.description && (
-                        <Markdown>{m.description.short.markdown}</Markdown>
+                      {p.area && <Typography sx={{fontWeight: 'bold'}}>{p.area.name}</Typography>}
+                      {p.profiles.find(
+                        (p: any) => p.description?.short && p.type == "website"
+                      )?.description?.short && (
+                        <Typography>
+                          {
+                            p.profiles.find(
+                              (p: any) =>
+                                p.description?.short && p.type == "website"
+                            )?.description?.short?.markdown
+                          }
+                        </Typography>
                       )}
                     </Stack>
                   }
@@ -69,16 +79,27 @@ description {
 
 export const query = graphql`
   query {
-    partnerships: allMongodbPartnership(filter: {
-      categories: {
-        elemMatch: {
-          _id: {eq: "64d4ceeca4d6089295a8a753"}
-        }
+    partnerships: allMongodbPartnership(
+      sort: [{ name: ASC }],
+      filter: {
+        categories: { elemMatch: { _id: { eq: "64d4ceeca4d6089295a8a753" } } }
       }
-    }) {
+    ) {
       nodes {
         _id
         name
+        area {
+          name
+        }
+        profiles {
+          type
+          link
+          description {
+            short {
+              markdown
+            }
+          }
+        }
       }
     }
   }

@@ -1,29 +1,46 @@
 import React from "react";
-import { graphql } from "gatsby";
+import { graphql, navigate } from "gatsby";
 import AppTopBar from "../components/app-top-bar";
 import {
   Box,
   Button,
   Card,
+  CardActionArea,
+  CardActions,
   CardContent,
   CardHeader,
   Grid,
   IconButton,
+  ListItem,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
-import { CalendarMonth, Facebook, Language, Place } from "@mui/icons-material";
+import {
+  CalendarMonth,
+  Facebook,
+  Language,
+  Place,
+  Link,
+} from "@mui/icons-material";
 import Layout from "../components/layout";
+import Markdown from "markdown-to-jsx";
 
 export default function PartnershipTemplate({ data }: any) {
   const partnership = data.partnership;
 
-  const producers = data.producerContributions.nodes
+  const producers = data.contributions.nodes
     .map((c: any) => c.contributor.activity)
     .filter((p: any) => p != null);
 
-  const mainOrganisation = data.partnership?.mainOrganisation
+  const members = data.contributions.nodes
+    .map((c: any) => c.contributor.partnership)
+    .filter((p: any) => p != null && p.name)
+    .sort((a: any, b: any) => {
+      return a.name.localeCompare(b.name);
+    });
+
+  const mainOrganisation = data.partnership?.mainOrganisation;
 
   /*
   const stalls = data.stalls.nodes.sort((a: any, b: any) =>
@@ -41,77 +58,132 @@ export default function PartnershipTemplate({ data }: any) {
         <Typography align="center" variant="h3" component="h3">
           {partnership.name}
         </Typography>
-        {mainOrganisation && (
-          <Paper  sx={{ p: 1 }}>
-                <Box>
-                  <Box>
-                    {mainOrganisation.legalName ?? mainOrganisation.name}
-                    {mainOrganisation.legalFormShort && (
-                        <span> ({mainOrganisation?.legalFormShort})</span>
-                    )}
-                  </Box>
-                  {mainOrganisation.number && (
-                  <Box>
-                      <span>Numéro d'entreprise : </span>
-                      <a target="_blank" href= {"https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=" + mainOrganisation.number.replace(/\D/g,'')} >
-                        <span>{mainOrganisation.number}</span>
-                      </a>
-                  </Box>
-                  )}
-                  <Box>
-                    {mainOrganisation.bankAccountNumber && (
-                          <span>{"Numéro de compte : " + mainOrganisation?.bankAccountNumber}</span>
-                      )}
-                  </Box>
-                </Box>
+        {partnership.profiles.find(
+          (p: any) => p.description?.short && p.type == "web_element"
+        ) && (
+          <Paper sx={{ p: 1, m: 2 }}>
+            <Markdown>
+              {
+                partnership.profiles.find(
+                  (p: any) => p.description?.short && p.type == "web_element"
+                ).description?.short?.markdown
+              }
+            </Markdown>
           </Paper>
         )}
-        <Typography variant="h4" component="h4">
-          Producteurs
-        </Typography>
-        <Grid container spacing={2}>
-          {producers.map((activity: any) => (
-            <Grid item xs={12} sm={6} md={4} xl={3}>
-              <Paper sx={{ p: 1 }}>
-                <Stack direction="row">
-                  <Typography variant="h6">{activity.name}</Typography>
-                  {activity.profiles?.find(
-                    (p: any) => p.type == "facebook"
-                  ) && (
+        {mainOrganisation && (
+          <Box sx={{ m: 2 }}>
+            <Typography variant="h4" component="h4">
+              Entreprise principale
+            </Typography>
+            <Paper sx={{ p: 1 }}>
+              <Box>
+                <Box>
+                  {mainOrganisation.legalName ?? mainOrganisation.name}
+                  {mainOrganisation.legalFormShort && (
+                    <span> ({mainOrganisation?.legalFormShort})</span>
+                  )}
+                </Box>
+                {mainOrganisation.number && (
+                  <Box>
+                    <span>Numéro d'entreprise : </span>
                     <a
+                      target="_blank"
                       href={
-                        "https://www.facebook.com/" +
-                        activity.profiles.find((p: any) => p.type == "facebook")
-                          .key
+                        "https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=" +
+                        mainOrganisation.number.replace(/\D/g, "")
                       }
                     >
-                      <IconButton size="small">
-                        <Facebook />
-                      </IconButton>
+                      {mainOrganisation.number}
                     </a>
-                  )}
-                  {activity.profiles?.find((p: any) => p.type == "website") && (
-                    <a
-                      href={
-                        activity.profiles.find((p: any) => p.type == "website")
-                          .link
-                      }
-                    >
-                      <IconButton size="small">
-                        <Language />
-                      </IconButton>
-                    </a>
-                  )}
-                </Stack>
-                {activity.place && (
-                  <Typography variant="subtitle1">
-                    {activity.place.name}
-                  </Typography>
+                  </Box>
                 )}
-              </Paper>
+                <Box>
+                  {mainOrganisation.bankAccountNumber && (
+                    <span>
+                      {"Numéro de compte : " +
+                        mainOrganisation?.bankAccountNumber}
+                    </span>
+                  )}
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
+        )}
+        {members.length > 0 && (
+          <Box sx={{ m: 2 }}>
+            <Typography variant="h4" component="h4">
+              Membres
+            </Typography>
+            <Grid container spacing={1}>
+              {members.map((member: any) => (
+                <Grid item xs={4} sm={3} md={3} xl={2}>
+                  <Card>
+                    <CardActionArea>
+                      <CardContent onClick={() => navigate("/partnership/" + member._id)}>
+                      {member.name}
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
+          </Box>
+        )}
+        {producers.length > 0 && (
+          <Box sx={{ m: 2 }}>
+            <Typography variant="h4" component="h4">
+              Producteurs
+            </Typography>
+            <Grid container spacing={2}>
+              {producers.map((activity: any) => (
+                <Grid item xs={12} sm={6} md={4} xl={3}>
+                  <Paper sx={{ p: 1 }}>
+                    <Stack direction="row">
+                      <Typography variant="h6">{activity.name}</Typography>
+                      {activity.profiles?.find(
+                        (p: any) => p.type == "facebook"
+                      ) && (
+                        <a
+                          href={
+                            "https://www.facebook.com/" +
+                            activity.profiles.find(
+                              (p: any) => p.type == "facebook"
+                            ).key
+                          }
+                        >
+                          <IconButton size="small">
+                            <Facebook />
+                          </IconButton>
+                        </a>
+                      )}
+                      {activity.profiles?.find(
+                        (p: any) => p.type == "website"
+                      ) && (
+                        <a
+                          href={
+                            activity.profiles.find(
+                              (p: any) => p.type == "website"
+                            ).link
+                          }
+                        >
+                          <IconButton size="small">
+                            <Language />
+                          </IconButton>
+                        </a>
+                      )}
+                    </Stack>
+                    {activity.place && (
+                      <Typography variant="subtitle1">
+                        {activity.place.name}
+                      </Typography>
+                    )}
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
       </Box>
     </Layout>
   );
@@ -129,13 +201,29 @@ export const query = graphql`
         legalName
         bankAccountNumber
       }
+      profiles {
+        type
+        link
+        mainImage {
+          url
+        }
+        description {
+          short {
+            markdown
+          }
+        }
+      }
     }
-    producerContributions: allMongodbContribution(
+    contributions: allMongodbContribution(
       filter: { subject: { partnership: { _id: { eq: $id } } } }
     ) {
       nodes {
         contributor {
           activity {
+            _id
+            name
+          }
+          partnership {
             _id
             name
           }

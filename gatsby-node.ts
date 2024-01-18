@@ -88,10 +88,13 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       }
       type mongodbContributionContributor{
         activity: mongodbActivity @link(by: "mongodb_id")
+        partnership: mongodbPartnership @link(by: "mongodb_id")
       }
       type mongodbPartnership implements Node {
         categories: [mongodbCategory] @link(by: "mongodb_id")
         mainOrganisation: mongodbOrganisation @link(by: "mongodb_id")
+        area: mongodbPlace @link(by: "mongodb_id")
+        profiles: [mongodbProfile] @link(by:"subject.partnership", from: "mongodb_id")
       }
       type mongodbContributionSubject{
         partnership: mongodbPartnership @link(by: "mongodb_id")
