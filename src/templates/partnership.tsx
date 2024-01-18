@@ -33,6 +33,9 @@ export default function PartnershipTemplate({ data }: any) {
     .map((c: any) => c.contributor.activity)
     .filter((p: any) => p != null);
 
+  const workspaces = partnership.workspaces;
+  const contacts = partnership.contacts;
+
   const members = data.contributions.nodes
     .map((c: any) => c.contributor.partnership)
     .filter((p: any) => p != null && p.name)
@@ -110,6 +113,44 @@ export default function PartnershipTemplate({ data }: any) {
             </Paper>
           </Box>
         )}
+        <Grid container>
+        {workspaces.length > 0 && (
+          <Grid item xs={12} sm={12} md={6} xl={6}>
+          <Box sx={{ m: 2 }}>
+            <Typography variant="h4" component="h4">
+              Espaces de travail
+            </Typography>
+            <Stack direction="row">
+              {workspaces.map((workspace: any) => (
+                <Paper sx={{ p: 1, m: 2 }}>
+                  <Typography sx={{fontWeight: 'bold'}}>{workspace.name}</Typography>
+                  <Box>{workspace.place?.address?.street}</Box>
+                  <Box>{workspace.place?.address?.postalCode} {workspace.place?.address?.locality}</Box>
+                </Paper>
+              ))}
+            </Stack>
+          </Box>
+          </Grid>
+        )}
+        { contacts && contacts.length > 0 && (
+          <Grid item xs={12} sm={12} md={6} xl={6}>
+          <Box sx={{ m: 2 }}>
+            <Typography variant="h4" component="h4">
+              Contacts
+            </Typography>
+            <Stack direction="row">
+              {contacts.map((contact: any) => (
+                <Paper sx={{ p: 1, m: 2 }}>
+                  <Typography sx={{fontWeight: 'bold'}}>{contact.purpose}</Typography>
+                  <Typography>{contact.mainEmail}</Typography>
+                  <Typography>{contact.mainPhoneNumberFormatted}</Typography>
+                </Paper>
+              ))}
+            </Stack>
+          </Box>
+          </Grid>
+        )}
+        </Grid>
         {members.length > 0 && (
           <Box sx={{ m: 2 }}>
             <Typography variant="h4" component="h4">
@@ -120,8 +161,10 @@ export default function PartnershipTemplate({ data }: any) {
                 <Grid item xs={4} sm={3} md={3} xl={2}>
                   <Card>
                     <CardActionArea>
-                      <CardContent onClick={() => navigate("/partnership/" + member._id)}>
-                      {member.name}
+                      <CardContent
+                        onClick={() => navigate("/partnership/" + member._id)}
+                      >
+                        {member.name}
                       </CardContent>
                     </CardActionArea>
                   </Card>
@@ -212,6 +255,22 @@ export const query = graphql`
             markdown
           }
         }
+      }
+      workspaces {
+        name
+        place {
+          address {
+            street
+            locality
+            postalCode
+          }
+        }
+      }
+      contacts {
+        purpose
+        mainEmail
+        mainPhoneNumber
+        mainPhoneNumberFormatted
       }
     }
     contributions: allMongodbContribution(

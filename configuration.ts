@@ -17,5 +17,6 @@ export const mongoCollections: string[] = [
   "profile",
   "partnership",
   "contribution",
-  "action"
+  "action",
+  "contact"
 ];
