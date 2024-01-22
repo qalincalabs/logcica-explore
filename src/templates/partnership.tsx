@@ -34,6 +34,7 @@ export default function PartnershipTemplate({ data }: any) {
     .filter((p: any) => p != null);
 
   const workspaces = partnership.workspaces;
+  const counters = partnership.counters;
   const contacts = partnership.contacts;
 
   const members = data.contributions.nodes
@@ -126,6 +127,25 @@ export default function PartnershipTemplate({ data }: any) {
                   <Typography sx={{fontWeight: 'bold'}}>{workspace.name}</Typography>
                   <Box>{workspace.place?.address?.street}</Box>
                   <Box>{workspace.place?.address?.postalCode} {workspace.place?.address?.locality}</Box>
+                </Paper>
+              ))}
+            </Stack>
+          </Box>
+          </Grid>
+        )}
+        {counters.length > 0 && (
+          <Grid item xs={12} sm={12} md={6} xl={6}>
+          <Box sx={{ m: 2 }}>
+            <Typography variant="h4" component="h4">
+              Comptoirs
+            </Typography>
+            <Stack direction="row">
+              {counters.map((counter: any) => (
+                <Paper sx={{ p: 1, m: 2 }}>
+                  <Box><a target="_blank" href={counter.link}>{counter.link}</a></Box>
+                  <Typography sx={{fontWeight: 'bold'}}>{counter.purpose}</Typography>
+                  <Box>{counter.place?.address?.street}</Box>
+                  <Box>{counter.place?.address?.postalCode} {counter.place?.address?.locality}</Box>
                 </Paper>
               ))}
             </Stack>
@@ -271,6 +291,23 @@ export const query = graphql`
         mainEmail
         mainPhoneNumber
         mainPhoneNumberFormatted
+      }
+      counters {
+        online
+        link
+        purpose
+        availabilityStatement {
+          short {
+            markdown
+          }
+        }
+        place {
+          address {
+            street
+            locality
+            postalCode
+          }
+        }
       }
     }
     contributions: allMongodbContribution(
