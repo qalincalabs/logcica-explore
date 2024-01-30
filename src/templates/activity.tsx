@@ -50,25 +50,29 @@ export default function PartnershipTemplate({ data }: any) {
           </Paper>
         )}
         <Grid container>
-        { contacts && contacts.length > 0 && (
-          <Grid item xs={12} sm={12} md={6} xl={6}>
-          <Box sx={{ m: 2 }}>
-            <Typography variant="h4" component="h4">
-              Contacts
-            </Typography>
-            <Stack direction="row">
-              {contacts.map((contact: any) => (
-                <Paper sx={{ p: 1, m: 2 }}>
-                  <Typography sx={{fontWeight: 'bold'}}>{contact.purpose}</Typography>
-                  <Typography>{contact.name}</Typography>
-                  <Typography>{contact.mainEmail}</Typography>
-                  <Typography>{contact.mainPhoneNumberFormatted}</Typography>
-                </Paper>
-              ))}
-            </Stack>
-          </Box>
-          </Grid>
-        )}
+          {contacts && contacts.length > 0 && (
+            <Grid item xs={12} sm={12} md={6} xl={6}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Contacts
+                </Typography>
+                <Stack direction="row">
+                  {contacts.map((contact: any) => (
+                    <Paper sx={{ p: 1, m: 2 }}>
+                      <Typography sx={{ fontWeight: "bold" }}>
+                        {contact.purpose}
+                      </Typography>
+                      <Typography>{contact.name}</Typography>
+                      <Typography>{contact.mainEmail}</Typography>
+                      <Typography>
+                        {contact.mainPhoneNumberFormatted}
+                      </Typography>
+                    </Paper>
+                  ))}
+                </Stack>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Layout>
