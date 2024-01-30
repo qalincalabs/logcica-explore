@@ -1,5 +1,5 @@
 import React from "react";
-import { graphql } from "gatsby";
+import { graphql, navigate } from "gatsby";
 import AppTopBar from "../components/app-top-bar";
 import {
   Box,
@@ -71,7 +71,7 @@ export default function MarketplaceTemplate({ data }: any) {
             <Grid item xs={12} sm={6} md={4} xl={3}>
               <Paper sx={{ p: 1 }}>
                 <Stack direction="row">
-                  <Typography variant="h6">
+                  <Typography variant="h6" onClick={() => navigate("/activity/" + stall.manager.activity._id)}>
                     {stall.manager.activity.name}
                   </Typography>
                   {stall.manager.activity.profiles?.find(
@@ -168,6 +168,7 @@ export const query = graphql`
         }
         manager {
           activity {
+            _id
             name
             place {
               _id

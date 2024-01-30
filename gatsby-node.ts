@@ -20,7 +20,7 @@ const mongoCollections: string[] = [
   "partnership",
   "contribution",
   "action",
-  "contact"
+  "contact",
 ];
 
 function capitalizeFirstLetter(string: String) {
@@ -46,6 +46,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       type mongodbActivity implements Node {
         place: mongodbPlace @link(by: "mongodb_id")
         profiles: [mongodbProfile] @link(by: "mongodb_id")
+        contacts: [mongodbContact] @link(by: "mongodb_id")
       }
       type mongodbCounter implements Node {
         catalog: mongodbCatalog @link(by: "mongodb_id")
@@ -132,7 +133,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
     });
   });
 
-  const { data } = await graphql(`
+  const { data: partnershipsQuery } = await graphql(`
     query {
       allMongodbPartnership {
         nodes {
@@ -142,12 +143,33 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  data.allMongodbPartnership.nodes.forEach((node: any) => {
+  partnershipsQuery.allMongodbPartnership.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/partnership.tsx`);
 
     actions.createPage({
       path: "/partnership/" + _id,
+      component: component,
+      context: { id: _id },
+    });
+  });
+
+  const { data: activitiesQuery } = await graphql(`
+    query {
+      allMongodbActivity {
+        nodes {
+          _id
+          name
+        }
+      }
+    }
+  `);
+  activitiesQuery.allMongodbActivity.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/activity.tsx`);
+
+    actions.createPage({
+      path: "/activity/" + _id,
       component: component,
       context: { id: _id },
     });
