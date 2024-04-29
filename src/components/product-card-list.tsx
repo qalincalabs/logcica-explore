@@ -124,6 +124,7 @@ export function ProductCardList() {
             number
             system {
               _id
+              key
             }
           }
         }

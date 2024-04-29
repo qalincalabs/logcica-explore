@@ -227,7 +227,7 @@ export function ProductCard({ item }: any) {
                               margin: "1px",
                               backgroundColor:
                                 item.availabilities?.[0]?.season?.year?.months.includes(
-                                  monthNumber + 1
+                                  moment(monthNumber, "M").format("MMM")
                                 )
                                   ? "#AFE1AF"
                                   : "default",
@@ -309,7 +309,7 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </Grid>
-        {(item.references?.find((r: any) => r.system?.key == "be/openbatra") ||
+        {(item.references?.find((r: any) => r.system?.key == "openbatra.org") ||
           item.description?.short) && (
           <Box display="flex" width="100%">
             {item.description?.short && (
@@ -325,7 +325,7 @@ export function ProductCard({ item }: any) {
               </CardContent>
             )}
             {item.references?.find(
-              (r: any) => r.system?.key == "be/openbatra"
+              (r: any) => r.system?.key == "openbatra.org"
             ) && (
               <CardActions>
                 <a
@@ -333,7 +333,7 @@ export function ProductCard({ item }: any) {
                     "https://www.batra.link/batra2.0/productFull.html?gtin=" +
                     encodeURIComponent(
                       item.references.find(
-                        (r: any) => r.system?.key == "be/openbatra"
+                        (r: any) => r.system?.key == "openbatra.org"
                       ).number
                     )
                   }

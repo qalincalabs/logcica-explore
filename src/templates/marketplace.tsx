@@ -20,8 +20,8 @@ import Layout from "../components/layout";
 
 export function ProfileExternalLink({ profile }: any) {
   return (
-    <a href={"https://www.facebook.com/" + profile.key}>
-      <Button startIcon={<Facebook />}>{profile.key}</Button>
+    <a href={"https://www.facebook.com/" + profile.localKey}>
+      <Button startIcon={<Facebook />}>{profile.localKey}</Button>
     </a>
   );
 }
@@ -82,7 +82,7 @@ export default function MarketplaceTemplate({ data }: any) {
                         "https://www.facebook.com/" +
                         stall.manager.activity.profiles.find(
                           (p: any) => p.type == "facebook"
-                        ).key
+                        ).localKey
                       }
                     >
                       <IconButton size="small">
@@ -145,7 +145,7 @@ export const query = graphql`
         }
       }
       profiles {
-        key
+        localKey
         type
         link
       }
@@ -175,7 +175,7 @@ export const query = graphql`
               name
             }
             profiles {
-              key
+              localKey
               type
               link
             }

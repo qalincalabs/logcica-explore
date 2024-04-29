@@ -80,7 +80,7 @@ export const query = graphql`
           }
         }
         profiles {
-          key
+          localKey
           type
           link
         }
