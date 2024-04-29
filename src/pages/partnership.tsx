@@ -79,7 +79,7 @@ description {
 
 export const query = graphql`
   query {
-    partnerships: allMongodbPartnership(
+    partnerships: allMongodbPartnerships(
       sort: [{ name: ASC }],
       filter: {
         categories: { elemMatch: { _id: { eq: "64d4ceeca4d6089295a8a753" } } }

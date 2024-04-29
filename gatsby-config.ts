@@ -1,26 +1,26 @@
 import type { GatsbyConfig } from "gatsby";
 
-const mongoCollections: string[] = [
-  "product",
-  "organisation",
-  "workspace",
-  "activity",
-  "category",
-  "availability",
-  "seasonAvailability",
-  "code",
-  "codeList",
-  "place",
-  "unit",
-  "informationSystem",
-  "reference",
-  "counter",
-  "catalog",
-  "profile",
-  "partnership",
-  "contribution",
-  "action",
-  "contact"
+export const mongoCollections: string[] = [
+  "products",
+  "organisations",
+  "workspaces",
+  "activities",
+  "categories",
+  "availabilities",
+  "season_availabilities",
+  "codes",
+  "codeLists",
+  "places",
+  "units",
+  "information_systems",
+  "references",
+  "counters",
+  "catalogs",
+  "profiles",
+  "partnerships",
+  "contributions",
+  "actions",
+  "contacts"
 ];
 
 require("dotenv").config({
@@ -43,7 +43,7 @@ module.exports = {
         collection: mongoCollections,
         connectionString: process.env.MONGO_CONNECTION_STRING,
         query: {},
-        preserveObjectIds: true,
+        preserveObjectIds: false,
       },
       //query: { documents: { as_of: { $gte: 1604397088013 } } },
     },

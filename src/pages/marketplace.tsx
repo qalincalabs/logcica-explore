@@ -59,7 +59,7 @@ export const Head: HeadFC = () => <title>Marchés</title>;
 
 export const query = graphql`
   query {
-    marketplaces: allMongodbCounter(filter: { type: { eq: "marketplace" } }) {
+    marketplaces: allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
       nodes {
         _id
         name

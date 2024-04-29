@@ -1,26 +1,31 @@
 import path from "path";
 
-const mongoCollections: string[] = [
-  "product",
-  "organisation",
-  "workspace",
-  "activity",
-  "category",
-  "availability",
-  "seasonAvailability",
-  "code",
-  "codeList",
-  "place",
-  "unit",
-  "informationSystem",
-  "reference",
-  "counter",
-  "catalog",
-  "profile",
-  "partnership",
-  "contribution",
-  "action",
-  "contact",
+type mongoMapping = {
+  collection: string
+  type: string
+}
+
+export const mongoCollections: string[] = [
+  "products",
+  "organisations",
+  "workspaces",
+  "activities",
+  "categories",
+  "availabilities",
+  "season_availabilities", // WARNING
+  "codes",
+  "codeLists",
+  "places",
+  "units",
+  "information_systems", // WARNING
+  "references",
+  "counters",
+  "catalogs",
+  "profiles",
+  "partnerships",
+  "contributions",
+  "actions",
+  "contacts"
 ];
 
 function capitalizeFirstLetter(string: String) {
@@ -41,71 +46,70 @@ exports.createSchemaCustomization = ({ actions }: any) => {
 
   createTypes(mongoIdTypeDefs);
 
-  // TODO rename allergenKey to allergen and containmentLevel ...
   const typeDefs1 = `
-      type mongodbActivity implements Node {
-        place: mongodbPlace @link(by: "mongodb_id")
-        profiles: [mongodbProfile] @link(by: "mongodb_id")
-        contacts: [mongodbContact] @link(by: "mongodb_id")
+      type mongodbActivities implements Node {
+        place: mongodbPlaces @link(by: "mongodb_id")
+        profiles: [mongodbProfiles] @link(by: "mongodb_id")
+        contacts: [mongodbContacts] @link(by: "mongodb_id")
       }
-      type mongodbCounter implements Node {
-        catalog: mongodbCatalog @link(by: "mongodb_id")
-        place: mongodbPlace @link(by: "mongodb_id")
-        profiles: [mongodbProfile] @link(by: "mongodb_id")
-        actions: [mongodbAction] @link(by:"subject.counter", from: "mongodb_id")
+      type mongodbCounters implements Node {
+        catalog: mongodbCatalogs @link(by: "mongodb_id")
+        place: mongodbPlaces @link(by: "mongodb_id")
+        profiles: [mongodbProfiles] @link(by: "mongodb_id")
+        actions: [mongodbActions] @link(by:"subject.counter", from: "mongodb_id")
       }
-      type mongodbProductOwner implements Node {
-        organisation: mongodbOrganisation @link(by: "mongodb_id")
-        workspace: mongodbWorkspace @link(by: "mongodb_id")
-        activity: mongodbActivity @link(by: "mongodb_id")
+      type mongodbProductsOwner implements Node {
+        organisation: mongodbOrganisations @link(by: "mongodb_id")
+        workspace: mongodbWorkspaces @link(by: "mongodb_id")
+        activity: mongodbActivities @link(by: "mongodb_id")
       }
-      type mongodbCounterManager implements Node {
-        organisation: mongodbOrganisation @link(by: "mongodb_id")
-        workspace: mongodbWorkspace @link(by: "mongodb_id")
-        activity: mongodbActivity @link(by: "mongodb_id")
+      type mongodbCountersManager implements Node {
+        organisation: mongodbOrganisations @link(by: "mongodb_id")
+        workspace: mongodbWorkspaces @link(by: "mongodb_id")
+        activity: mongodbActivities @link(by: "mongodb_id")
       }
-      type mongodbReference implements Node {
-        system: mongodbInformationSystem @link(by: "mongodb_id")
+      type mongodbReferences implements Node {
+        system: mongodbInformation_systems @link(by: "mongodb_id")
       }
-      type mongodbProduct implements Node {
-        categories: [mongodbCategory] @link(by: "mongodb_id")
-        availabilities: [mongodbAvailability] @link(by: "mongodb_id")
-        references: [mongodbReference] @link(by:"target", from: "mongodb_id")
+      type mongodbProducts implements Node {
+        categories: [mongodbCategories] @link(by: "mongodb_id")
+        availabilities: [mongodbAvailabilities] @link(by: "mongodb_id")
+        references: [mongodbReferences] @link(by:"target", from: "mongodb_id")
       }
-      type mongodbAvailability implements Node {
-        season: mongodbSeasonAvailability @link(by: "mongodb_id")
+      type mongodbAvailabilities implements Node {
+        season: mongodbSeason_availabilities @link(by: "mongodb_id")
       }
-      type mongodbOrganisation implements Node {
-        place: mongodbPlace @link(by: "mongodb_id")
+      type mongodbOrganisations implements Node {
+        place: mongodbPlaces @link(by: "mongodb_id")
       }
-      type mongodbProductAllergenList implements Node {
-        allergenKey: mongodbCode @link(by: "mongodb_id")
-        containmentLevelKey: mongodbCode @link(by: "mongodb_id")
+      type mongodbProductsAllergenList implements Node {
+        allergen: mongodbCodes @link(by: "mongodb_id")
+        containmentLevel: mongodbCodes @link(by: "mongodb_id")
       }
-      type mongodbProductNutrientList{
-        nutrientKey: mongodbCode @link(by: "mongodb_id")
+      type mongodbProductsNutrientList{
+        nutrient: mongodbCodes @link(by: "mongodb_id")
       }
-      type mongodbProductNetContent{
-        unit: mongodbUnit @link(by: "mongodb_id")
+      type mongodbProductsNetContent{
+        unit: mongodbUnits @link(by: "mongodb_id")
       }
-      type mongodbContributionContributor{
-        activity: mongodbActivity @link(by: "mongodb_id")
-        partnership: mongodbPartnership @link(by: "mongodb_id")
+      type mongodbContributionsContributor{
+        activity: mongodbActivities @link(by: "mongodb_id")
+        partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
-      type mongodbPartnership implements Node {
-        categories: [mongodbCategory] @link(by: "mongodb_id")
-        mainOrganisation: mongodbOrganisation @link(by: "mongodb_id")
-        area: mongodbPlace @link(by: "mongodb_id")
-        profiles: [mongodbProfile] @link(by:"subject.partnership", from: "mongodb_id")
-        workspaces: [mongodbWorkspace] @link(by:"manager.partnership", from: "mongodb_id")
-        contacts: [mongodbContact] @link(by: "mongodb_id")
-        counters: [mongodbCounter] @link(by:"manager.partnership", from: "mongodb_id")
+      type mongodbPartnerships implements Node {
+        categories: [mongodbCategories] @link(by: "mongodb_id")
+        mainOrganisation: mongodbOrganisations @link(by: "mongodb_id")
+        area: mongodbPlaces @link(by: "mongodb_id")
+        profiles: [mongodbProfiles] @link(by:"subject.partnership", from: "mongodb_id")
+        workspaces: [mongodbWorkspaces] @link(by:"manager.partnership", from: "mongodb_id")
+        contacts: [mongodbContacts] @link(by: "mongodb_id")
+        counters: [mongodbCounters] @link(by:"manager.partnership", from: "mongodb_id")
       }
-      type mongodbContributionSubject{
-        partnership: mongodbPartnership @link(by: "mongodb_id")
+      type mongodbContributionsSubject{
+        partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
-      type mongodbWorkspace{
-        place: mongodbPlace @link(by: "mongodb_id")
+      type mongodbWorkspaces{
+        place: mongodbPlaces @link(by: "mongodb_id")
       }
     `;
   createTypes(typeDefs1);
@@ -114,7 +118,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
 exports.createPages = async function ({ actions, graphql }: any) {
   const { data: marketplacesQuery } = await graphql(`
     query {
-      allMongodbCounter(filter: { type: { eq: "marketplace" } }) {
+      allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
         nodes {
           _id
           name
@@ -122,7 +126,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  marketplacesQuery.allMongodbCounter.nodes.forEach((node: any) => {
+  marketplacesQuery.allMongodbCounters.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/marketplace.tsx`);
 
@@ -135,7 +139,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
 
   const { data: partnershipsQuery } = await graphql(`
     query {
-      allMongodbPartnership {
+      allMongodbPartnerships {
         nodes {
           _id
           name
@@ -143,7 +147,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  partnershipsQuery.allMongodbPartnership.nodes.forEach((node: any) => {
+  partnershipsQuery.allMongodbPartnerships.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/partnership.tsx`);
 
@@ -156,7 +160,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
 
   const { data: activitiesQuery } = await graphql(`
     query {
-      allMongodbActivity {
+      allMongodbActivities {
         nodes {
           _id
           name
@@ -164,7 +168,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  activitiesQuery.allMongodbActivity.nodes.forEach((node: any) => {
+  activitiesQuery.allMongodbActivities.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/activity.tsx`);
 

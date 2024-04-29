@@ -7,7 +7,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 export function ProductCardList() {
   const data = useStaticQuery(graphql`
     query {
-      allMongodbProduct {
+      allMongodbProducts {
         nodes {
           _id
           name
@@ -58,16 +58,16 @@ export function ProductCardList() {
             }
           }
           allergenList {
-            allergenKey {
+            allergen {
               name
             }
-            containmentLevelKey {
+            containmentLevel {
               name
             }
           }
           alcoholPercentage
           nutrientList {
-            nutrientKey {
+            nutrient {
               _id
               code
               name
@@ -124,7 +124,6 @@ export function ProductCardList() {
             number
             system {
               _id
-              key
             }
           }
         }
@@ -132,7 +131,7 @@ export function ProductCardList() {
     }
   `);
 
-  const products = data.allMongodbProduct.nodes.sort((a: any, b: any) =>
+  const products = data.allMongodbProducts.nodes.sort((a: any, b: any) =>
     a.name?.length < b.name?.length ? 1 : -1
   );
 

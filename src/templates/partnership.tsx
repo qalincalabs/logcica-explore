@@ -276,7 +276,7 @@ export default function PartnershipTemplate({ data }: any) {
 
 export const query = graphql`
   query ($id: String!) {
-    partnership: mongodbPartnership(_id: { eq: $id }) {
+    partnership: mongodbPartnerships(_id: { eq: $id }) {
       _id
       name
       mainOrganisation {
@@ -332,7 +332,7 @@ export const query = graphql`
         }
       }
     }
-    contributions: allMongodbContribution(
+    contributions: allMongodbContributions(
       filter: { subject: { partnership: { _id: { eq: $id } } } }
     ) {
       nodes {

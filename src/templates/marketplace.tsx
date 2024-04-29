@@ -130,7 +130,7 @@ export default function MarketplaceTemplate({ data }: any) {
 
 export const query = graphql`
   query ($id: String!) {
-    marketplace: mongodbCounter(_id: { eq: $id }) {
+    marketplace: mongodbCounters(_id: { eq: $id }) {
       _id
       name
       place {
@@ -150,7 +150,7 @@ export const query = graphql`
         link
       }
     }
-    stalls: allMongodbCounter(filter: { marketplace: { eq: $id } }) {
+    stalls: allMongodbCounters(filter: { marketplace: { eq: $id } }) {
       nodes {
         _id
         name
@@ -164,7 +164,7 @@ export const query = graphql`
         actions {
           name
           fontAwesomeIcon
-          url
+          link
         }
         manager {
           activity {

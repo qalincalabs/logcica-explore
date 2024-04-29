@@ -83,15 +83,15 @@ export function NutrientListTable({ nutrientList }: any) {
         </TableHead>
         <TableBody>
           {nutrientOrder
-            .map((n) => nutrientList.find((i: any) => i.nutrientKey.code == n))
+            .map((n) => nutrientList.find((i: any) => i.nutrient?.code == n))
             .filter((n) => n != null)
             .map((productNutrient: any) => (
               <TableRow key={1}>
                 <TableCell>
                   {["saturatedFat", "sugars"].includes(
-                    productNutrient.nutrientKey.code
+                    productNutrient.nutrient.code
                   ) && <span>&nbsp;&nbsp;</span>}
-                  {productNutrient.nutrientKey.name}
+                  {productNutrient.nutrient.name}
                 </TableCell>
                 <TableCell align="right">
                   {productNutrient.quantity.value +
@@ -381,9 +381,9 @@ export function ProductCard({ item }: any) {
                   <Stack direction="row" gap={1} flexGrow={1}>
                     <CrisisAlert />
                     <Typography>
-                      {productAllergen.containmentLevelKey.name +
+                      {productAllergen.containmentLevel.name +
                         " " +
-                        productAllergen.allergenKey.name?.toLowerCase()}
+                        productAllergen.allergen.name?.toLowerCase()}
                     </Typography>
                   </Stack>
                 ))}

@@ -81,7 +81,7 @@ export default function PartnershipTemplate({ data }: any) {
 
 export const query = graphql`
   query ($id: String!) {
-    activity: mongodbActivity(_id: { eq: $id }) {
+    activity: mongodbActivities(_id: { eq: $id }) {
       _id
       name
       profiles {
@@ -104,7 +104,7 @@ export const query = graphql`
         mainPhoneNumberFormatted
       }
     }
-    contributions: allMongodbContribution(
+    contributions: allMongodbContributions(
       filter: { contributor: { activity: { _id: { eq: $id } } } }
     ) {
       nodes {
