@@ -29,13 +29,21 @@ import Markdown from "markdown-to-jsx";
 export default function PartnershipTemplate({ data }: any) {
   const activity = data.activity;
   const contacts = activity.contacts;
+  const profiles = activity.profiles;
 
   return (
     <Layout>
       <Box>
         <Typography align="center" variant="h3" component="h3">
           {activity.name}
-        </Typography>
+        </Typography>        
+        {activity.description?.short?.markdown && (
+          <Paper sx={{ p: 1, m: 2 }}>
+            <Markdown>
+              {activity.description?.short?.markdown}
+            </Markdown>
+          </Paper>
+        )}
         {activity.profiles?.find(
           (p: any) => p.description?.long && p.type == "web_element"
         ) && (
@@ -65,8 +73,27 @@ export default function PartnershipTemplate({ data }: any) {
                       <Typography>{contact.name}</Typography>
                       <Typography>{contact.mainEmail}</Typography>
                       <Typography>
-                        {contact.mainPhoneNumberFormatted}
+                        {contact.mainPhoneNumberFormatted ?? contact.mainPhoneNumber}
                       </Typography>
+                    </Paper>
+                  ))}
+                </Stack>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
+        <Grid container>
+          {profiles && profiles.length > 0 && (
+            <Grid item xs={12} sm={12} md={6} xl={6}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Profiles
+                </Typography>
+                <Stack direction="row">
+                  {profiles.map((profile: any) => (
+                    <Paper sx={{ p: 1, m: 2 }}>
+                      <Typography sx={{ fontWeight: 'bold' }}>{profile.type}</Typography>
+                      <Typography><a href={profile.link} target="_blank">{profile.localKey ?? profile.key}</a></Typography>
                     </Paper>
                   ))}
                 </Stack>
@@ -84,8 +111,15 @@ export const query = graphql`
     activity: mongodbActivities(_id: { eq: $id }) {
       _id
       name
+      description {
+        short {
+          markdown
+        }
+      }
       profiles {
         type
+        localKey
+        key
         link
         mainImage {
           url
