@@ -32,6 +32,12 @@ export default function AppTopBar() {
             >
               GROUPEMENTS
             </Button>
+            <Button
+              sx={{ color: "black" }}
+              onClick={() => navigate("/activity")}
+            >
+              PRODUCTEURS
+            </Button>
             {/*
             <Button
               sx={{ color: "black" }}

@@ -45,8 +45,15 @@ module.exports = {
         query: {},
         preserveObjectIds: false,
       },
+      
       //query: { documents: { as_of: { $gte: 1604397088013 } } },
     },
+    {
+      resolve: 'gatsby-plugin-react-leaflet',
+      options: {
+        linkStyles: true // (default: true) Enable/disable loading stylesheets via CDN
+      }
+    }
   ],
 };
 
