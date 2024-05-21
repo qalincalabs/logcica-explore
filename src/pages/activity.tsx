@@ -5,6 +5,9 @@ import {
 } from "@mui/material";
 import Layout from "../components/layout";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+
+import 'leaflet/dist/leaflet.css'
 
 const PartnershipPage = ({ data }: any) => {
   return (
@@ -18,6 +21,9 @@ const PartnershipPage = ({ data }: any) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <MarkerClusterGroup
+        chunkedLoading
+      >
       {data.activities.nodes.map((activity: any) => {
       const coordinatesToSwap= activity.place?.center?.coordinates
       if(!coordinatesToSwap)
@@ -32,6 +38,7 @@ const PartnershipPage = ({ data }: any) => {
         </Popup>
       </Marker>
       )})}
+      </MarkerClusterGroup>
     </MapContainer>
     </Layout>
   );
