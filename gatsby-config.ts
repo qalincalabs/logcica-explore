@@ -1,5 +1,12 @@
-import type { GatsbyConfig } from "gatsby";
+import type { AdapterInit, GatsbyConfig } from "gatsby";
 import { collections } from "./collections";
+
+const noOpAdapter: AdapterInit = () => ({
+  name: `gatsby-adapter-noop`,
+  adapt() {
+    // noop
+  },
+})
 
 require("dotenv").config({
   path: `.env`, // ${process.env.NODE_ENV}
@@ -7,6 +14,8 @@ require("dotenv").config({
 
 module.exports = {
   //pathPrefix: "/logcica-discover",
+ 
+  adapter: noOpAdapter(),
   plugins: [
     /*
      * Gatsby's data processing layer begins with “source” plugins. Here we
