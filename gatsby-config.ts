@@ -1,27 +1,5 @@
 import type { GatsbyConfig } from "gatsby";
-
-export const mongoCollections: string[] = [
-  "products",
-  "organisations",
-  "workspaces",
-  "activities",
-  "categories",
-  "availabilities",
-  "season_availabilities",
-  "codes",
-  "codeLists",
-  "places",
-  "units",
-  "information_systems",
-  "references",
-  "counters",
-  "catalogs",
-  "profiles",
-  "partnerships",
-  "contributions",
-  "actions",
-  "contacts"
-];
+import { collections } from "./collections";
 
 require("dotenv").config({
   path: `.env`, // ${process.env.NODE_ENV}
@@ -40,7 +18,7 @@ module.exports = {
       options: {
         typePrefix: "",
         dbName: process.env.MONGO_DB_NAME,
-        collection: mongoCollections,
+        collection: collections,
         connectionString: process.env.MONGO_CONNECTION_STRING,
         query: {},
         preserveObjectIds: false,
@@ -51,7 +29,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-react-leaflet',
       options: {
-        linkStyles: true // (default: true) Enable/disable loading stylesheets via CDN
+        linkStyles: false // (default: true) Enable/disable loading stylesheets via CDN
       }
     }
   ],

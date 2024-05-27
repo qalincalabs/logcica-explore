@@ -1,16 +1,16 @@
-export const mongoCollections: string[] = [
+export const collections: string[] = [
   "products",
   "organisations",
   "workspaces",
   "activities",
   "categories",
   "availabilities",
-  "season_availabilities",
+  "season_availabilities", // WARNING
   "codes",
   "codeLists",
   "places",
   "units",
-  "information_systems",
+  "information_systems", // WARNING
   "references",
   "counters",
   "catalogs",

@@ -1,32 +1,5 @@
 import path from "path";
-
-type mongoMapping = {
-  collection: string
-  type: string
-}
-
-export const mongoCollections: string[] = [
-  "products",
-  "organisations",
-  "workspaces",
-  "activities",
-  "categories",
-  "availabilities",
-  "season_availabilities", // WARNING
-  "codes",
-  "codeLists",
-  "places",
-  "units",
-  "information_systems", // WARNING
-  "references",
-  "counters",
-  "catalogs",
-  "profiles",
-  "partnerships",
-  "contributions",
-  "actions",
-  "contacts"
-];
+import { collections } from "./collections";
 
 function capitalizeFirstLetter(string: String) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -35,7 +8,7 @@ function capitalizeFirstLetter(string: String) {
 exports.createSchemaCustomization = ({ actions }: any) => {
   const { createTypes } = actions;
 
-  const mongoIdTypeDefs = mongoCollections
+  const mongoIdTypeDefs = collections
     .map(
       (c) =>
         `type mongodb${capitalizeFirstLetter(c)} implements Node {
