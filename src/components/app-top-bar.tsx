@@ -4,6 +4,9 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { AppBar, Stack } from "@mui/material";
 import { navigate } from "gatsby";
+import Search from "../components/search"
+
+const searchIndices = [{ name: `Activities`, title: `Activité` }]
 
 export default function AppTopBar() {
   return (
@@ -50,7 +53,9 @@ export default function AppTopBar() {
         </Typography>
         <Typography
           sx={{ flex: 1, display: { xs: "none", sm: "block" } }}
-        ></Typography>
+        >
+          <Search indices={searchIndices} />
+        </Typography>
       </Toolbar>
     </AppBar>
   );

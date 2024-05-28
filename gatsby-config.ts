@@ -15,6 +15,7 @@ require("dotenv").config({
 module.exports = {
   adapter: noOpAdapter(),
   plugins: [
+    `gatsby-plugin-styled-components`,
     /*
      * Gatsby's data processing layer begins with “source” plugins. Here we
      * setup the site to pull data from the "documents" collection in a local
