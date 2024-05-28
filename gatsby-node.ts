@@ -24,6 +24,17 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         place: mongodbPlaces @link(by: "mongodb_id")
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
+        categories: [mongodbCategories] @link(by: "mongodb_id")
+        distributionsCategories: [mongodbCategories] @link(by: "mongodb_id")
+        catalogs: [mongodbCatalogs] @link(by:"seller.activity", from: "mongodb_id")
+      }
+      type mongodbActivitiesManager implements Node {
+        organisation: mongodbOrganisations @link(by: "mongodb_id")
+        workspace: mongodbWorkspaces @link(by: "mongodb_id")
+        activity: mongodbActivities @link(by: "mongodb_id")
+      }
+      type mongodbCatalogs implements Node {
+        productCategories: [mongodbCategories] @link(by: "mongodb_id")
       }
       type mongodbCounters implements Node {
         catalog: mongodbCatalogs @link(by: "mongodb_id")
@@ -83,6 +94,9 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       }
       type mongodbWorkspaces{
         place: mongodbPlaces @link(by: "mongodb_id")
+      }
+      type mongodbPlaces{
+        within: [mongodbPlaces] @link(by: "mongodb_id")
       }
     `;
   createTypes(typeDefs1);
