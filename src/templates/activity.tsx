@@ -30,13 +30,15 @@ export default function PartnershipTemplate({ data }: any) {
   const activity = data.activity;
   const contacts = activity.contacts;
   const profiles = activity.profiles;
+  const organisation = data.organisation || {};;
 
   return (
     <Layout>
       <Box>
         <Typography align="center" variant="h3" component="h3">
           {activity.name}
-        </Typography>        
+        </Typography>
+              
         {activity.description?.short?.markdown && (
           <Paper sx={{ p: 1, m: 2 }}>
             <Markdown>
@@ -100,6 +102,23 @@ export default function PartnershipTemplate({ data }: any) {
               </Box>
             </Grid>
           )}
+          {organisation.number && organisation.legalFormShort && (
+            <Grid item xs={12} sm={12} md={6} xl={6}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Numéro d'entreprise
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Typography variant="subtitle1" component="p">
+                    Numéro : {organisation.number}
+                  </Typography>
+                  <Typography variant="subtitle1" component="p">
+                    Forme juridique : {organisation.legalFormShort}
+                  </Typography>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Layout>
@@ -138,6 +157,11 @@ export const query = graphql`
         mainPhoneNumberFormatted
       }
     }
+    organisation: mongodbOrganisations(_id: { eq: $id }) {
+      number
+      legalFormShort
+    }
+
     contributions: allMongodbContributions(
       filter: { contributor: { activity: { _id: { eq: $id } } } }
     ) {
