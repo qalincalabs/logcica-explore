@@ -58,24 +58,37 @@ export default function AppTopBar() {
         </Typography>
         <Box sx={{ flex: 1, display: { xs: "none", sm: "flex" }, justifyContent: "center" }}>
           <Stack direction="row" gap={2}>
-            <Button sx={{ color: "black" }} onClick={() => navigate("/product")}>
+            <Button sx={{ color: "white" }} onClick={() => navigate("/product")}>
               PRODUITS
             </Button>
-            <Button sx={{ color: "black" }} onClick={() => navigate("/marketplace")}>
+            <Button sx={{ color: "white" }} onClick={() => navigate("/marketplace")}>
               MARCHÉS
             </Button>
-            <Button sx={{ color: "black" }} onClick={() => navigate("/partnership")}>
+            <Button sx={{ color: "white" }} onClick={() => navigate("/partnership")}>
               GROUPEMENTS
             </Button>
-            <Button sx={{ color: "black" }} onClick={() => navigate("/activity")}>
+            <Button sx={{ color: "white" }} onClick={() => navigate("/activity")}>
               PRODUCTEURS
             </Button>
           </Stack>
         </Box>
-        <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-          <Search indices={searchIndices} />
-        </Box>
         <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: 'white',
+              borderRadius: 1,
+              boxShadow: 1,
+              padding: '2px 2px',  // reduced padding
+              width: '70%',
+              maxWidth: 190,  // reduced maxWidth
+              height: 30,
+              marginRight: 2,
+            }}
+          >
+            <Search indices={searchIndices} />
+          </Box>
           {isSmallScreen && (
             <IconButton
               edge="end"
