@@ -57,17 +57,61 @@ export default function AppTopBar() {
           logCiCa explore
         </Typography>
         <Box sx={{ flex: 1, display: { xs: "none", sm: "flex" }, justifyContent: "center" }}>
-          <Stack direction="row" gap={2}>
-            <Button sx={{ color: "white" }} onClick={() => navigate("/product")}>
+        <Stack direction="row" gap={2} sx={{ marginLeft: 2 }}>
+            <Button
+              sx={{
+                color: "black",
+                fontWeight: "bold",
+                padding: "8px 16px",
+                textTransform: "uppercase",
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                }
+              }}
+              onClick={() => navigate("/product")}
+            >
               PRODUITS
             </Button>
-            <Button sx={{ color: "white" }} onClick={() => navigate("/marketplace")}>
+            <Button
+              sx={{
+                color: "black",
+                fontWeight: "bold",
+                padding: "8px 16px",
+                textTransform: "uppercase",
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                }
+              }}
+              onClick={() => navigate("/marketplace")}
+            >
               MARCHÉS
             </Button>
-            <Button sx={{ color: "white" }} onClick={() => navigate("/partnership")}>
+            <Button
+              sx={{
+                color: "black",
+                fontWeight: "bold",
+                padding: "8px 16px",
+                textTransform: "uppercase",
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                }
+              }}
+              onClick={() => navigate("/partnership")}
+            >
               GROUPEMENTS
             </Button>
-            <Button sx={{ color: "white" }} onClick={() => navigate("/activity")}>
+            <Button
+              sx={{
+                color: "black",
+                fontWeight: "bold",
+                padding: "8px 16px",
+                textTransform: "uppercase",
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                }
+              }}
+              onClick={() => navigate("/activity")}
+            >
               PRODUCTEURS
             </Button>
           </Stack>
