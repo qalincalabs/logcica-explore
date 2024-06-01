@@ -117,22 +117,9 @@ export default function AppTopBar() {
           </Stack>
         </Box>
         <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: 'white',
-              borderRadius: 1,
-              boxShadow: 1,
-              padding: '2px 2px',  // reduced padding
-              width: '70%',
-              maxWidth: 190,  // reduced maxWidth
-              height: 30,
-              marginRight: 2,
-            }}
-          >
+          
             <Search indices={searchIndices} />
-          </Box>
+          
           {isSmallScreen && (
             <IconButton
               edge="end"
