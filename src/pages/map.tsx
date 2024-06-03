@@ -8,6 +8,7 @@ import { Airports } from "../components/airports";
 import type { HeadFC, PageProps } from "gatsby";
 import Layout from "../components/layout";
 import { useMemo } from "react";
+import "./searchbox.css";
 
 const MapPage: React.FC<PageProps> = () => {
 
@@ -31,7 +32,7 @@ const MapPage: React.FC<PageProps> = () => {
         searchClient={searchClient}
         indexName="Activities"
       >
-        <SearchBox placeholder="Search for airports..." className="searchbox" />
+        <SearchBox placeholder="Search for places..." className="searchbox" />
         <MapContainer
           style={mapStyles}
           className="map"

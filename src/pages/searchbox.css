@@ -1,0 +1,20 @@
+.searchbox {
+    position: absolute;
+    bottom: 650px;
+    left: 60px;
+    z-index: 1000;
+    width: 300px;
+  }
+  
+  .searchbox input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .searchbox .ais-SearchBox-submit,
+  .searchbox .ais-SearchBox-reset {
+    display: none;
+  }
+  
