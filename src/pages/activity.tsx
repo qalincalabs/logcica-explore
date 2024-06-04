@@ -1,5 +1,5 @@
 import * as React from "react";
-import { graphql, Link, type HeadFC, type PageProps, navigate } from "gatsby";
+import { graphql, Link, type HeadFC } from "gatsby";
 import Layout from "../components/layout";
 import L, { LatLng } from "leaflet";
 import "leaflet.markercluster";
@@ -13,10 +13,7 @@ import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import ReactDOMServer from "react-dom/server";
 import { useEffect } from "react";
-
-// center={[50.2686855,4.4135125]}
-// zoom={8}
-// scrollWheelZoom={false}
+import { Link as LinkIcon, Facebook as FacebookIcon } from "@mui/icons-material";
 
 const PartnershipPage = ({ data }: any) => {
   const mapStyles = {
@@ -48,7 +45,7 @@ const PartnershipPage = ({ data }: any) => {
 
     var markers = L.markerClusterGroup();
 
-    data.activities.nodes.map((activity: any) => {
+    data.activities.nodes.forEach((activity: any) => {
       const coordinatesToSwap = activity.place?.center?.coordinates;
       if (coordinatesToSwap) {
         const marker = L.marker(
@@ -56,7 +53,10 @@ const PartnershipPage = ({ data }: any) => {
         );
         marker.bindPopup(
           ReactDOMServer.renderToString(
-            <Link to={"/activity/" + activity._id}>{activity.name}</Link>
+            <div>
+              <Link to={"/activity/" + activity._id}>{activity.name}</Link>
+              {activity.profiles && activity.profiles.length > 0 && getProfileLinkAndIcon(activity.profiles)}
+            </div>
           )
         );
         markers.addLayer(marker);
@@ -64,7 +64,7 @@ const PartnershipPage = ({ data }: any) => {
     });
 
     map.addLayer(markers);
-  }, []);
+  }, [data]);
 
   return (
     <Layout>
@@ -77,29 +77,45 @@ export default PartnershipPage;
 
 export const Head: HeadFC = () => <title>Groupements</title>;
 
-/*
-filter: {
-  categories: { elemMatch: { _id: { eq: "64d4ceeca4d6089295a8a753" } } }
-}
-*/
-
 export const query = graphql`
   query {
     activities: allMongodbActivities(sort: [{ name: ASC }]) {
       nodes {
         _id
         name
-        description {
-          short {
-            markdown
-          }
-        }
         place {
           center {
             coordinates
           }
         }
+        profiles {
+          type
+          link
+        }
       }
     }
   }
 `;
+
+const getProfileLinkAndIcon = (profiles: any) => {
+  console.log('Profiles:', profiles); // Ajout de logs pour débogage
+  const linkProfile = profiles.find((profile: any) => profile.link);
+  if (!linkProfile || !linkProfile.link) {
+    return null;
+  }
+
+  const link = linkProfile.link;
+  console.log('Link:', link); // Ajout de logs pour débogage
+  const icon = link.includes("facebook.com") ? 
+               <FacebookIcon style={{ fontSize: 16, marginRight: 5 }} /> : 
+               <LinkIcon style={{ fontSize: 16, marginRight: 5 }} />;
+  
+  return (
+    <a href={link} target="_blank" style={{ textDecoration: "none", color: "#3b5998", cursor: "pointer" }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {icon}
+        <span style={{ fontSize: 12 }}>{linkProfile.type}</span>
+      </div>
+    </a>
+  );
+};
