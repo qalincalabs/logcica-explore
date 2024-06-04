@@ -48,9 +48,11 @@ module.exports = {
       options: {
         linkStyles: false // (default: true) Enable/disable loading stylesheets via CDN
       }
-    }
+    },
+    'gatsby-plugin-svgr'
   ],
 };
+
 
 const config: GatsbyConfig = {
   siteMetadata: {
