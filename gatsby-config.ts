@@ -37,6 +37,9 @@ module.exports = {
         dbName: process.env.MONGO_DB_NAME,
         collection: collections,
         connectionString: process.env.MONGO_CONNECTION_STRING,
+        extraParams: {
+          appName:"Cluster0",
+        },
         query: {},
         preserveObjectIds: false,
       },
