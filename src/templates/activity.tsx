@@ -1,6 +1,5 @@
 import React from "react";
 import { graphql, PageProps } from "gatsby";
-import AppTopBar from "../components/app-top-bar";
 import {
   Box,
   Grid,
@@ -18,6 +17,8 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contacts = activity.contacts;
   const profiles = activity.profiles;
   const organisation = activity.manager?.organisation || {};
+  const places = data.places.nodes;
+  const contributions = data.contributions.nodes;
 
   return (
     <Layout>
@@ -71,27 +72,27 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
           </Paper>
         )}
         <Grid container>
-        {contacts && contacts.length > 0 && (
-          <Box sx={{ m: 2 }}>
-            <Typography variant="h4" component="h4">
-              Contact
-            </Typography>
-            <Stack spacing={2}>
-              {contacts.map((contact: any) => (
-                <Paper key={contact.mainEmail} sx={{ p: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <Email sx={{ mr: 1 }} />
-                    <Typography>{contact.mainEmail}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Phone sx={{ mr: 1 }} />
-                    <Typography>{contact.mainPhoneNumberFormatted ?? contact.mainPhoneNumber}</Typography>
-                  </Box>
-                </Paper>
-              ))}
-            </Stack>
-          </Box>
-        )}
+          {contacts && contacts.length > 0 && (
+            <Box sx={{ m: 2 }}>
+              <Typography variant="h4" component="h4">
+                Contact
+              </Typography>
+              <Stack spacing={2}>
+                {contacts.map((contact: any) => (
+                  <Paper key={contact.mainEmail} sx={{ p: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Email sx={{ mr: 1 }} />
+                      <Typography>{contact.mainEmail}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Phone sx={{ mr: 1 }} />
+                      <Typography>{contact.mainPhoneNumberFormatted ?? contact.mainPhoneNumber}</Typography>
+                    </Box>
+                  </Paper>
+                ))}
+              </Stack>
+            </Box>
+          )}
           {profiles && profiles.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={6}>
               <Box sx={{ m: 2 }}>
@@ -102,7 +103,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                   <Stack direction="column" spacing={1}>
                     {profiles.map((profile: any) => (
                       <Box key={profile.key} sx={{ display: 'inline-flex', alignItems: 'center' }}>
-                      <Typography sx={{ fontWeight: 'bold' }}>{profile.type} : {""}</Typography>
+                        <Typography sx={{ fontWeight: 'bold' }}>{profile.type} : {""}</Typography>
                         <Link href={profile.link} target="_blank" sx={{ color: 'primary.main', textDecoration: 'underline', display: 'inline-flex', alignItems: 'center' }}>
                           {profile.localKey ?? profile.key} <OpenInNew sx={{ ml: 0.5 }} />
                         </Link>
@@ -130,20 +131,35 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+          {places && places.length > 0 && (
+            <Grid item xs={12} sm={12} md={6} xl={6}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Adresse
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    {places.map((place: any) => (
+                      <Typography key={place.title}>{place.title}</Typography>
+                    ))}
+                  </Stack>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
         </Grid>
-        
       </Box>
     </Layout>
   );
 }
 
 export const query = graphql`
-query ($id: String!) {
+query GetActivityAndRelatedData($id: String!) {
   activity: mongodbActivities(_id: { eq: $id }) {
     _id
     name
-    manager{
-      organisation{
+    manager {
+      organisation {
         name
         number
         legalFormShort
@@ -176,7 +192,11 @@ query ($id: String!) {
       mainPhoneNumberFormatted
     }
   }
-  
+  places: allMongodbPlaces(filter: { id: { eq: $id } }) {
+    nodes {
+      title
+    }
+  }
   contributions: allMongodbContributions(
     filter: { contributor: { activity: { _id: { eq: $id } } } }
   ) {
