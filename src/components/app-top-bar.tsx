@@ -51,75 +51,34 @@ export default function AppTopBar() {
   );
 
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" sx={{ height: '64px' }}>
       <Toolbar>
-        <Typography variant="h6" sx={{ flex: 1 }}>
+        <Typography variant="h6" sx={{ flex: { xs: 1, sm: 0.2 }, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           logCiCa explore
         </Typography>
-        <Box sx={{ flex: 1, display: { xs: "none", sm: "flex" }, justifyContent: "center" }}>
-        <Stack direction="row" gap={2} sx={{ marginLeft: 2 }}>
-            <Button
-              sx={{
-                color: "black",
-                fontWeight: "bold",
-                padding: "8px 16px",
-                textTransform: "uppercase",
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                }
-              }}
-              onClick={() => navigate("/product")}
-            >
-              PRODUITS
-            </Button>
-            <Button
-              sx={{
-                color: "black",
-                fontWeight: "bold",
-                padding: "8px 16px",
-                textTransform: "uppercase",
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                }
-              }}
-              onClick={() => navigate("/marketplace")}
-            >
-              MARCHÉS
-            </Button>
-            <Button
-              sx={{
-                color: "black",
-                fontWeight: "bold",
-                padding: "8px 16px",
-                textTransform: "uppercase",
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                }
-              }}
-              onClick={() => navigate("/partnership")}
-            >
-              GROUPEMENTS
-            </Button>
-            <Button
-              sx={{
-                color: "black",
-                fontWeight: "bold",
-                padding: "8px 16px",
-                textTransform: "uppercase",
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                }
-              }}
-              onClick={() => navigate("/activity")}
-            >
-              PRODUCTEURS
-            </Button>
+        <Box sx={{ flex: { xs: 1, sm: 0.6 }, display: { xs: "none", sm: "flex" }, justifyContent: "center" }}>
+          <Stack direction="row" gap={1} sx={{ marginLeft: 2 }}>
+            {menuItems.map((item, index) => (
+              <Button
+                key={index}
+                sx={{
+                  color: "black",
+                  fontWeight: "bold",
+                  padding: "8px 16px",
+                  textTransform: "uppercase",
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0',
+                  }
+                }}
+                onClick={() => navigate(item.path)}
+              >
+                {item.label}
+              </Button>
+            ))}
           </Stack>
         </Box>
-        <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-          
-            <Search indices={searchIndices} />
-          
+        <Box sx={{ flex: { xs: 1, sm: 0.2 }, display: "flex", justifyContent: "flex-end" }}>
+          <Search indices={searchIndices} />
           {isSmallScreen && (
             <IconButton
               edge="end"
