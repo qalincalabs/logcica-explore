@@ -1,27 +1,24 @@
 import React from "react";
 import { graphql, navigate } from "gatsby";
-import AppTopBar from "../components/app-top-bar";
 import {
   Box,
-  Button,
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
-  CardHeader,
   Grid,
   IconButton,
-  ListItem,
   Paper,
   Stack,
   Typography,
+  Link as MuiLink,
 } from "@mui/material";
 import {
-  CalendarMonth,
+  Email,
   Facebook,
   Language,
+  Phone,
   Place,
-  Link,
+  OpenInNew
 } from "@mui/icons-material";
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
@@ -40,33 +37,37 @@ export default function PartnershipTemplate({ data }: any) {
   const members = data.contributions.nodes
     .map((c: any) => c.contributor.partnership)
     .filter((p: any) => p != null && p.name)
-    .sort((a: any, b: any) => {
-      return a.name.localeCompare(b.name);
-    });
+    .sort((a: any, b: any) => a.name.localeCompare(b.name));
 
   const mainOrganisation = data.partnership?.mainOrganisation;
 
-  /*
-  const stalls = data.stalls.nodes.sort((a: any, b: any) =>
-    a.name.localeCompare(b.name)
-  );
-  const marketplaceFacebookProfile = marketplace.profiles?.find(
-    (p: any) => p.type == "facebook"
-  );
-
-  */
-
   return (
     <Layout>
-      <Box>
-        <Typography align="center" variant="h3" component="h3">
+      <Box sx={{ p: 2 }}>
+        <Typography align="center" variant="h3" component="h3" sx={{ mb: 3 }}>
           {partnership.name}
         </Typography>
         {partnership.profiles.find(
           (p: any) => p.description?.short && p.type == "web_element"
         ) && (
-          <Paper sx={{ p: 1, m: 2 }}>
-            <Markdown>
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Markdown
+              options={{
+                overrides: {
+                  a: {
+                    component: (props: any) => (
+                      <MuiLink
+                        href={props.href}
+                        target="_blank"
+                        sx={{ color: 'primary.main', textDecoration: 'underline', display: 'inline-flex', alignItems: 'center' }}
+                      >
+                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                      </MuiLink>
+                    ),
+                  },
+                },
+              }}
+            >
               {
                 partnership.profiles.find(
                   (p: any) => p.description?.short && p.type == "web_element"
@@ -77,10 +78,10 @@ export default function PartnershipTemplate({ data }: any) {
         )}
         {mainOrganisation && (
           <Box sx={{ m: 2 }}>
-            <Typography variant="h4" component="h4">
+            <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
               Entreprise principale
             </Typography>
-            <Paper sx={{ p: 1 }}>
+            <Paper sx={{ p: 2 }}>
               <Box>
                 <Box>
                   {mainOrganisation.legalName ?? mainOrganisation.name}
@@ -90,16 +91,17 @@ export default function PartnershipTemplate({ data }: any) {
                 </Box>
                 {mainOrganisation.number && (
                   <Box>
-                    <span>Numéro d'entreprise : </span>
-                    <a
+                    <span><strong>Numéro d'entreprise : </strong></span>
+                    <MuiLink
                       target="_blank"
                       href={
                         "https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=" +
                         mainOrganisation.number.replace(/\D/g, "")
                       }
+                      sx={{ color: 'primary.main', textDecoration: 'underline' }}
                     >
                       {mainOrganisation.number}
-                    </a>
+                    </MuiLink>
                   </Box>
                 )}
                 <Box>
@@ -114,95 +116,100 @@ export default function PartnershipTemplate({ data }: any) {
             </Paper>
           </Box>
         )}
-        <Grid container>
+        <Grid container spacing={2}>
           {workspaces.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12} sm={6}>
               <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4">
+                <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
                   Espaces de travail
                 </Typography>
-                <Stack direction="row">
-                  {workspaces.map((workspace: any) => (
-                    <Paper sx={{ p: 1, m: 2 }}>
-                      <Typography sx={{ fontWeight: "bold" }}>
-                        {workspace.name}
-                      </Typography>
-                      <Box>{workspace.place?.address?.street}</Box>
-                      <Box>
-                        {workspace.place?.address?.postalCode}{" "}
-                        {workspace.place?.address?.locality}
+                <Paper sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    {workspaces.map((workspace: any, index: number) => (
+                      <Box key={index}>
+                        <Typography sx={{ fontWeight: "bold" }}>
+                          {workspace.name}
+                        </Typography>
+                        <Typography>{workspace.place?.address?.street}, {workspace.place?.address?.postalCode} {workspace.place?.address?.locality}</Typography>
                       </Box>
-                    </Paper>
-                  ))}
-                </Stack>
+                    ))}
+                  </Stack>
+                </Paper>
               </Box>
             </Grid>
           )}
           {counters.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12} sm={6}>
               <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4">
+                <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
                   Comptoirs
                 </Typography>
-                <Stack direction="row">
-                  {counters.map((counter: any) => (
-                    <Paper sx={{ p: 1, m: 2 }}>
-                      <Box>
-                        <a target="_blank" href={counter.link}>
-                          {counter.link}
-                        </a>
+                <Paper sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    {counters.map((counter: any, index: number) => (
+                      <Box key={index}>
+                        {counter.link && (
+                          <MuiLink href={counter.link} target="_blank" sx={{ display: 'block', mb: 1 }}>
+                            {counter.link}
+                          </MuiLink>
+                        )}
+                        <Typography sx={{ fontWeight: "bold" }}>
+                          {counter.purpose}
+                        </Typography>
+                        <Typography>{counter.place?.address?.street} {counter.place?.address?.postalCode} {counter.place?.address?.locality}</Typography>
                       </Box>
-                      <Typography sx={{ fontWeight: "bold" }}>
-                        {counter.purpose}
-                      </Typography>
-                      <Box>{counter.place?.address?.street}</Box>
-                      <Box>
-                        {counter.place?.address?.postalCode}{" "}
-                        {counter.place?.address?.locality}
-                      </Box>
-                    </Paper>
-                  ))}
-                </Stack>
+                    ))}
+                  </Stack>
+                </Paper>
               </Box>
             </Grid>
           )}
           {contacts && contacts.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4">
+                <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
                   Contacts
                 </Typography>
-                <Stack direction="row">
-                  {contacts.map((contact: any) => (
-                    <Paper sx={{ p: 1, m: 2 }}>
-                      <Typography sx={{ fontWeight: "bold" }}>
-                        {contact.purpose}
-                      </Typography>
-                      <Typography>{contact.mainEmail}</Typography>
-                      <Typography>
-                        {contact.mainPhoneNumberFormatted}
-                      </Typography>
-                    </Paper>
-                  ))}
-                </Stack>
+                <Paper sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    {contacts.map((contact: any, index: number) => (
+                      <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+                        {contact.mainEmail && (
+                          <>
+                            <Email sx={{ mr: 1 }} />
+                            <Typography>{contact.mainEmail}</Typography>
+                          </>
+                        )}
+                      </Box>
+                    ))}
+                    {contacts.map((contact: any, index: number) => (
+                      <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+                        {contact.mainPhoneNumberFormatted && (
+                          <>
+                            <Phone sx={{ mr: 1 }} />
+                            <Typography>{contact.mainPhoneNumberFormatted}</Typography>
+                          </>
+                        )}
+                      </Box>
+                    ))}
+                  </Stack>
+                </Paper>
               </Box>
             </Grid>
           )}
         </Grid>
         {members.length > 0 && (
           <Box sx={{ m: 2 }}>
-            <Typography variant="h4" component="h4">
+            <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
               Membres
             </Typography>
-            <Grid container spacing={1}>
-              {members.map((member: any) => (
-                <Grid item xs={4} sm={3} md={3} xl={2}>
+            <Grid container spacing={2}>
+              {members.map((member: any, index: number) => (
+                <Grid item xs={12} sm={6} md={4} xl={3} key={index}>
                   <Card>
-                    <CardActionArea>
-                      <CardContent
-                        onClick={() => navigate("/partnership/" + member._id)}
-                      >
-                        {member.name}
+                    <CardActionArea onClick={() => navigate("/partnership/" + member._id)}>
+                      <CardContent>
+                        <Typography variant="h6">{member.name}</Typography>
                       </CardContent>
                     </CardActionArea>
                   </Card>
@@ -213,43 +220,26 @@ export default function PartnershipTemplate({ data }: any) {
         )}
         {producers.length > 0 && (
           <Box sx={{ m: 2 }}>
-            <Typography variant="h4" component="h4">
+            <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
               Producteurs
             </Typography>
             <Grid container spacing={2}>
-              {producers.map((activity: any) => (
-                <Grid item xs={12} sm={6} md={4} xl={3}>
+              {producers.map((activity: any, index: number) => (
+                <Grid item xs={12} sm={6} md={4} xl={3} key={index}>
                   <Card>
-                    <CardActionArea>
+                    <CardActionArea onClick={() => navigate("/activity/" + activity._id)}>
                       <CardContent>
-                        <Stack direction="row">
-                          <Typography onClick={() => navigate("/activity/" + activity._id)} variant="h6">{activity.name}</Typography>
-                          {activity.profiles?.find(
-                            (p: any) => p.type == "facebook"
-                          ) && (
-                            <a
-                              href={
-                                "https://www.facebook.com/" +
-                                activity.profiles.find(
-                                  (p: any) => p.type == "facebook"
-                                ).key
-                              }
-                            >
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Typography variant="h6">{activity.name}</Typography>
+                          {activity.profiles?.find((p: any) => p.type === "facebook") && (
+                            <a href={`https://www.facebook.com/${activity.profiles.find((p: any) => p.type === "facebook").key}`} target="_blank" rel="noopener noreferrer">
                               <IconButton size="small">
                                 <Facebook />
                               </IconButton>
                             </a>
                           )}
-                          {activity.profiles?.find(
-                            (p: any) => p.type == "website"
-                          ) && (
-                            <a
-                              href={
-                                activity.profiles.find(
-                                  (p: any) => p.type == "website"
-                                ).link
-                              }
-                            >
+                          {activity.profiles?.find((p: any) => p.type === "website") && (
+                            <a href={activity.profiles.find((p: any) => p.type === "website").link} target="_blank" rel="noopener noreferrer">
                               <IconButton size="small">
                                 <Language />
                               </IconButton>
@@ -257,9 +247,7 @@ export default function PartnershipTemplate({ data }: any) {
                           )}
                         </Stack>
                         {activity.place && (
-                          <Typography variant="subtitle1">
-                            {activity.place.name}
-                          </Typography>
+                          <Typography variant="subtitle1">{activity.place.name}</Typography>
                         )}
                       </CardContent>
                     </CardActionArea>
@@ -359,16 +347,3 @@ export const query = graphql`
     }
   }
 `;
-
-/*
-export const pageQuery = graphql`
-  query($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
-      frontmatter {
-        title
-      }
-    }
-  }
-`
-*/
