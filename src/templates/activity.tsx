@@ -1,13 +1,14 @@
 import React from "react";
 import { graphql, PageProps } from "gatsby";
-import AppTopBar from "../components/app-top-bar";
 import {
   Box,
   Grid,
   Paper,
   Stack,
   Typography,
+  Link,
 } from "@mui/material";
+import { OpenInNew, Email, Phone } from '@mui/icons-material';
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 
@@ -16,6 +17,8 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contacts = activity.contacts;
   const profiles = activity.profiles;
   const organisation = activity.manager?.organisation || {};
+  const places = data.places.nodes;
+  const contributions = data.contributions.nodes;
 
   return (
     <Layout>
@@ -23,10 +26,22 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
         <Typography align="center" variant="h3" component="h3">
           {activity.name}
         </Typography>
-              
+
         {activity.description?.short?.markdown && (
           <Paper sx={{ p: 1, m: 2 }}>
-            <Markdown>
+            <Markdown
+              options={{
+                overrides: {
+                  a: {
+                    component: (props: any) => (
+                      <Link href={props.href} target="_blank" sx={{ color: 'primary.main', textDecoration: 'underline', display: 'inline-flex', alignItems: 'center' }}>
+                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                      </Link>
+                    ),
+                  },
+                },
+              }}
+            >
               {activity.description?.short?.markdown}
             </Markdown>
           </Paper>
@@ -35,7 +50,19 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
           (p: any) => p.description?.long && p.type === "web_element"
         ) && (
           <Paper sx={{ p: 1, m: 2 }}>
-            <Markdown>
+            <Markdown
+              options={{
+                overrides: {
+                  a: {
+                    component: (props: any) => (
+                      <Link href={props.href} target="_blank" sx={{ color: 'primary.main', textDecoration: 'underline', display: 'inline-flex', alignItems: 'center' }}>
+                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                      </Link>
+                    ),
+                  },
+                },
+              }}
+            >
               {
                 activity.profiles.find(
                   (p: any) => p.description?.long && p.type === "web_element"
@@ -46,27 +73,25 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
         )}
         <Grid container>
           {contacts && contacts.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={6}>
-              <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4">
-                  Contacts
-                </Typography>
-                <Stack direction="row">
-                  {contacts.map((contact: any) => (
-                    <Paper key={contact.mainEmail} sx={{ p: 1, m: 2 }}>
-                      <Typography sx={{ fontWeight: "bold" }}>
-                        {contact.purpose}
-                      </Typography>
-                      <Typography>{contact.name}</Typography>
+            <Box sx={{ m: 2 }}>
+              <Typography variant="h4" component="h4">
+                Contact
+              </Typography>
+              <Stack spacing={2}>
+                {contacts.map((contact: any) => (
+                  <Paper key={contact.mainEmail} sx={{ p: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Email sx={{ mr: 1 }} />
                       <Typography>{contact.mainEmail}</Typography>
-                      <Typography>
-                        {contact.mainPhoneNumberFormatted ?? contact.mainPhoneNumber}
-                      </Typography>
-                    </Paper>
-                  ))}
-                </Stack>
-              </Box>
-            </Grid>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Phone sx={{ mr: 1 }} />
+                      <Typography>{contact.mainPhoneNumberFormatted ?? contact.mainPhoneNumber}</Typography>
+                    </Box>
+                  </Paper>
+                ))}
+              </Stack>
+            </Box>
           )}
           {profiles && profiles.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={6}>
@@ -74,14 +99,18 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 <Typography variant="h4" component="h4">
                   Profiles
                 </Typography>
-                <Stack direction="row">
-                  {profiles.map((profile: any) => (
-                    <Paper key={profile.key} sx={{ p: 1, m: 2 }}>
-                      <Typography sx={{ fontWeight: 'bold' }}>{profile.type}</Typography>
-                      <Typography><a href={profile.link} target="_blank">{profile.localKey ?? profile.key}</a></Typography>
-                    </Paper>
-                  ))}
-                </Stack>
+                <Paper sx={{ p: 1, m: 2 }}>
+                  <Stack direction="column" spacing={1}>
+                    {profiles.map((profile: any) => (
+                      <Box key={profile.key} sx={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <Typography sx={{ fontWeight: 'bold' }}>{profile.type} : {""}</Typography>
+                        <Link href={profile.link} target="_blank" sx={{ color: 'primary.main', textDecoration: 'underline', display: 'inline-flex', alignItems: 'center' }}>
+                          {profile.localKey ?? profile.key} <OpenInNew sx={{ ml: 0.5 }} />
+                        </Link>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Paper>
               </Box>
             </Grid>
           )}
@@ -93,11 +122,27 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 </Typography>
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="subtitle1" component="p">
-                    Numéro : {organisation.number}
+                    <strong>Numéro : </strong>{organisation.number}
                   </Typography>
                   <Typography variant="subtitle1" component="p">
-                    Forme juridique : {organisation.legalFormShort}
+                    <strong>Forme juridique : </strong>{organisation.legalFormShort}
                   </Typography>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
+          {places && places.length > 0 && (
+            <Grid item xs={12} sm={12} md={6} xl={6}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Adresse
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    {places.map((place: any) => (
+                      <Typography key={place.title}>{place.title}</Typography>
+                    ))}
+                  </Stack>
                 </Paper>
               </Box>
             </Grid>
@@ -109,12 +154,12 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
 }
 
 export const query = graphql`
-query ($id: String!) {
+query GetActivityAndRelatedData($id: String!) {
   activity: mongodbActivities(_id: { eq: $id }) {
     _id
     name
-    manager{
-      organisation{
+    manager {
+      organisation {
         name
         number
         legalFormShort
@@ -147,7 +192,11 @@ query ($id: String!) {
       mainPhoneNumberFormatted
     }
   }
-  
+  places: allMongodbPlaces(filter: { id: { eq: $id } }) {
+    nodes {
+      title
+    }
+  }
   contributions: allMongodbContributions(
     filter: { contributor: { activity: { _id: { eq: $id } } } }
   ) {
@@ -162,16 +211,3 @@ query ($id: String!) {
   }
 }
 `;
-
-/*
-export const pageQuery = graphql`
-  query($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
-      frontmatter {
-        title
-      }
-    }
-  }
-`
-*/

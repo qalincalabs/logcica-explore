@@ -18,7 +18,7 @@ import { Link as LinkIcon, Facebook as FacebookIcon } from "@mui/icons-material"
 const PartnershipPage = ({ data }: any) => {
   const mapStyles = {
     width: "100%",
-    height: "600px",
+    height: "700px",
   };
 
   useEffect(() => {
