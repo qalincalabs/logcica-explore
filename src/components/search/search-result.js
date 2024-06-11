@@ -19,21 +19,23 @@ const HitCount = () => {
   ) : null
 }
 
-const PageHit = ({ hit }) => (
-  <div>
-    <Link to={"/activity/" + hit.objectID}>
-      <h4>
-        <Highlight attribute="name" hit={hit} />
-      </h4>
-    </Link>
-    <Snippet attribute="description.short.markdown" hit={hit} />
-  </div>
-)
+const PageHit = ({ hit, indexName }) => {
+  return (
+    <div>
+      <Link to={`/${indexName}/${hit.objectID}`}>
+        <h4>
+          <Highlight attribute="name" hit={hit} />
+        </h4>
+      </Link>
+      <Snippet attribute="description.short.markdown" hit={hit} />
+    </div>
+  );
+};
 
 const HitsInIndex = ({ index }) => (
   <Index indexName={index.name}>
     <HitCount />
-    <Hits className="Hits" hitComponent={PageHit} />
+    <Hits className="Hits" hitComponent={({hit})=>PageHit({hit, indexName : index.name})} />
   </Index>
 )
 
