@@ -1,52 +1,48 @@
 .container {
-    display: flex;
-    justify-content: space-between; /* Distribue l'espace entre les éléments */
-    align-items: center;
-    background-color: #fdd835; /* Couleur de fond */
-    padding: 10px;
-    border-radius: 5px; /* Coins arrondis */
+  display: flex;
+  justify-content: space-between; /* Distribue l'espace entre les éléments */
+  align-items: center;
+  background-color: #fdd835; /* Couleur de fond */
+  padding: 10px;
+  border-radius: 5px; /* Coins arrondis */
+}
+
+
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  width: 20px;
+  height: 20px;
+  color: #000; /* Couleur de l'icône */
+}
+
+.search-input {
+  padding: 10px 10px 10px 30px; /* Ajouter de l'espace à gauche pour l'icône */
+  border: 1px solid #ccc; /* Couleur de la bordure */
+  border-radius: 5px; /* Coins arrondis */
+  font-size: 16px; /* Taille de la police */
+  width: 300px; /* Réduire la largeur */
+  outline: none; /* Enlever le contour par défaut */
+}
+
+.search-input::placeholder {
+  color: #000000; /* Couleur du texte du placeholder */
+}
+
+/* Médias queries pour écran réduit */
+@media (max-width: 768px) {
+  .container {
+    justify-content: center; /* Centrer le contenu sur les petits écrans */
   }
-  
-  .producteurs {
-    /* Ajoutez les styles pour les éléments "producteurs" ici */
-  }
-  
-  .search-form {
-    display: flex;
-    align-items: center;
-  }
-  
-  .search-input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  
-  .search-icon {
-    position: absolute;
-    left: 10px;
-    width: 20px;
-    height: 20px;
-    color: #000; /* Couleur de l'icône */
-  }
-  
-  .search-input {
-    padding: 10px 10px 10px 40px; /* Ajouter de l'espace à gauche pour l'icône */
-    border: 1px solid #ccc; /* Couleur de la bordure */
-    border-radius: 5px; /* Coins arrondis */
-    font-size: 16px; /* Taille de la police */
-    width: 200px; /* Réduire la largeur */
-    outline: none; /* Enlever le contour par défaut */
-  }
-  
-  .search-input::placeholder {
-    color: #000000; /* Couleur du texte du placeholder */
-  }
-  
-  /* Médias queries pour écran réduit */
-  @media (max-width: 768px) {
-    .container {
-      justify-content: center; /* Centrer le contenu sur les petits écrans */
-    }
-  }
-  
+}

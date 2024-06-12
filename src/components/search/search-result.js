@@ -34,6 +34,8 @@ const PageHit = ({ hit, indexName }) => {
 
 const HitsInIndex = ({ index }) => (
   <Index indexName={index.name}>
+        <h2>{index.name === "activity" ? "Producteurs" : "Groupements"}</h2>
+
     <HitCount />
     <Hits className="Hits" hitComponent={({hit})=>PageHit({hit, indexName : index.name})} />
   </Index>
