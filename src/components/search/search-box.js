@@ -8,9 +8,7 @@ const SearchBox = ({ className, onFocus, onChange }) => {
 
   return (
     <div className="container">
-      <div className="producteurs">
-        {/* Ajoutez ici le contenu ou les éléments pour "producteurs" */}
-      </div>
+      
       <form className={`search-form ${className}`}>
         <div className="search-input-container">
           <SearchIcon className="search-icon" />
