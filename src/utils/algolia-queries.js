@@ -77,6 +77,120 @@ const partnershipsQuery = `
 }
 `;
 
+const productsQuery = `
+{
+  products: allMongodbProducts {
+    nodes {
+      _id
+      dimensions {
+        name
+      }
+      netWeight {
+        unit
+        value
+      }
+      producer {
+        activity
+        organisation
+        workspace
+      }
+      categories {
+        name
+      }
+      allergenList {
+        name
+      }
+      tags
+      references
+      availabilities
+      owner {
+        activity
+        organisation
+        workspace
+      }
+      ownerRoles
+      consumerStorageInstructions {
+        short {
+          markdown
+        }
+      }
+      consumerUsageInstructions {
+        short {
+          markdown
+        }
+      }
+      description {
+        short {
+          markdown
+        }
+      }
+      ingredientStatement {
+        short {
+          markdown
+        }
+      }
+      originStatement {
+        short {
+          markdown
+        }
+      }
+      mainImage {
+        url
+      }
+      alcoholPercentage
+      images
+      nutrientList
+      netContent {
+        unit
+        value
+      }
+      weight {
+        unit
+        value
+      }
+      producerReference
+      ownerReference
+    }
+  }
+}
+`;
+
+const MarchesQuery = `
+{
+  Marches: allMongodbCounters {
+    nodes {
+      _id
+      key
+      name
+      workspace
+      place {
+        id
+      }
+      catalog {
+        id
+      }
+      availabilities
+      translations {
+        en {
+          name
+        }
+      }
+      description {
+        short {
+          markdown
+        }
+      }
+      manager {
+        organisation {
+          id
+        }
+      }
+      updatedAt
+    }
+  }
+}
+`;
+
 const addContentDigest = obj => {
   const content = JSON.stringify(obj);
   const digest = crypto
@@ -114,16 +228,33 @@ const queries = [
     transformer: ({ data }) => data.partnerships.nodes.map(n => {
       n.objectID = n._id;
       delete n._id;
-      if (n.place?.center?.coordinates) {
-        n._geoloc = {
-          lat: n.place.center.coordinates[1],
-          lng: n.place.center.coordinates[0]
-        };
-        delete n.place.center;
-      }
       return addContentDigest(n);
     }),
     indexName: "partnership",
+    settings: { 
+      //attributesToSnippet: [`description.short.markdown:20`] 
+    },
+  },
+  {
+    query: productsQuery,
+    transformer: ({ data }) => data.products.nodes.map(n => {
+      n.objectID = n._id;
+      delete n._id;
+      return addContentDigest(n);
+    }),
+    indexName: "product",
+    settings: { 
+      //attributesToSnippet: [`description.short.markdown:20`] 
+    },
+  },
+  {
+    query: MarchesQuery,
+    transformer: ({ data }) => data.Marches.nodes.map(n => {
+      n.objectID = n._id;
+      delete n._id;
+      return addContentDigest(n);
+    }),
+    indexName: "marketplace",
     settings: { 
       //attributesToSnippet: [`description.short.markdown:20`] 
     },

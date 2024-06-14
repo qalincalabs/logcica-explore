@@ -18,7 +18,9 @@ const theme = {
 export default function Search() {
   const indices = [
     { name: 'activity' },
-    { name: 'partnership' }
+    { name: 'partnership' },
+    { name: 'product'}
+  
   ];
   const rootRef = createRef()
   const [query, setQuery] = useState()
