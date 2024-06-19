@@ -1,5 +1,7 @@
+
 import React from "react";
 import { graphql, PageProps } from "gatsby";
+import { ProductCardList } from "../components/product-card-list";
 import {
   Box,
   Grid,
@@ -19,6 +21,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const organisation = activity.manager?.organisation || {};
   const places = data.places.nodes;
   const contributions = data.contributions.nodes;
+  const products = data.products.nodes;
 
   return (
     <Layout>
@@ -122,7 +125,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 </Typography>
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="subtitle1" component="p">
-                    <strong>Numéro : </strong>{organisation.number}
+                    <strong>Numéro BE : </strong>{organisation.number}
                   </Typography>
                   <Typography variant="subtitle1" component="p">
                     <strong>Forme juridique : </strong>{organisation.legalFormShort}
@@ -144,6 +147,16 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                     ))}
                   </Stack>
                 </Paper>
+              </Box>
+            </Grid>
+          )}
+          {products && products.length > 0 && (
+            <Grid item xs={12}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Products
+                </Typography>
+                <ProductCardList products={products} />
               </Box>
             </Grid>
           )}
@@ -209,5 +222,13 @@ query GetActivityAndRelatedData($id: String!) {
       }
     }
   }
+  products: allMongodbProducts(filter: { owner: {activity: { _id: { eq: $id } } }}) {
+    nodes {
+      _id
+      name
+    }
+  }
 }
 `;
+
+
