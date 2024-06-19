@@ -60,7 +60,7 @@ const config: GatsbyConfig = {
     title: `logCiCa explore`,
     siteUrl: `https://explore.logcica.org`,
     menuLinks: [
-      { name: "PRODUCTEURS", url: "/activity" },
+      { name: "PRODUCTEURS", url: "/" },
       { name: "GROUPEMENTS", url: "/partnership" },
       { name: "MARCHÉS", url: "/marketplace" },
       { name: "PRODUITS", url: "/product" },
