@@ -1,6 +1,6 @@
 import React, { createRef, useState, useMemo } from "react"
 import algoliasearch from "algoliasearch/lite"
-import { InstantSearch, Index, SearchBox, Hits } from "react-instantsearch"
+import { InstantSearch } from "react-instantsearch"
 import { ThemeProvider } from "styled-components"
 import StyledSearchBox from "./styled-search-box"
 import StyledSearchResult from "./styled-search-result"

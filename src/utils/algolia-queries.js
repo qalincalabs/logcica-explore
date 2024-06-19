@@ -1,4 +1,32 @@
-const crypto = require('crypto');
+const crypto = require("crypto");
+
+const catalogFieldsFragment = `
+fragment CatalogFields on mongodbCatalogs {
+  name
+  productCategories {
+    name
+  }
+  description {
+    short {
+      markdown
+    }
+  }
+}
+`;
+
+const placeFieldsFragment = `
+fragment PlaceFields on mongodbPlaces {
+  center {
+    coordinates
+  }
+  address {
+    locality
+  }
+  within {
+    name
+  }
+}
+`;
 
 const activitiesQuery = `
 {
@@ -22,31 +50,14 @@ const activitiesQuery = `
         ...PlaceFields
       }
       catalogs {
-        name
-        productCategories {
-          name
-        }
-        description {
-          short {
-            markdown
-          }
-        }
+        ...CatalogFields
       }
     }
   }
 }
 
-fragment PlaceFields on mongodbPlaces {
-  center {
-    coordinates
-  }
-  address {
-    locality
-  }
-  within {
-    name
-  }
-}
+${catalogFieldsFragment}
+${placeFieldsFragment}
 `;
 
 const partnershipsQuery = `
@@ -62,9 +73,6 @@ const partnershipsQuery = `
         name
       }
       profiles {
-        name
-      }
-      contacts {
         name
       }
       description {
@@ -83,59 +91,23 @@ const productsQuery = `
     nodes {
       _id
       name
-      dimensions {
-        height{
-        
-          value
-        }
-        length{
-          
-          value
-        }
-        width{
-          
-          value
-        }
-      }
-      netWeight {
-        
-        value
-      }
-      producer {
-        activity
-        organisation
-        workspace
-      }
       categories {
         name
       }
-      tags
-      references {
-        id
-      }
-      availabilities {
-        id
+      producer {
+        activity {
+          name
+        }
+        organisation {
+          name
+        }
       }
       owner {
         activity {
-          id
+          name
         }
         organisation {
-          id
-        }
-        workspace {
-          id
-        }
-      }
-      ownerRoles
-      consumerStorageInstructions {
-        short {
-          markdown
-        }
-      }
-      consumerUsageInstructions {
-        short {
-          markdown
+          name
         }
       }
       description {
@@ -148,50 +120,27 @@ const productsQuery = `
           markdown
         }
       }
-      originStatement {
-        short {
-          markdown
-        }
-      }
-      mainImage {
-        url
-      }
-      alcoholPercentage
-      
-      netContent {
-       
-      
-        value
-      }
-      weight {
-        unit
-        value
-      }
-      producerReference
-      ownerReference
     }
   }
 }
 `;
 
-const CountersQuery = `
+const countersQuery = `
 {
-  Counters: allMongodbCounters {
+  counters: allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
     nodes {
       _id
-      key
       name
-      workspace
-      internalName
       type
-      marketplace
+      marketplace {
+        name
+      }
       place {
-        id
+        ...PlaceFields
       }
       catalog {
-        id
+        ...CatalogFields
       }
-      availabilities
       description {
         short {
           markdown
@@ -199,23 +148,22 @@ const CountersQuery = `
       }
       manager {
         organisation {
-          id
+          name
         }
       }
-      updatedAt
     }
   }
 }
+
+${placeFieldsFragment}
+${catalogFieldsFragment}
 `;
 
-const addContentDigest = obj => {
+const addContentDigest = (obj) => {
   const content = JSON.stringify(obj);
-  const digest = crypto
-    .createHash('md5')
-    .update(content)
-    .digest('hex');
+  const digest = crypto.createHash("md5").update(content).digest("hex");
   obj.internal = {
-    contentDigest: digest
+    contentDigest: digest,
   };
   return obj;
 };
@@ -223,57 +171,68 @@ const addContentDigest = obj => {
 const queries = [
   {
     query: activitiesQuery,
-    transformer: ({ data }) => data.activities.nodes.map(n => {
-      n.objectID = n._id;
-      delete n._id;
-      if (n.place?.center?.coordinates) {
-        n._geoloc = {
-          lat: n.place.center.coordinates[1],
-          lng: n.place.center.coordinates[0]
-        };
-        delete n.place.center;
-      }
-      return addContentDigest(n);
-    }),
+    transformer: ({ data }) =>
+      data.activities.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        if (n.place?.center?.coordinates) {
+          n._geoloc = {
+            lat: n.place.center.coordinates[1],
+            lng: n.place.center.coordinates[0],
+          };
+          delete n.place.center;
+        }
+        return addContentDigest(n);
+      }),
     indexName: "activity",
-    settings: { 
-      //attributesToSnippet: [`description.short.markdown:20`] 
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
     },
   },
   {
     query: partnershipsQuery,
-    transformer: ({ data }) => data.partnerships.nodes.map(n => {
-      n.objectID = n._id;
-      delete n._id;
-      return addContentDigest(n);
-    }),
+    transformer: ({ data }) =>
+      data.partnerships.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
     indexName: "partnership",
-    settings: { 
-      //attributesToSnippet: [`description.short.markdown:20`] 
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
     },
   },
   {
     query: productsQuery,
-    transformer: ({ data }) => data.products.nodes.map(n => {
-      n.objectID = n._id;
-      delete n._id;
-      return addContentDigest(n);
-    }),
+    transformer: ({ data }) =>
+      data.products.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
     indexName: "product",
-    settings: { 
-      //attributesToSnippet: [`description.short.markdown:20`] 
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
     },
   },
   {
-    query: CountersQuery,
-    transformer: ({ data }) => data.Counters.nodes.map(n => {
-      n.objectID = n._id;
-      delete n._id;
-      return addContentDigest(n);
-    }),
+    query: countersQuery,
+    transformer: ({ data }) =>
+      data.counters.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        if (n.place?.center?.coordinates) {
+          n._geoloc = {
+            lat: n.place.center.coordinates[1],
+            lng: n.place.center.coordinates[0],
+          };
+          delete n.place.center;
+        }
+        return addContentDigest(n);
+      }),
     indexName: "marketplace",
-    settings: { 
-      //attributesToSnippet: [`description.short.markdown:20`] 
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
     },
   },
 ];

@@ -150,7 +150,7 @@ export const query = graphql`
         link
       }
     }
-    stalls: allMongodbCounters(filter: { marketplace: { eq: $id } }) {
+    stalls: allMongodbCounters(filter: { marketplace: { _id: { eq: $id } } }) {
       nodes {
         _id
         name
