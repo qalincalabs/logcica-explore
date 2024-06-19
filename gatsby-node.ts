@@ -110,15 +110,6 @@ exports.createSchemaCustomization = ({ actions }: any) => {
 
 exports.createPages = async function ({ actions, graphql }: any) {
 
-  const { createRedirect } = actions
-
-  createRedirect({
-    fromPath: '/',
-    toPath: '/activity',
-    isPermanent: true,
-    redirectInBrowser: true,
- })
-
   const { data: marketplacesQuery } = await graphql(`
     query {
       allMongodbCounters(filter: { type: { eq: "marketplace" } }) {

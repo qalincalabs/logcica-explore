@@ -27,7 +27,7 @@ export default function AppTopBar() {
   };
 
   const menuItems = [
-    { label: "PRODUCTEURS", path: "/activity" },
+    { label: "PRODUCTEURS", path: "/" },
     { label: "GROUPEMENTS", path: "/partnership" },
     { label: "MARCHÉS", path: "/marketplace" },
     { label: "PRODUITS", path: "/product" },
