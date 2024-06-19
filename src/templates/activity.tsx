@@ -19,6 +19,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const organisation = activity.manager?.organisation || {};
   const places = data.places.nodes;
   const contributions = data.contributions.nodes;
+  const products = data.products.nodes;
 
   return (
     <Layout>
@@ -122,7 +123,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 </Typography>
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="subtitle1" component="p">
-                    <strong>Numéro : </strong>{organisation.number}
+                    <strong>Numéro BE : </strong>{organisation.number}
                   </Typography>
                   <Typography variant="subtitle1" component="p">
                     <strong>Forme juridique : </strong>{organisation.legalFormShort}
@@ -141,6 +142,22 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                   <Stack spacing={2}>
                     {places.map((place: any) => (
                       <Typography key={place.title}>{place.title}</Typography>
+                    ))}
+                  </Stack>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
+          {products && products.length > 0 && (
+            <Grid item xs={12} sm={12} md={6} xl={6}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Products
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    {products.map((product: any) => (
+                      <Typography key={product._id}>{product.name}</Typography>
                     ))}
                   </Stack>
                 </Paper>
@@ -207,6 +224,12 @@ query GetActivityAndRelatedData($id: String!) {
           name
         }
       }
+    }
+  }
+  products: allMongodbProducts(filter: { owner: {activity: { _id: { eq: $id } } }}) {
+    nodes {
+      _id
+      name
     }
   }
 }
