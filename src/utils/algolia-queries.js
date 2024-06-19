@@ -96,6 +96,7 @@ const productsQuery = `
       }
       producer {
         activity {
+          _id
           name
         }
         organisation {

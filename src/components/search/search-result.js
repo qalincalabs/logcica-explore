@@ -8,9 +8,6 @@ import {
   PoweredBy,
   useStats,
 } from "react-instantsearch"
-import {
-  Stack
-} from "@mui/material";
 
 const HitCount = () => {
   const { nbHits } = useStats()
@@ -25,7 +22,7 @@ const HitCount = () => {
 const PageHit = ({ hit, indexName }) => {
   return (
     <div>
-      <Link to={ indexName === "product" ? `/#${hit.objectID}` : `/${indexName}/${hit.objectID}`}>
+      <Link to={ indexName === "product" ? `/activity/${hit.producer?.activity?._id}/#${hit.objectID}` : `/${indexName}/${hit.objectID}`}>
         <h4>
           <Highlight attribute="name" hit={hit} />
         </h4>

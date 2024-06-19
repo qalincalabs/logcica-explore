@@ -149,7 +149,7 @@ export function ProductCard({ item }: any) {
   };
 
   return (
-    <Card id={item._id}>
+    <Card style={{scrollPaddingTop: "100px", scrollMarginTop: "100px"}} id={item._id}>
       <Grid container>
         {item.mainImage && (
           <Grid item xs={3} sm={2} md={3}>

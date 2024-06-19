@@ -20,7 +20,7 @@ export default function Search() {
     { name: 'activity' },
     { name: 'partnership' },
     { name: 'marketplace'},
-    // TODO (uncomment next commit) : { name: 'product'},
+    { name: 'product'},
   ];
   const rootRef = createRef()
   const [query, setQuery] = useState()
