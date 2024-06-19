@@ -27,10 +27,10 @@ export default function AppTopBar() {
   };
 
   const menuItems = [
-    { label: "PRODUITS", path: "/product" },
-    { label: "MARCHÉS", path: "/marketplace" },
-    { label: "GROUPEMENTS", path: "/partnership" },
     { label: "PRODUCTEURS", path: "/activity" },
+    { label: "GROUPEMENTS", path: "/partnership" },
+    { label: "MARCHÉS", path: "/marketplace" },
+    { label: "PRODUITS", path: "/product" },
   ];
 
   const list = () => (
