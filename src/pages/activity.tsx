@@ -15,7 +15,7 @@ import ReactDOMServer from "react-dom/server";
 import { useEffect } from "react";
 import { Link as LinkIcon, Facebook as FacebookIcon } from "@mui/icons-material";
 
-const PartnershipPage = ({ data }: any) => {
+const ActivityPage = ({ data }: any) => {
   const mapStyles = {
     width: "100%",
     height: "700px",
@@ -73,7 +73,7 @@ const PartnershipPage = ({ data }: any) => {
   );
 };
 
-export default PartnershipPage;
+export default ActivityPage;
 
 export const Head: HeadFC = () => <title>Groupements</title>;
 

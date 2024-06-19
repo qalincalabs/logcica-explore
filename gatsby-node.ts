@@ -38,11 +38,17 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       }
       type mongodbCounters implements Node {
         catalog: mongodbCatalogs @link(by: "mongodb_id")
+        marketplace: mongodbCounters @link(by: "mongodb_id")
         place: mongodbPlaces @link(by: "mongodb_id")
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
         actions: [mongodbActions] @link(by:"subject.counter", from: "mongodb_id")
       }
       type mongodbProductsOwner implements Node {
+        organisation: mongodbOrganisations @link(by: "mongodb_id")
+        workspace: mongodbWorkspaces @link(by: "mongodb_id")
+        activity: mongodbActivities @link(by: "mongodb_id")
+      }
+      type mongodbProductsProducer implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
         workspace: mongodbWorkspaces @link(by: "mongodb_id")
         activity: mongodbActivities @link(by: "mongodb_id")
@@ -103,6 +109,16 @@ exports.createSchemaCustomization = ({ actions }: any) => {
 };
 
 exports.createPages = async function ({ actions, graphql }: any) {
+
+  const { createRedirect } = actions
+
+  createRedirect({
+    fromPath: '/',
+    toPath: '/activity',
+    isPermanent: true,
+    redirectInBrowser: true,
+ })
+
   const { data: marketplacesQuery } = await graphql(`
     query {
       allMongodbCounters(filter: { type: { eq: "marketplace" } }) {

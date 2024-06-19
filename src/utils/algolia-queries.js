@@ -1,4 +1,32 @@
-const crypto = require('crypto');
+const crypto = require("crypto");
+
+const catalogFieldsFragment = `
+fragment CatalogFields on mongodbCatalogs {
+  name
+  productCategories {
+    name
+  }
+  description {
+    short {
+      markdown
+    }
+  }
+}
+`;
+
+const placeFieldsFragment = `
+fragment PlaceFields on mongodbPlaces {
+  center {
+    coordinates
+  }
+  address {
+    locality
+  }
+  within {
+    name
+  }
+}
+`;
 
 const activitiesQuery = `
 {
@@ -22,31 +50,14 @@ const activitiesQuery = `
         ...PlaceFields
       }
       catalogs {
-        name
-        productCategories {
-          name
-        }
-        description {
-          short {
-            markdown
-          }
-        }
+        ...CatalogFields
       }
     }
   }
 }
 
-fragment PlaceFields on mongodbPlaces {
-  center {
-    coordinates
-  }
-  address {
-    locality
-  }
-  within {
-    name
-  }
-}
+${catalogFieldsFragment}
+${placeFieldsFragment}
 `;
 
 const partnershipsQuery = `
@@ -64,9 +75,6 @@ const partnershipsQuery = `
       profiles {
         name
       }
-      contacts {
-        name
-      }
       description {
         short {
           markdown
@@ -77,14 +85,86 @@ const partnershipsQuery = `
 }
 `;
 
-const addContentDigest = obj => {
+const productsQuery = `
+{
+  products: allMongodbProducts {
+    nodes {
+      _id
+      name
+      categories {
+        name
+      }
+      producer {
+        activity {
+          _id
+          name
+        }
+        organisation {
+          name
+        }
+      }
+      owner {
+        activity {
+          name
+        }
+        organisation {
+          name
+        }
+      }
+      description {
+        short {
+          markdown
+        }
+      }
+      ingredientStatement {
+        short {
+          markdown
+        }
+      }
+    }
+  }
+}
+`;
+
+const countersQuery = `
+{
+  counters: allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
+    nodes {
+      _id
+      name
+      type
+      marketplace {
+        name
+      }
+      place {
+        ...PlaceFields
+      }
+      catalog {
+        ...CatalogFields
+      }
+      description {
+        short {
+          markdown
+        }
+      }
+      manager {
+        organisation {
+          name
+        }
+      }
+    }
+  }
+}
+
+${placeFieldsFragment}
+${catalogFieldsFragment}
+`;
+
+const addContentDigest = (obj) => {
   const content = JSON.stringify(obj);
-  const digest = crypto
-    .createHash('md5')
-    .update(content)
-    .digest('hex');
+  const digest = crypto.createHash("md5").update(content).digest("hex");
   obj.internal = {
-    contentDigest: digest
+    contentDigest: digest,
   };
   return obj;
 };
@@ -92,40 +172,68 @@ const addContentDigest = obj => {
 const queries = [
   {
     query: activitiesQuery,
-    transformer: ({ data }) => data.activities.nodes.map(n => {
-      n.objectID = n._id;
-      delete n._id;
-      if (n.place?.center?.coordinates) {
-        n._geoloc = {
-          lat: n.place.center.coordinates[1],
-          lng: n.place.center.coordinates[0]
-        };
-        delete n.place.center;
-      }
-      return addContentDigest(n);
-    }),
+    transformer: ({ data }) =>
+      data.activities.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        if (n.place?.center?.coordinates) {
+          n._geoloc = {
+            lat: n.place.center.coordinates[1],
+            lng: n.place.center.coordinates[0],
+          };
+          delete n.place.center;
+        }
+        return addContentDigest(n);
+      }),
     indexName: "activity",
-    settings: { 
-      //attributesToSnippet: [`description.short.markdown:20`] 
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
     },
   },
   {
     query: partnershipsQuery,
-    transformer: ({ data }) => data.partnerships.nodes.map(n => {
-      n.objectID = n._id;
-      delete n._id;
-      if (n.place?.center?.coordinates) {
-        n._geoloc = {
-          lat: n.place.center.coordinates[1],
-          lng: n.place.center.coordinates[0]
-        };
-        delete n.place.center;
-      }
-      return addContentDigest(n);
-    }),
+    transformer: ({ data }) =>
+      data.partnerships.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
     indexName: "partnership",
-    settings: { 
-      //attributesToSnippet: [`description.short.markdown:20`] 
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
+    },
+  },
+  {
+    query: productsQuery,
+    transformer: ({ data }) =>
+      data.products.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
+    indexName: "product",
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
+    },
+  },
+  {
+    query: countersQuery,
+    transformer: ({ data }) =>
+      data.counters.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        if (n.place?.center?.coordinates) {
+          n._geoloc = {
+            lat: n.place.center.coordinates[1],
+            lng: n.place.center.coordinates[0],
+          };
+          delete n.place.center;
+        }
+        return addContentDigest(n);
+      }),
+    indexName: "marketplace",
+    settings: {
+      //attributesToSnippet: [`description.short.markdown:20`]
     },
   },
 ];

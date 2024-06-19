@@ -24,7 +24,12 @@ export default styled(SearchResult)`
 
   .HitCount {
     display: flex;
-    justify-content: flex-end;
+  }
+
+  .HitHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .Hits {
