@@ -149,7 +149,7 @@ export function ProductCard({ item }: any) {
   };
 
   return (
-    <Card>
+    <Card id={item._id}>
       <Grid container>
         {item.mainImage && (
           <Grid item xs={3} sm={2} md={3}>

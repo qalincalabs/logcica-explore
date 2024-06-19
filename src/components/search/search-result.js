@@ -8,21 +8,24 @@ import {
   PoweredBy,
   useStats,
 } from "react-instantsearch"
+import {
+  Stack
+} from "@mui/material";
 
 const HitCount = () => {
   const { nbHits } = useStats()
 
   return nbHits > 0 ? (
-    <div className="HitCount">
-      {nbHits} result{nbHits !== 1 ? "s" : ""}
-    </div>
+    <span className="HitCount">
+      {nbHits} résultat{nbHits !== 1 ? "s" : ""}
+    </span>
   ) : null
 }
 
 const PageHit = ({ hit, indexName }) => {
   return (
     <div>
-      <Link to={`/${indexName}/${hit.objectID}`}>
+      <Link to={ indexName === "product" ? `/#${hit.objectID}` : `/${indexName}/${hit.objectID}`}>
         <h4>
           <Highlight attribute="name" hit={hit} />
         </h4>
@@ -34,18 +37,20 @@ const PageHit = ({ hit, indexName }) => {
 
 const HitsInIndex = ({ index }) => (
   <Index indexName={index.name}>
-    <h2>
-      {index.name === "activity"
-        ? "Producteurs"
-        : index.name === "partnership"
-        ? "Groupements"
-        : index.name === "product"
-        ? "Produits"
-        : index.name === "marketplace"
-        ? "Marchés"
-        : "aucune valeur"}
-    </h2>
-    <HitCount />
+    <div class="HitHeader">
+      <h2>
+        {index.name === "activity"
+          ? "Producteurs"
+          : index.name === "partnership"
+          ? "Groupements"
+          : index.name === "product"
+          ? "Produits"
+          : index.name === "marketplace"
+          ? "Marchés"
+          : "aucune valeur"}
+      </h2>
+      <HitCount />
+    </div>
     <Hits className="Hits" hitComponent={({ hit }) => <PageHit hit={hit} indexName={index.name} />} />
   </Index>
 )

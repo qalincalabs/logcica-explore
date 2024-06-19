@@ -19,8 +19,8 @@ export default function Search() {
   const indices = [
     { name: 'activity' },
     { name: 'partnership' },
-    { name: 'product'},
-    { name: 'marketplace'}
+    { name: 'marketplace'},
+    // TODO (uncomment next commit) : { name: 'product'},
   ];
   const rootRef = createRef()
   const [query, setQuery] = useState()
