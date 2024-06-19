@@ -1,5 +1,7 @@
+
 import React from "react";
 import { graphql, PageProps } from "gatsby";
+import { ProductCardList } from "../components/product-card-list";
 import {
   Box,
   Grid,
@@ -149,18 +151,12 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
             </Grid>
           )}
           {products && products.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
                   Products
                 </Typography>
-                <Paper sx={{ p: 2 }}>
-                  <Stack spacing={2}>
-                    {products.map((product: any) => (
-                      <Typography key={product._id}>{product.name}</Typography>
-                    ))}
-                  </Stack>
-                </Paper>
+                <ProductCardList products={products} />
               </Box>
             </Grid>
           )}
@@ -234,3 +230,5 @@ query GetActivityAndRelatedData($id: String!) {
   }
 }
 `;
+
+
