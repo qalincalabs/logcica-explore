@@ -19,8 +19,8 @@ export default function Search() {
   const indices = [
     { name: 'activity' },
     { name: 'partnership' },
-    { name: 'product'}
-  
+    { name: 'product'},
+    { name: 'marketplace'}
   ];
   const rootRef = createRef()
   const [query, setQuery] = useState()

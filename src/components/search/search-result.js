@@ -29,8 +29,8 @@ const PageHit = ({ hit, indexName }) => {
       </Link>
       <Snippet attribute="description.short.markdown" hit={hit} />
     </div>
-  );
-};
+  )
+}
 
 const HitsInIndex = ({ index }) => (
   <Index indexName={index.name}>
@@ -41,11 +41,12 @@ const HitsInIndex = ({ index }) => (
         ? "Groupements"
         : index.name === "product"
         ? "Produits"
-        : ""
-        }
+        : index.name === "marketplace"
+        ? "Marchés"
+        : "aucune valeur"}
     </h2>
     <HitCount />
-    <Hits className="Hits" hitComponent={({ hit }) => PageHit({ hit, indexName: index.name })} />
+    <Hits className="Hits" hitComponent={({ hit }) => <PageHit hit={hit} indexName={index.name} />} />
   </Index>
 )
 

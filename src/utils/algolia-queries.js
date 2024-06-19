@@ -82,11 +82,23 @@ const productsQuery = `
   products: allMongodbProducts {
     nodes {
       _id
+      name
       dimensions {
-        name
+        height{
+        
+          value
+        }
+        length{
+          
+          value
+        }
+        width{
+          
+          value
+        }
       }
       netWeight {
-        unit
+        
         value
       }
       producer {
@@ -97,16 +109,23 @@ const productsQuery = `
       categories {
         name
       }
-      allergenList {
-        name
-      }
       tags
-      references
-      availabilities
+      references {
+        id
+      }
+      availabilities {
+        id
+      }
       owner {
-        activity
-        organisation
-        workspace
+        activity {
+          id
+        }
+        organisation {
+          id
+        }
+        workspace {
+          id
+        }
       }
       ownerRoles
       consumerStorageInstructions {
@@ -138,10 +157,10 @@ const productsQuery = `
         url
       }
       alcoholPercentage
-      images
-      nutrientList
+      
       netContent {
-        unit
+       
+      
         value
       }
       weight {
@@ -155,14 +174,17 @@ const productsQuery = `
 }
 `;
 
-const MarchesQuery = `
+const CountersQuery = `
 {
-  Marches: allMongodbCounters {
+  Counters: allMongodbCounters {
     nodes {
       _id
       key
       name
       workspace
+      internalName
+      type
+      marketplace
       place {
         id
       }
@@ -170,11 +192,6 @@ const MarchesQuery = `
         id
       }
       availabilities
-      translations {
-        en {
-          name
-        }
-      }
       description {
         short {
           markdown
@@ -248,8 +265,8 @@ const queries = [
     },
   },
   {
-    query: MarchesQuery,
-    transformer: ({ data }) => data.Marches.nodes.map(n => {
+    query: CountersQuery,
+    transformer: ({ data }) => data.Counters.nodes.map(n => {
       n.objectID = n._id;
       delete n._id;
       return addContentDigest(n);
