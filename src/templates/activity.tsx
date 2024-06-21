@@ -15,9 +15,6 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
-  // Filtrer les profils pour vérifier s'il y a des profils avec des liens valides
-  const validProfiles = profiles?.filter((profile: any) => profile.link);
-
   return (
     <Layout>
       <Box>
@@ -112,7 +109,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Stack>
             </Box>
           )}
-          {validProfiles && validProfiles.length > 0 && (
+          {profiles && profiles.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={6}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
@@ -120,7 +117,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 </Typography>
                 <Paper sx={{ p: 1, m: 2 }}>
                   <Stack direction="column" spacing={1}>
-                    {validProfiles.map((profile: any) => (
+                    {profiles.map((profile: any) => (
                       <Box
                         key={profile.key}
                         sx={{ display: "inline-flex", alignItems: "center" }}
@@ -128,19 +125,25 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                         <Typography sx={{ fontWeight: "bold" }}>
                           {profile.type} : {""}
                         </Typography>
-                        <Link
-                          href={profile.link}
-                          target="_blank"
-                          sx={{
-                            color: "primary.main",
-                            textDecoration: "underline",
-                            display: "inline-flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          {profile.localKey ?? profile.key}{" "}
-                          <OpenInNew sx={{ ml: 0.5 }} />
-                        </Link>
+                        {profile.link ? (
+                          <Link
+                            href={profile.link}
+                            target="_blank"
+                            sx={{
+                              color: "primary.main",
+                              textDecoration: "underline",
+                              display: "inline-flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            {profile.localKey ?? profile.key}{" "}
+                            <OpenInNew sx={{ ml: 0.5 }} />
+                          </Link>
+                        ) : (
+                          <Typography>
+                            {profile.localKey ?? profile.key}
+                          </Typography>
+                        )}
                       </Box>
                     ))}
                   </Stack>
