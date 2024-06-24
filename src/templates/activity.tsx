@@ -1,7 +1,7 @@
 import React from "react";
 import { graphql, PageProps } from "gatsby";
 import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Email, Phone } from "@mui/icons-material";
+import { OpenInNew, Email, Phone, Place } from "@mui/icons-material";
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 import { ProductCard } from "../components/product-card";
@@ -11,7 +11,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contacts = activity.contacts;
   const profiles = activity.profiles;
   const organisation = activity.manager?.organisation || {};
-  const places = data.places.nodes;
+  const place = activity.place;
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
@@ -53,14 +53,54 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
         {activity.profiles?.find(
           (p: any) => p.description?.long && p.type === "web_element"
         ) && (
-          <Paper sx={{ p: 1, m: 2 }}>
-            <Markdown
-              options={{
-                overrides: {
-                  a: {
-                    component: (props: any) => (
+            <Paper sx={{ p: 1, m: 2 }}>
+              <Markdown
+                options={{
+                  overrides: {
+                    a: {
+                      component: (props: any) => (
+                        <Link
+                          href={props.href}
+                          target="_blank"
+                          sx={{
+                            color: "primary.main",
+                            textDecoration: "underline",
+                            display: "inline-flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                        </Link>
+                      ),
+                    },
+                  },
+                }}
+              >
+                {
+                  activity.profiles.find(
+                    (p: any) => p.description?.long && p.type === "web_element"
+                  ).description?.long?.markdown
+                }
+              </Markdown>
+            </Paper>
+          )}
+        <Grid container>
+          {place && (
+            <Grid item xs={12} sm={12} md={6} xl={4}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Adresse
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Stack direction="row">
+                    <Typography key={place._id}>
+                      <strong>Adresse : </strong>
+                      {place.title}
+                    </Typography>
+
+                    {place.center?.coordinates &&
                       <Link
-                        href={props.href}
+                        href={`https://www.google.com/maps/search/?api=1&query=${place.center.coordinates[1]}%2C${place.center.coordinates[0]}&query_place_id=${place.gmaps?.id}`}
                         target="_blank"
                         sx={{
                           color: "primary.main",
@@ -69,48 +109,44 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                           alignItems: "center",
                         }}
                       >
-                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                        {place.localKey ?? place.key}{" "}
+                        <OpenInNew sx={{ ml: 0.5 }} />
                       </Link>
-                    ),
-                  },
-                },
-              }}
-            >
-              {
-                activity.profiles.find(
-                  (p: any) => p.description?.long && p.type === "web_element"
-                ).description?.long?.markdown
-              }
-            </Markdown>
-          </Paper>
-        )}
-        <Grid container>
+                    }
+
+                  </Stack>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
           {contacts && contacts.length > 0 && (
-            <Box sx={{ m: 2 }}>
-              <Typography variant="h4" component="h4">
-                Contact
-              </Typography>
-              <Stack spacing={2}>
-                {contacts.map((contact: any) => (
-                  <Paper key={contact.mainEmail} sx={{ p: 2 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                      <Email sx={{ mr: 1 }} />
-                      <Typography>{contact.mainEmail}</Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Phone sx={{ mr: 1 }} />
-                      <Typography>
-                        {contact.mainPhoneNumberFormatted ??
-                          contact.mainPhoneNumber}
-                      </Typography>
-                    </Box>
-                  </Paper>
-                ))}
-              </Stack>
-            </Box>
+            <Grid item xs={12} sm={12} md={6} xl={4}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Contact
+                </Typography>
+                <Stack spacing={2}>
+                  {contacts.map((contact: any) => (
+                    <Paper key={contact.mainEmail} sx={{ p: 2 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                        <Email sx={{ mr: 1 }} />
+                        <Typography>{contact.mainEmail}</Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Phone sx={{ mr: 1 }} />
+                        <Typography>
+                          {contact.mainPhoneNumberFormatted ??
+                            contact.mainPhoneNumber}
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  ))}
+                </Stack>
+              </Box>
+            </Grid>
           )}
           {profiles && profiles.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={6}>
+            <Grid item xs={12} sm={12} md={6} xl={4}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
                   Profiles
@@ -160,22 +196,6 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                     <strong>Forme juridique : </strong>
                     {organisation.legalFormShort}
                   </Typography>
-                </Paper>
-              </Box>
-            </Grid>
-          )}
-          {places && places.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={6}>
-              <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4">
-                  Adresse
-                </Typography>
-                <Paper sx={{ p: 2 }}>
-                  <Stack spacing={2}>
-                    {places.map((place: any) => (
-                      <Typography key={place.title}>{place.title}</Typography>
-                    ))}
-                  </Stack>
                 </Paper>
               </Box>
             </Grid>
@@ -240,10 +260,15 @@ export const query = graphql`
         mainPhoneNumber
         mainPhoneNumberFormatted
       }
-    }
-    places: allMongodbPlaces(filter: { id: { eq: $id } }) {
-      nodes {
+      place {
         title
+        gmaps {
+          id
+          title
+        }
+        center {
+          coordinates
+        }
       }
     }
     contributions: allMongodbContributions(
