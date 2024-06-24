@@ -119,6 +119,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
           {contacts && contacts.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
               <Box sx={{ m: 2 }}>
@@ -128,17 +129,26 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 <Stack spacing={2}>
                   {contacts.map((contact: any) => (
                     <Paper key={contact.mainEmail} sx={{ p: 2 }}>
-                      <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                        <Email sx={{ mr: 1 }} />
-                        <Typography>{contact.mainEmail}</Typography>
-                      </Box>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Phone sx={{ mr: 1 }} />
-                        <Typography>
-                          {contact.mainPhoneNumberFormatted ??
-                            contact.mainPhoneNumber}
-                        </Typography>
-                      </Box>
+                      {contact.name &&
+                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                          <Typography>{contact.name}</Typography>
+                        </Box>
+                      }
+                      {contact.mainEmail &&
+                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                          <Email sx={{ mr: 1 }} />
+                          <Typography>{contact.mainEmail}</Typography>
+                        </Box>
+                      }
+                      {contact.mainPhoneNumber &&
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Phone sx={{ mr: 1 }} />
+                          <Typography>
+                            {contact.mainPhoneNumberFormatted ??
+                              contact.mainPhoneNumber}
+                          </Typography>
+                        </Box>
+                      }
                     </Paper>
                   ))}
                 </Stack>
