@@ -94,6 +94,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         workspaces: [mongodbWorkspaces] @link(by:"manager.partnership", from: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
         counters: [mongodbCounters] @link(by:"manager.partnership", from: "mongodb_id")
+        place: mongodbPlaces @link(by: "mongodb_id")
       }
       type mongodbContributionsSubject{
         partnership: mongodbPartnerships @link(by: "mongodb_id")
@@ -103,6 +104,8 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       }
       type mongodbPlaces{
         within: [mongodbPlaces] @link(by: "mongodb_id")
+        country: [mongodbPlaces] @link(by: "mongodb_id")
+
       }
     `;
   createTypes(typeDefs1);
@@ -112,13 +115,27 @@ exports.createPages = async function ({ actions, graphql }: any) {
 
   const { data: marketplacesQuery } = await graphql(`
     query {
-      allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
-        nodes {
-          _id
-          name
+  allMongodbCounters(filter: { 
+    type: { 
+      eq: "marketplace"
+    }
+    
+    place: {
+      within: {
+        elemMatch: {
+          _id: {
+            eq: "6509bb9a94bcb52b76132d6a"
+          }
         }
       }
     }
+  }) {
+    nodes {
+      _id
+      name
+    }
+  }
+}
   `);
   marketplacesQuery.allMongodbCounters.nodes.forEach((node: any) => {
     const _id = node._id;
@@ -133,7 +150,17 @@ exports.createPages = async function ({ actions, graphql }: any) {
 
   const { data: partnershipsQuery } = await graphql(`
     query {
-      allMongodbPartnerships {
+      allMongodbPartnerships(filter: { 
+    place: {
+      within: {
+        elemMatch: {
+          _id: {
+            eq: "6509bb9a94bcb52b76132d6a"
+          }
+        }
+      }
+    }
+  }) {
         nodes {
           _id
           name
@@ -154,7 +181,17 @@ exports.createPages = async function ({ actions, graphql }: any) {
 
   const { data: activitiesQuery } = await graphql(`
     query {
-      allMongodbActivities {
+      allMongodbActivities(filter: { 
+    place: {
+      within: {
+        elemMatch: {
+          _id: {
+            eq: "6509bb9a94bcb52b76132d6a"
+          }
+        }
+      }
+    }
+  }) {
         nodes {
           _id
           name
