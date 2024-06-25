@@ -187,7 +187,9 @@ const queries = [
       }),
     indexName: "activity",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      queryLanguages: ['fr'],
+      removeStopWords: true,
+      attributesForFaceting: ['searchable(categories.name)', 'type', 'place.address.locality', 'catalogs.productCategories.name'],
     },
   },
   {
@@ -200,7 +202,9 @@ const queries = [
       }),
     indexName: "partnership",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      queryLanguages: ['fr'],
+      removeStopWords: true,
+      attributesForFaceting: ['searchable(categories.name)', 'mainOrganisation.name'],
     },
   },
   {
@@ -213,7 +217,9 @@ const queries = [
       }),
     indexName: "product",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      queryLanguages: ['fr'],
+      removeStopWords: true,
+      attributesForFaceting: ['searchable(categories.name)', 'producer.organisation.name', 'owner.organisation.name'],
     },
   },
   {
@@ -233,7 +239,9 @@ const queries = [
       }),
     indexName: "marketplace",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      queryLanguages: ['fr'],
+      removeStopWords: true,
+      attributesForFaceting: ['searchable(type)', 'marketplace.name', 'manager.organisation.name', 'place.address.locality', 'catalog.productCategories.name'],
     },
   },
 ];
