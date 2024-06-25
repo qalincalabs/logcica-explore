@@ -21,8 +21,12 @@ import Layout from "../components/layout";
 import { Store, Star, StarBorder, Favorite, Delete } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 
+type favoriteItem = {
+  targetId: string
+}
+
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<favoriteItem[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
@@ -32,10 +36,13 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   }, []);
 
   const toggleFavorite = (id: string) => {
-    const updatedFavorites = favorites.includes(id)
-      ? favorites.filter(fav => fav !== id)
-      : [...favorites, id];
+    const updatedFavorites = favorites.some(fav => fav.targetId == id)
+      ? favorites.filter(fav => fav.targetId !== id)
+      : [...favorites, {targetId: id}];
+    
+    console.log(updatedFavorites)
     setFavorites(updatedFavorites);
+    console.log(updatedFavorites)
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
 
@@ -48,7 +55,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const removeFavorite = (id: string) => {
-    const updatedFavorites = favorites.filter(fav => fav !== id);
+    const updatedFavorites = favorites.filter(fav => fav.targetId !== id);
     setFavorites(updatedFavorites);
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
@@ -58,7 +65,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const filteredMarketplaces = showFavoritesOnly
-    ? data.marketplaces.nodes.filter((m: any) => favorites.includes(m._id))
+    ? data.marketplaces.nodes.filter((m: any) => favorites.some(fav => fav.targetId == m._id))
     : data.marketplaces.nodes;
 
   return (
@@ -112,7 +119,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
                 </ListItemButton>
                 <ListItemIcon>
                   <IconButton onClick={() => toggleFavorite(m._id)}>
-                    {favorites.includes(m._id) ? <Star /> : <StarBorder />}
+                    {favorites.some(fav => fav.targetId == m._id) ? <Star /> : <StarBorder />}
                   </IconButton>
                 </ListItemIcon>
               </ListItem>
@@ -125,7 +132,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
           <Typography variant="h6" style={{ color: 'black' }}>Favoris</Typography>
           <List>
             {data.marketplaces.nodes
-              .filter((m: any) => favorites.includes(m._id))
+              .filter((m: any) => favorites.some(fav => fav.targetId == m._id))
               .map((m: any) => (
                 <ListItem key={m._id}>
                   <ListItemButton onClick={() => navigate("/marketplace/" + m._id)}>
