@@ -169,6 +169,12 @@ const addContentDigest = (obj) => {
   return obj;
 };
 
+const indexBaseSettings = {
+  queryLanguages: ['fr'],
+  indexLanguages: ['fr'],
+  removeStopWords: true
+}
+
 const queries = [
   {
     query: activitiesQuery,
@@ -187,9 +193,8 @@ const queries = [
       }),
     indexName: "activity",
     settings: {
-      queryLanguages: ['fr'],
-      removeStopWords: true,
-      attributesForFaceting: ['searchable(categories.name)', 'type', 'place.address.locality', 'catalogs.productCategories.name'],
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(categories.name)', 'type', 'searchable(place.address.locality)'],
     },
   },
   {
@@ -202,9 +207,8 @@ const queries = [
       }),
     indexName: "partnership",
     settings: {
-      queryLanguages: ['fr'],
-      removeStopWords: true,
-      attributesForFaceting: ['searchable(categories.name)', 'mainOrganisation.name'],
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(categories.name)'],
     },
   },
   {
@@ -217,9 +221,8 @@ const queries = [
       }),
     indexName: "product",
     settings: {
-      queryLanguages: ['fr'],
-      removeStopWords: true,
-      attributesForFaceting: ['searchable(categories.name)', 'producer.organisation.name', 'owner.organisation.name'],
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(categories.name)', searchable('producer.organisation.name'), searchable('owner.organisation.name')],
     },
   },
   {
@@ -239,9 +242,8 @@ const queries = [
       }),
     indexName: "marketplace",
     settings: {
-      queryLanguages: ['fr'],
-      removeStopWords: true,
-      attributesForFaceting: ['searchable(type)', 'marketplace.name', 'manager.organisation.name', 'place.address.locality', 'catalog.productCategories.name'],
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(type)', searchable('marketplace.name'), searchable('manager.organisation.name'), searchable('place.address.locality')],
     },
   },
 ];
