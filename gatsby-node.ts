@@ -104,8 +104,6 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       }
       type mongodbPlaces{
         within: [mongodbPlaces] @link(by: "mongodb_id")
-        country: [mongodbPlaces] @link(by: "mongodb_id")
-
       }
     `;
   createTypes(typeDefs1);
