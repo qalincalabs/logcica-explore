@@ -171,19 +171,25 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                         <Typography sx={{ fontWeight: "bold" }}>
                           {profile.type} : {""}
                         </Typography>
-                        <Link
-                          href={profile.link}
-                          target="_blank"
-                          sx={{
-                            color: "primary.main",
-                            textDecoration: "underline",
-                            display: "inline-flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          {profile.localKey ?? profile.key}{" "}
-                          <OpenInNew sx={{ ml: 0.5 }} />
-                        </Link>
+                        {profile.link ? (
+                          <Link
+                            href={profile.link}
+                            target="_blank"
+                            sx={{
+                              color: "primary.main",
+                              textDecoration: "underline",
+                              display: "inline-flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            {profile.localKey ?? profile.key}{" "}
+                            <OpenInNew sx={{ ml: 0.5 }} />
+                          </Link>
+                        ) : (
+                          <Typography>
+                            {profile.localKey ?? profile.key}
+                          </Typography>
+                        )}
                       </Box>
                     ))}
                   </Stack>
