@@ -94,7 +94,6 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 <Paper sx={{ p: 2 }}>
                   <Stack direction="row">
                     <Typography key={place._id}>
-                      <strong>Adresse : </strong>
                       {place.title}
                     </Typography>
 
@@ -121,7 +120,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
           )}
 
           {contacts && contacts.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={4}>
+            <Grid item xs={12} sm={12} md={6} xl={3}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
                   Contact
@@ -156,7 +155,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
             </Grid>
           )}
           {profiles && profiles.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={4}>
+            <Grid item xs={12} sm={12} md={6} xl={5}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
                   Profiles
@@ -164,12 +163,13 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 <Paper sx={{ p: 1, m: 2 }}>
                   <Stack direction="column" spacing={1}>
                     {profiles.map((profile: any) => (
-                      <Box
+                      <Stack
+                        direction="row"
+                        gap={1}
                         key={profile.key}
-                        sx={{ display: "inline-flex", alignItems: "center" }}
                       >
                         <Typography sx={{ fontWeight: "bold" }}>
-                          {profile.type} : {""}
+                          {profile.type}
                         </Typography>
                         {profile.link ? (
                           <Link
@@ -180,6 +180,8 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                               textDecoration: "underline",
                               display: "inline-flex",
                               alignItems: "center",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
                             }}
                           >
                             {profile.localKey ?? profile.key}{" "}
@@ -190,7 +192,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                             {profile.localKey ?? profile.key}
                           </Typography>
                         )}
-                      </Box>
+                      </Stack>
                     ))}
                   </Stack>
                 </Paper>
