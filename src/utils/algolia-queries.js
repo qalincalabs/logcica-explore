@@ -222,7 +222,7 @@ const queries = [
     indexName: "product",
     settings: {
       ...indexBaseSettings,
-      attributesForFaceting: ['searchable(categories.name)', searchable('producer.organisation.name'), searchable('owner.organisation.name')],
+      attributesForFaceting: ['searchable(categories.name)', 'searchable(producer.organisation.name)', 'searchable(owner.organisation.name)'],
     },
   },
   {
@@ -243,7 +243,7 @@ const queries = [
     indexName: "marketplace",
     settings: {
       ...indexBaseSettings,
-      attributesForFaceting: ['searchable(type)', searchable('marketplace.name'), searchable('manager.organisation.name'), searchable('place.address.locality')],
+      attributesForFaceting: ['searchable(type)', 'searchable(marketplace.name)', 'searchable(manager.organisation.name)', 'searchable(place.address.locality)'],
     },
   },
 ];
