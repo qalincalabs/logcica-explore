@@ -32,7 +32,7 @@
   border: 1px solid #ccc; /* Couleur de la bordure */
   border-radius: 5px; /* Coins arrondis */
   font-size: 16px; /* Taille de la police */
-  width: 300px; /* Réduire la largeur */
+  width: 200px; /* Réduire la largeur */
   outline: none; /* Enlever le contour par défaut */
 }
 

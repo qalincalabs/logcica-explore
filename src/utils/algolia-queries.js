@@ -169,6 +169,12 @@ const addContentDigest = (obj) => {
   return obj;
 };
 
+const indexBaseSettings = {
+  queryLanguages: ['fr'],
+  indexLanguages: ['fr'],
+  removeStopWords: true
+}
+
 const queries = [
   {
     query: activitiesQuery,
@@ -187,7 +193,8 @@ const queries = [
       }),
     indexName: "activity",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(categories.name)', 'type', 'searchable(place.address.locality)'],
     },
   },
   {
@@ -200,7 +207,8 @@ const queries = [
       }),
     indexName: "partnership",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(categories.name)'],
     },
   },
   {
@@ -213,7 +221,8 @@ const queries = [
       }),
     indexName: "product",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(categories.name)', 'searchable(producer.organisation.name)', 'searchable(owner.organisation.name)'],
     },
   },
   {
@@ -233,7 +242,8 @@ const queries = [
       }),
     indexName: "marketplace",
     settings: {
-      //attributesToSnippet: [`description.short.markdown:20`]
+      ...indexBaseSettings,
+      attributesForFaceting: ['searchable(type)', 'searchable(marketplace.name)', 'searchable(manager.organisation.name)', 'searchable(place.address.locality)'],
     },
   },
 ];
