@@ -206,10 +206,25 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                   Entreprise
                 </Typography>
                 <Paper sx={{ p: 2 }}>
-                  <Typography variant="subtitle1" component="p">
-                    <strong>Numéro : </strong>
-                    {organisation.number}
-                  </Typography>
+                  <Stack direction="row">
+                    <Typography variant="subtitle1" component="p">
+                      <strong>Numéro : </strong>
+                      {organisation.number}
+                    </Typography>
+                    <Link
+                      href={`https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=${organisation.number.match(/\d+/g).join('')}`}
+                      target="_blank"
+                      sx={{
+                        color: "primary.main",
+                        textDecoration: "underline",
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {place.localKey ?? place.key}{" "}
+                      <OpenInNew sx={{ ml: 0.5 }} />
+                    </Link>
+                  </Stack>
                   <Typography variant="subtitle1" component="p">
                     <strong>Forme juridique : </strong>
                     {organisation.legalFormShort}
