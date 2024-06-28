@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, FormControlLabel, Checkbox, Box } from "@mui/material";
 import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -138,8 +138,9 @@ export function ProductCardList() {
 
   // State for the list
   const [list, setList] = React.useState([...products.slice(0, 24)]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = React.useState(false);
 
-  // State to trigger oad more
+  // State to trigger load more
   const [loadMore, setLoadMore] = React.useState<boolean>(false);
 
   // State of whether there is more to load
@@ -163,42 +164,84 @@ export function ProductCardList() {
     }
   }, [loadMore, hasMore]); //eslint-disable-line
 
-  //Check if there is more
+  // Check if there is more
   React.useEffect(() => {
     const isMore = list.length < products.length;
     setHasMore(isMore);
   }, [list]); //eslint-disable-line
 
-  // TODO LoadingButton was for mobile but it's not really working
+  const toggleShowFavoritesOnly = () => {
+    setShowFavoritesOnly(!showFavoritesOnly);
+  };
+
+  const filteredList = showFavoritesOnly
+    ? list.filter((item: any) => {
+        const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
+        return storedFavorites.includes(item._id);
+      })
+    : list;
 
   return (
-    <Grid container spacing={2}>
-      {list.map((item: any): any => (
-        <Grid item xs={12} md={6} xl={4} key={item._id}>
-          <ProductCard item={item} />
+    <>
+      <Box sx={{ 
+        padding: '10px 20px', 
+        backgroundColor: '#EAD107', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        borderBottom: '1px solid #ccc',
+        marginBottom: '20px'
+      }}>
+        <Box sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#000000' }}>Filtres :</Box>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={showFavoritesOnly}
+              onChange={toggleShowFavoritesOnly}
+              name="showFavoritesOnly"
+              sx={{
+                color: '#000000',
+                '&.Mui-checked': {
+                  color: '#000000',
+                },
+                '& .MuiSvgIcon-root': {
+                  fill: '#FFFFFF',
+                },
+              }}
+            />
+          }
+          label="Afficher uniquement les favoris"
+          sx={{ color: '#000000' }}
+        />
+      </Box>
+      <Grid container spacing={2}>
+        {filteredList.map((item: any): any => (
+          <Grid item xs={12} md={6} xl={4} key={item._id}>
+            <ProductCard item={item} />
+          </Grid>
+        ))}
+        <Grid
+          item
+          xs={12}
+          style={{
+            textAlign: "center", // this does the magic
+          }}
+        >
+          {hasMore ? (
+            <LoadingButton
+              onClick={handleLoadMore}
+              loading={loadMore}
+              loadingPosition="end"
+              variant="contained"
+              fullWidth
+            >
+              Load more
+            </LoadingButton>
+          ) : (
+            <p>No more results</p>
+          )}
         </Grid>
-      ))}
-      <Grid
-        item
-        xs={12}
-        style={{
-          textAlign: "center", // this does the magic
-        }}
-      >
-        {hasMore ? (
-          <LoadingButton
-            onClick={handleLoadMore}
-            loading={loadMore}
-            loadingPosition="end"
-            variant="contained"
-            fullWidth
-          >
-            Load more
-          </LoadingButton>
-        ) : (
-          <p>No more results</p>
-        )}
       </Grid>
-    </Grid>
+    </>
   );
 }
