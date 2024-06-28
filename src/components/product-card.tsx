@@ -15,33 +15,26 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Breadcrumbs,
   Link,
   Box,
   Avatar,
-  Button,
-  Tab,
   IconButton,
-  Chip,
-  Popper,
-  Paper,
+  Tab,
   CardActions,
-  Fab,
 } from "@mui/material";
 import {
   CalendarMonth,
   LocalDining,
   CrisisAlert,
   WineBar,
-  Delete,
-  VisibilityOff,
   Agriculture,
   Blender,
   Inventory,
   SquareFoot,
+  Star,
+  StarBorder,
+  VisibilityOff,
 } from "@mui/icons-material";
 
 import TabContext from "@mui/lab/TabContext";
@@ -125,13 +118,16 @@ function netContentsText(item: any) {
 
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
+  const [isFavorite, setIsFavorite] = React.useState<boolean>(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
+    return storedFavorites.includes(item._id);
+  });
+  const [tab, setTab] = React.useState("0");
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
     };
-
-  const [tab, setTab] = React.useState("0");
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setTab(newValue);
@@ -148,14 +144,23 @@ export function ProductCard({ item }: any) {
     setIsAddressVisible(!isAddressVisible);
   };
 
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
+    const updatedFavorites = isFavorite
+      ? storedFavorites.filter((fav: string) => fav !== item._id)
+      : [...storedFavorites, item._id];
+    localStorage.setItem('productFavorites', JSON.stringify(updatedFavorites));
+  };
+
   return (
-    <Card style={{scrollPaddingTop: "100px", scrollMarginTop: "100px"}} id={item._id}>
+    <Card style={{ scrollPaddingTop: "100px", scrollMarginTop: "100px" }} id={item._id}>
       <Grid container>
         {item.mainImage && (
           <Grid item xs={3} sm={2} md={3}>
             <CardMedia
               component="img"
-              image={item.mainImage.url} // {`${item?.img}?w=164&h=164&fit=crop&auto=format`}
+              image={item.mainImage.url}
               alt={item.name}
               sx={{
                 objectFit: "contain",
@@ -193,6 +198,13 @@ export function ProductCard({ item }: any) {
                 >
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
+                  <IconButton onClick={toggleFavorite}>
+                    {isFavorite ? (
+                      <Star color="primary" />
+                    ) : (
+                      <StarBorder color="primary" />
+                    )}
+                  </IconButton>
                 </Box>
               }
               subheader={
@@ -221,6 +233,7 @@ export function ProductCard({ item }: any) {
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(
                         (monthNumber) => (
                           <Typography
+                            key={monthNumber}
                             sx={{
                               fontSize: "0.85rem",
                               padding: "1px",
@@ -290,7 +303,7 @@ export function ProductCard({ item }: any) {
                             />
                           ) : (
                             <Avatar>
-                              item.owner.organisation?.name?.charAt(0)
+                              {item.owner.organisation?.name?.charAt(0)}
                             </Avatar>
                           )
                         }
@@ -309,7 +322,7 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </Grid>
-        {(item.references?.find((r: any) => r.system?.key == "openbatra.org") ||
+        {(item.references?.find((r: any) => r.system?.key === "openbatra.org") ||
           item.description?.short) && (
           <Box display="flex" width="100%">
             {item.description?.short && (
@@ -325,7 +338,7 @@ export function ProductCard({ item }: any) {
               </CardContent>
             )}
             {item.references?.find(
-              (r: any) => r.system?.key == "openbatra.org"
+              (r: any) => r.system?.key === "openbatra.org"
             ) && (
               <CardActions>
                 <a
@@ -333,7 +346,7 @@ export function ProductCard({ item }: any) {
                     "https://www.batra.link/batra2.0/productFull.html?gtin=" +
                     encodeURIComponent(
                       item.references.find(
-                        (r: any) => r.system?.key == "openbatra.org"
+                        (r: any) => r.system?.key === "openbatra.org"
                       ).number
                     )
                   }
@@ -378,7 +391,7 @@ export function ProductCard({ item }: any) {
               )}
               {item.allergenList &&
                 item.allergenList.map((productAllergen: any) => (
-                  <Stack direction="row" gap={1} flexGrow={1}>
+                  <Stack direction="row" gap={1} flexGrow={1} key={productAllergen.allergen._id}>
                     <CrisisAlert />
                     <Typography>
                       {productAllergen.containmentLevel.name +
@@ -447,7 +460,7 @@ export function ProductCard({ item }: any) {
                   )}
                   <IconButton
                     onClick={handleChange2("0")}
-                    sx={{ display: tab == "0" ? "none" : "block" }}
+                    sx={{ display: tab === "0" ? "none" : "block" }}
                   >
                     <VisibilityOff fontSize="small" />
                   </IconButton>
@@ -478,15 +491,42 @@ export function ProductCard({ item }: any) {
             </TabContext>
           </CardContent>
         )}
-        {/*
-          <CardActions>
-            <IconButton>
-              <AccessAlarm />
-              <CalendarMonth />
-            </IconButton>
-          </CardActions>
-          */}
       </Grid>
     </Card>
+  );
+}
+
+export function ProductCardList({ showFavoritesOnly }: { showFavoritesOnly: boolean }) {
+  const [products, setProducts] = React.useState<any[]>([]);
+  const [favorites, setFavorites] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    // Fetch the product data from your source
+    // For example, you could use fetch or axios to get the data from an API
+    // For now, we will use a mock data array
+    const fetchProducts = async () => {
+      const productData = await fetch("/path/to/your/products/api"); // Adjust the path to your products API
+      const products = await productData.json();
+      setProducts(products);
+    };
+
+    fetchProducts();
+
+    const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
+    setFavorites(storedFavorites);
+  }, []);
+
+  const filteredProducts = showFavoritesOnly
+    ? products.filter(product => favorites.includes(product._id))
+    : products;
+
+  return (
+    <Grid container spacing={2}>
+      {filteredProducts.map(product => (
+        <Grid item xs={12} sm={6} md={4} key={product._id}>
+          <ProductCard item={product} />
+        </Grid>
+      ))}
+    </Grid>
   );
 }

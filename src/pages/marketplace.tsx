@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { graphql, Link, HeadFC, PageProps, navigate } from "gatsby";
+import { graphql, navigate, PageProps } from "gatsby";
 import {
   Avatar,
   Box,
@@ -16,7 +16,6 @@ import {
   FormControlLabel,
   Checkbox,
   Divider,
-  FormGroup
 } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import Layout from "../components/layout";
@@ -67,12 +66,15 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   const [activityFavorites, setActivityFavorites] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [productFavorites, setProductFavorites] = useState<string[]>([]);
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     const storedActivityFavorites = JSON.parse(localStorage.getItem('activityFavorites') || '[]');
+    const storedProductFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
     setFavorites(storedFavorites);
     setActivityFavorites(storedActivityFavorites);
+    setProductFavorites(storedProductFavorites);
   }, []);
 
   const toggleFavorite = (id: string) => {
@@ -102,6 +104,12 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
     const updatedActivityFavorites = activityFavorites.filter(fav => fav !== name);
     setActivityFavorites(updatedActivityFavorites);
     localStorage.setItem('activityFavorites', JSON.stringify(updatedActivityFavorites));
+  };
+
+  const removeProductFavorite = (id: string) => {
+    const updatedProductFavorites = productFavorites.filter(fav => fav !== id);
+    setProductFavorites(updatedProductFavorites);
+    localStorage.setItem('productFavorites', JSON.stringify(updatedProductFavorites));
   };
 
   const handleShowFavoritesOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,6 +213,20 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
               </ListItem>
             ))}
           </List>
+          <Divider />
+          <Typography variant="h6" style={{ color: 'black', marginTop: '16px' }}>Produits</Typography>
+          <List>
+            {productFavorites.map((id: string) => (
+              <ListItem key={id}>
+                <ListItemText primary={data.products?.nodes?.find((p: any) => p._id === id)?.name || "Produit inconnu"} />
+                <ListItemIcon>
+                  <IconButton onClick={() => removeProductFavorite(id)}>
+                    <Delete />
+                  </IconButton>
+                </ListItemIcon>
+              </ListItem>
+            ))}
+          </List>
         </Box>
       </Drawer>
     </Layout>
@@ -242,6 +264,12 @@ export const query = graphql`
           type
           link
         }
+      }
+    }
+    products: allMongodbProducts { 
+      nodes {
+        _id
+        name
       }
     }
   }
