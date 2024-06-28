@@ -16,15 +16,26 @@ import {
   FormControlLabel,
   Checkbox,
   Divider,
+  Button,
+  ButtonGroup,
 } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import Layout from "../components/layout";
-import { Store, Star, StarBorder, Favorite, Delete, Close } from "@mui/icons-material";
+
+import {
+  Store,
+  Star,
+  StarBorder,
+  Favorite,
+  Delete,
+  FilterAlt,
+  Close
+} from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 
 type favoriteItem = {
   targetId: string;
-}
+};
 
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
   '&.Mui-checked': {
@@ -95,9 +106,9 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const removeFavorite = (id: string) => {
-    const updatedFavorites = favorites.filter(fav => fav.targetId !== id);
+    const updatedFavorites = favorites.filter((fav) => fav.targetId !== id);
     setFavorites(updatedFavorites);
-    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
   const removeActivityFavorite = (name: string) => {
@@ -130,20 +141,31 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
           <Favorite />
         </IconButton>
       </Box>
-      <Box display="flex" justifyContent="center" alignItems="center" mb={4}>
-        <FilterBox>
-          <Typography variant="h6" style={{ color: 'black', fontWeight: 'bold', marginRight: '100px' }}>Filtres</Typography>
-          <FormControlLabel
-            control={
-              <CustomCheckbox
-                checked={showFavoritesOnly}
-                onChange={handleShowFavoritesOnlyChange}
-                name="showFavoritesOnly"
-              />
-            }
-            label={<Typography style={{ color: 'black' }}>Favoris</Typography>}
-          />
-        </FilterBox>
+      <Box
+        sx={{
+          display: "flex",
+          textAlign: "center",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ButtonGroup variant="outlined">
+          <Button disabled>
+            <FilterAlt />
+          </Button>
+          <Button>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showFavoritesOnly}
+                  onChange={handleShowFavoritesOnlyChange}
+                  name="showFavoritesOnly"
+                />
+              }
+              label="Favoris"
+            />
+          </Button>
+        </ButtonGroup>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
         <List>
@@ -171,7 +193,12 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
               </ListItemButton>
               <ListItemIcon>
                 <IconButton onClick={() => toggleFavorite(m._id)}>
-                  {favorites.some(fav => fav.targetId === m._id) ? <Star /> : <StarBorder />}
+
+                  {favorites.some((fav) => fav.targetId == m._id) ? (
+                    <Star />
+                  ) : (
+                    <StarBorder />
+                  )}
                 </IconButton>
               </ListItemIcon>
             </ListItem>
@@ -226,6 +253,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
                 </ListItemIcon>
               </ListItem>
             ))}
+
           </List>
         </Box>
       </Drawer>
