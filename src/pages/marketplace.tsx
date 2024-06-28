@@ -78,14 +78,17 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [productFavorites, setProductFavorites] = useState<string[]>([]);
+  const [partnershipFavorites, setPartnershipFavorites] = useState<string[]>([]);
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     const storedActivityFavorites = JSON.parse(localStorage.getItem('activityFavorites') || '[]');
     const storedProductFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
+    const storedPartnershipFavorites = JSON.parse(localStorage.getItem('partnershipFavorites') || '[]');
     setFavorites(storedFavorites);
     setActivityFavorites(storedActivityFavorites);
     setProductFavorites(storedProductFavorites);
+    setPartnershipFavorites(storedPartnershipFavorites);
   }, []);
 
   const toggleFavorite = (id: string) => {
@@ -121,6 +124,12 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
     const updatedProductFavorites = productFavorites.filter(fav => fav !== id);
     setProductFavorites(updatedProductFavorites);
     localStorage.setItem('productFavorites', JSON.stringify(updatedProductFavorites));
+  };
+
+  const removePartnershipFavorite = (id: string) => {
+    const updatedPartnershipFavorites = partnershipFavorites.filter(fav => fav !== id);
+    setPartnershipFavorites(updatedPartnershipFavorites);
+    localStorage.setItem('partnershipFavorites', JSON.stringify(updatedPartnershipFavorites));
   };
 
   const handleShowFavoritesOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,7 +262,20 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
                 </ListItemIcon>
               </ListItem>
             ))}
-
+          </List>
+          <Divider />
+          <Typography variant="h6" style={{ color: 'black', marginTop: '16px' }}>Groupements</Typography>
+          <List>
+            {partnershipFavorites.map((id: string) => (
+              <ListItem key={id}>
+                <ListItemText primary={data.partnerships?.nodes?.find((p: any) => p._id === id)?.name || "Groupement inconnu"} />
+                <ListItemIcon>
+                  <IconButton onClick={() => removePartnershipFavorite(id)}>
+                    <Delete />
+                  </IconButton>
+                </ListItemIcon>
+              </ListItem>
+            ))}
           </List>
         </Box>
       </Drawer>
@@ -295,6 +317,12 @@ export const query = graphql`
       }
     }
     products: allMongodbProducts { 
+      nodes {
+        _id
+        name
+      }
+    }
+    partnerships: allMongodbPartnerships {
       nodes {
         _id
         name

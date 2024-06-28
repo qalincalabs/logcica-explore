@@ -10,12 +10,28 @@ import {
   ListItemText,
   Stack,
   Typography,
+  IconButton,
+  ListItemIcon,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store } from "@mui/icons-material";
+import { Store, Star, StarBorder } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 
 const PartnershipPage = ({ data }: any) => {
+  const [favorites, setFavorites] = React.useState<string[]>(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('partnershipFavorites') || '[]');
+    return storedFavorites;
+  });
+
+  const toggleFavorite = (id: string) => {
+    const updatedFavorites = favorites.includes(id)
+      ? favorites.filter(fav => fav !== id)
+      : [...favorites, id];
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem('partnershipFavorites', JSON.stringify(updatedFavorites));
+  };
+
   return (
     <Layout>
       <Typography align="center" variant="h3">
@@ -24,7 +40,7 @@ const PartnershipPage = ({ data }: any) => {
       <Box display="flex" justifyContent="center" alignItems="center">
         <List>
           {data.partnerships.nodes.map((p: any) => (
-            <ListItem>
+            <ListItem key={p._id}>
               <ListItemButton onClick={() => navigate("/partnership/" + p._id)}>
                 <ListItemAvatar>
                   <Avatar>
@@ -52,6 +68,11 @@ const PartnershipPage = ({ data }: any) => {
                   }
                 />
               </ListItemButton>
+              <ListItemIcon>
+                <IconButton onClick={() => toggleFavorite(p._id)}>
+                  {favorites.includes(p._id) ? <Star /> : <StarBorder />}
+                </IconButton>
+              </ListItemIcon>
             </ListItem>
           ))}
         </List>
@@ -63,19 +84,6 @@ const PartnershipPage = ({ data }: any) => {
 export default PartnershipPage;
 
 export const Head: HeadFC = () => <title>Groupements</title>;
-
-/*
-description {
-          short {
-            markdown
-          }
-        }
-        profiles {
-          key
-          type
-          link
-        }
-*/
 
 export const query = graphql`
   query {
