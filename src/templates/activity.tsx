@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { graphql, PageProps } from "gatsby";
-import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Email, Phone, Place } from "@mui/icons-material";
+import { Box, Grid, Paper, Stack, Typography, Link, IconButton } from "@mui/material";
+import { OpenInNew, Email, Phone, Star, StarBorder } from "@mui/icons-material";
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 import { ProductCard } from "../components/product-card";
@@ -15,12 +15,32 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('activityFavorites') || '[]');
+    setFavorites(storedFavorites);
+  }, []);
+
+  const toggleFavorite = (name: string) => {
+    const updatedFavorites = favorites.includes(name)
+      ? favorites.filter(fav => fav !== name)
+      : [...favorites, name];
+    setFavorites(updatedFavorites);
+    localStorage.setItem('activityFavorites', JSON.stringify(updatedFavorites));
+  };
+
   return (
     <Layout>
       <Box>
-        <Typography align="center" variant="h3" component="h3">
-          {activity.name}
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
+          <Typography align="center" variant="h3" component="h3" mr={2}>
+            {activity.name}
+          </Typography>
+          <IconButton onClick={() => toggleFavorite(activity.name)}>
+            {favorites.includes(activity.name) ? <Star /> : <StarBorder />}
+          </IconButton>
+        </Box>
 
         {activity.description?.short?.markdown && (
           <Paper sx={{ p: 1, m: 2 }}>
@@ -50,40 +70,42 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
             </Markdown>
           </Paper>
         )}
+
         {activity.profiles?.find(
           (p: any) => p.description?.long && p.type === "web_element"
         ) && (
-            <Paper sx={{ p: 1, m: 2 }}>
-              <Markdown
-                options={{
-                  overrides: {
-                    a: {
-                      component: (props: any) => (
-                        <Link
-                          href={props.href}
-                          target="_blank"
-                          sx={{
-                            color: "primary.main",
-                            textDecoration: "underline",
-                            display: "inline-flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          {props.children} <OpenInNew sx={{ ml: 0.5 }} />
-                        </Link>
-                      ),
-                    },
+          <Paper sx={{ p: 1, m: 2 }}>
+            <Markdown
+              options={{
+                overrides: {
+                  a: {
+                    component: (props: any) => (
+                      <Link
+                        href={props.href}
+                        target="_blank"
+                        sx={{
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                      </Link>
+                    ),
                   },
-                }}
-              >
-                {
-                  activity.profiles.find(
-                    (p: any) => p.description?.long && p.type === "web_element"
-                  ).description?.long?.markdown
-                }
-              </Markdown>
-            </Paper>
-          )}
+                },
+              }}
+            >
+              {
+                activity.profiles.find(
+                  (p: any) => p.description?.long && p.type === "web_element"
+                ).description?.long?.markdown
+              }
+            </Markdown>
+          </Paper>
+        )}
+
         <Grid container>
           {place && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
@@ -154,6 +176,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
           {profiles && profiles.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={5}>
               <Box sx={{ m: 2 }}>
@@ -199,6 +222,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
           {organisation.number && organisation.legalFormShort && (
             <Grid item xs={12} sm={12} md={6} xl={6}>
               <Box sx={{ m: 2 }}>
@@ -233,6 +257,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
           {products && products.length > 0 && (
             <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
@@ -254,6 +279,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
     </Layout>
   );
 }
+
 
 export const query = graphql`
   query GetActivityAndRelatedData($id: String!) {
