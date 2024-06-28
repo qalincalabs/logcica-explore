@@ -4,6 +4,9 @@ import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
 import LoadingButton from "@mui/lab/LoadingButton";
 
+const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
+const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
+
 export function ProductCardList() {
   const data = useStaticQuery(graphql`
     query {
@@ -185,14 +188,15 @@ export function ProductCardList() {
     <>
       <Box sx={{ 
         padding: '10px 20px', 
-        backgroundColor: '#EAD107', 
+        backgroundColor: backgroundColor, 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
         borderBottom: '1px solid #ccc',
-        marginBottom: '20px'
+        marginBottom: '20px',
+        color: textColor // Couleur du texte de la barre de filtres
       }}>
-        <Box sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#000000' }}>Filtres :</Box>
+        <Box sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: textColor }}>Filtres :</Box>
         <FormControlLabel
           control={
             <Checkbox
@@ -200,9 +204,9 @@ export function ProductCardList() {
               onChange={toggleShowFavoritesOnly}
               name="showFavoritesOnly"
               sx={{
-                color: '#000000',
+                color: textColor,
                 '&.Mui-checked': {
-                  color: '#000000',
+                  color: textColor,
                 },
                 '& .MuiSvgIcon-root': {
                   fill: '#FFFFFF',
@@ -211,7 +215,7 @@ export function ProductCardList() {
             />
           }
           label="Afficher uniquement les favoris"
-          sx={{ color: '#000000' }}
+          sx={{ color: textColor }}
         />
       </Box>
       <Grid container spacing={2}>
@@ -234,6 +238,7 @@ export function ProductCardList() {
               loadingPosition="end"
               variant="contained"
               fullWidth
+              sx={{ backgroundColor: backgroundColor, color: textColor }} // Couleur du bouton "Load more"
             >
               Load more
             </LoadingButton>
