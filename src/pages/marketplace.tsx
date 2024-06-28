@@ -16,9 +16,18 @@ import {
   FormControlLabel,
   Checkbox,
   Divider,
+  Button,
+  ButtonGroup,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store, Star, StarBorder, Favorite, Delete } from "@mui/icons-material";
+import {
+  Store,
+  Star,
+  StarBorder,
+  Favorite,
+  Delete,
+  FilterAlt,
+} from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 
 type favoriteItem = {
@@ -42,9 +51,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
       ? favorites.filter((fav) => fav.targetId !== id)
       : [...favorites, { targetId: id }];
 
-    console.log(updatedFavorites);
     setFavorites(updatedFavorites);
-    console.log(updatedFavorites);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
@@ -84,71 +91,68 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
           <Favorite />
         </IconButton>
       </Box>
-      <Box display="flex">
-        <Box
-          width="250px"
-          p={2}
-          mr={2}
-          borderRight="1px solid #ccc"
-          bgcolor="lightgrey"
-        >
-          <Typography
-            variant="h6"
-            style={{ color: "black", fontWeight: "bold" }}
-          >
-            Filtres
-          </Typography>
-          <Divider />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={showFavoritesOnly}
-                onChange={handleShowFavoritesOnlyChange}
-                name="showFavoritesOnly"
-              />
-            }
-            label={<Typography style={{ color: "black" }}>Favoris</Typography>}
-          />
-        </Box>
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <List>
-            {filteredMarketplaces.map((m: any) => (
-              <ListItem key={m._id}>
-                <ListItemButton
-                  onClick={() => navigate("/marketplace/" + m._id)}
-                >
-                  <ListItemAvatar>
-                    <Avatar>
-                      <Store />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={m.name}
-                    secondary={
-                      <Stack>
-                        <Typography>
-                          {m.availabilityStatement.short.markdown}
-                        </Typography>
-                        {m.description && (
-                          <Markdown>{m.description.short.markdown}</Markdown>
-                        )}
-                      </Stack>
-                    }
-                  />
-                </ListItemButton>
-                <ListItemIcon>
-                  <IconButton onClick={() => toggleFavorite(m._id)}>
-                    {favorites.some((fav) => fav.targetId == m._id) ? (
-                      <Star />
-                    ) : (
-                      <StarBorder />
-                    )}
-                  </IconButton>
-                </ListItemIcon>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
+      <Box
+        sx={{
+          display: "flex",
+          textAlign: "center",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ButtonGroup variant="outlined">
+          <Button disabled>
+            <FilterAlt />
+          </Button>
+          <Button>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showFavoritesOnly}
+                  onChange={handleShowFavoritesOnlyChange}
+                  name="showFavoritesOnly"
+                />
+              }
+              label="Favoris"
+            />
+          </Button>
+        </ButtonGroup>
+      </Box>
+      <Box display="flex" justifyContent="center" alignItems="center">
+        <List>
+          {filteredMarketplaces.map((m: any) => (
+            <ListItem key={m._id}>
+              <ListItemButton onClick={() => navigate("/marketplace/" + m._id)}>
+                <ListItemAvatar>
+                  <Avatar>
+                    <Store />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={m.name}
+                  secondary={
+                    <Stack>
+                      <Typography>
+                        {m.availabilityStatement.short.markdown}
+                      </Typography>
+                      {m.description && (
+                        <Markdown>{m.description.short.markdown}</Markdown>
+                      )}
+                    </Stack>
+                  }
+                />
+              </ListItemButton>
+              <ListItemIcon>
+                <IconButton onClick={() => toggleFavorite(m._id)}>
+                  {favorites.some((fav) => fav.targetId == m._id) ? (
+                    <Star />
+                  ) : (
+                    <StarBorder />
+                  )}
+                </IconButton>
+              </ListItemIcon>
+            </ListItem>
+          ))}
+        </List>
       </Box>
       <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
         <Box p={2} width={250}>
