@@ -33,10 +33,6 @@ import {
 } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 
-type favoriteItem = {
-  targetId: string;
-};
-
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
   '&.Mui-checked': {
     color: 'black',
@@ -71,6 +67,10 @@ const DrawerHeader = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   alignItems: 'center',
 }));
+
+type favoriteItem = {
+  targetId: string;
+};
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   const [favorites, setFavorites] = useState<favoriteItem[]>([]);
@@ -202,7 +202,6 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
               </ListItemButton>
               <ListItemIcon>
                 <IconButton onClick={() => toggleFavorite(m._id)}>
-
                   {favorites.some((fav) => fav.targetId == m._id) ? (
                     <Star />
                   ) : (
@@ -226,7 +225,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
           <List>
             {favorites.map((fav: favoriteItem) => (
               <ListItem key={fav.targetId}>
-                <ListItemText primary={data.marketplaces.nodes.find((m: any) => m._id === fav.targetId)?.name} />
+                <ListItemText primary={data.marketplaces.nodes.find((m: any) => m._id === fav.targetId)?.name || "Marché inconnu"} />
                 <ListItemIcon>
                   <IconButton onClick={() => removeFavorite(fav.targetId)}>
                     <Delete />
