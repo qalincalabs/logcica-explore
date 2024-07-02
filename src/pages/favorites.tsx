@@ -19,15 +19,20 @@ import {
 import Layout from "../components/layout";
 import { Store, Delete } from "@mui/icons-material";
 
-type favoriteItem = {
-  targetId: string;
+type FavoriteData = {
+  activities: string[];
+  products: string[];
+  counters: string[];
+  partnerships: string[];
 };
 
 const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
-  const [favorites, setFavorites] = useState<favoriteItem[]>([]);
-  const [activityFavorites, setActivityFavorites] = useState<string[]>([]);
-  const [productFavorites, setProductFavorites] = useState<string[]>([]);
-  const [partnershipFavorites, setPartnershipFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteData>({
+    activities: [],
+    products: [],
+    counters: [],
+    partnerships: [],
+  });
   const [filter, setFilter] = useState({
     partnership: true,
     marketplace: true,
@@ -36,38 +41,21 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   });
 
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const storedActivityFavorites = JSON.parse(localStorage.getItem('activityFavorites') || '[]');
-    const storedProductFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
-    const storedPartnershipFavorites = JSON.parse(localStorage.getItem('partnershipFavorites') || '[]');
-    setFavorites(storedFavorites);
-    setActivityFavorites(storedActivityFavorites);
-    setProductFavorites(storedProductFavorites);
-    setPartnershipFavorites(storedPartnershipFavorites);
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [{"targetId":"64d492895436fdcde7e37bb7"}], "products": [], "counters": [], "partnerships": []}}');
+    setFavorites(storedFavorites.data);
   }, []);
 
-  const removeFavorite = (id: string) => {
-    const updatedFavorites = favorites.filter((fav) => fav.targetId !== id);
+  const saveFavorites = (updatedFavorites: FavoriteData) => {
+    localStorage.setItem('favorites.default', JSON.stringify({ data: updatedFavorites }));
+  };
+
+  const removeFavorite = (id: string, type: keyof FavoriteData) => {
+    const updatedFavorites = {
+      ...favorites,
+      [type]: favorites[type].filter((fav) => fav !== id),
+    };
     setFavorites(updatedFavorites);
-    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-  };
-
-  const removeActivityFavorite = (name: string) => {
-    const updatedActivityFavorites = activityFavorites.filter(fav => fav !== name);
-    setActivityFavorites(updatedActivityFavorites);
-    localStorage.setItem('activityFavorites', JSON.stringify(updatedActivityFavorites));
-  };
-
-  const removeProductFavorite = (id: string) => {
-    const updatedProductFavorites = productFavorites.filter(fav => fav !== id);
-    setProductFavorites(updatedProductFavorites);
-    localStorage.setItem('productFavorites', JSON.stringify(updatedProductFavorites));
-  };
-
-  const removePartnershipFavorite = (id: string) => {
-    const updatedPartnershipFavorites = partnershipFavorites.filter(fav => fav !== id);
-    setPartnershipFavorites(updatedPartnershipFavorites);
-    localStorage.setItem('partnershipFavorites', JSON.stringify(updatedPartnershipFavorites));
+    saveFavorites(updatedFavorites);
   };
 
   const handleItemClick = (type: string, id: string) => {
@@ -78,9 +66,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       case 'activity':
         navigate(`/activity/${id}`);
         break;
-      case 'product':
-        navigate(`/product/${id}`);
-        break;
+      
       case 'partnership':
         navigate(`/partnership/${id}`);
         break;
@@ -96,10 +82,10 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     }));
   };
 
-  const filteredPartnershipFavorites = filter.partnership ? partnershipFavorites : [];
-  const filteredFavorites = filter.marketplace ? favorites : [];
-  const filteredActivityFavorites = filter.activity ? activityFavorites : [];
-  const filteredProductFavorites = filter.product ? productFavorites : [];
+  const filteredPartnershipFavorites = filter.partnership ? favorites.partnerships : [];
+  const filteredFavorites = filter.marketplace ? favorites.counters : [];
+  const filteredActivityFavorites = filter.activity ? favorites.activities : [];
+  const filteredProductFavorites = filter.product ? favorites.products : [];
 
   return (
     <Layout>
@@ -144,9 +130,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                   {filteredPartnershipFavorites.map((id: string) => (
                     <ListItem key={id} onClick={() => handleItemClick('partnership', id)}>
                       <ListItemButton>
-                        <ListItemText primary={data.partnerships?.nodes?.find((p: any) => p._id === id)?.name || "Groupement inconnu"} />
+                        <ListItemText primary={data.partnerships.nodes.find((p: any) => p._id === id)?.name || "Groupement inconnu"} />
                         <ListItemIcon>
-                          <IconButton onClick={(e) => { e.stopPropagation(); removePartnershipFavorite(id); }}>
+                          <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'partnerships'); }}>
                             <Delete />
                           </IconButton>
                         </ListItemIcon>
@@ -164,8 +150,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                 <Box>
                   <Typography variant="h6" style={{ color: 'black', marginBottom: '16px' }}>Marchés</Typography>
                   <List>
-                    {filteredFavorites.map((fav: favoriteItem) => (
-                      <ListItem key={fav.targetId} onClick={() => handleItemClick('marketplace', fav.targetId)}>
+                    {filteredFavorites.map((id: string) => (
+                      <ListItem key={id} onClick={() => handleItemClick('marketplace', id)}>
                         <ListItemButton>
                           <ListItemAvatar>
                             <Avatar>
@@ -173,10 +159,10 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                             </Avatar>
                           </ListItemAvatar>
                           <ListItemText
-                            primary={data.marketplaces.nodes.find((m: any) => m._id === fav.targetId)?.name || "Marché inconnu"}
+                            primary={data.marketplaces.nodes.find((m: any) => m._id === id)?.name || "Marché inconnu"}
                           />
                           <ListItemIcon>
-                            <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(fav.targetId); }}>
+                            <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'counters'); }}>
                               <Delete />
                             </IconButton>
                           </ListItemIcon>
@@ -195,12 +181,12 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                 <Box>
                   <Typography variant="h6" style={{ color: 'black', marginBottom: '16px' }}>Producteurs</Typography>
                   <List>
-                    {filteredActivityFavorites.map((name: string) => (
-                      <ListItem key={name} onClick={() => handleItemClick('activity', name)}>
+                    {filteredActivityFavorites.map((id: string) => (
+                      <ListItem key={id} onClick={() => handleItemClick('activity', id)}>
                         <ListItemButton>
-                          <ListItemText primary={name} />
+                          <ListItemText primary={data.activities?.nodes?.find((a: any) => a._id === id)?.name || "Producteur inconnu"} />
                           <ListItemIcon>
-                            <IconButton onClick={(e) => { e.stopPropagation(); removeActivityFavorite(name); }}>
+                            <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'activities'); }}>
                               <Delete />
                             </IconButton>
                           </ListItemIcon>
@@ -224,9 +210,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                     {filteredProductFavorites.map((id: string) => (
                       <ListItem key={id} onClick={() => handleItemClick('product', id)}>
                         <ListItemButton>
-                          <ListItemText primary={data.products?.nodes?.find((p: any) => p._id === id)?.name || "Produit inconnu"} />
+                          <ListItemText primary={data.products.nodes.find((p: any) => p._id === id)?.name || "Produit inconnu"} />
                           <ListItemIcon>
-                            <IconButton onClick={(e) => { e.stopPropagation(); removeProductFavorite(id); }}>
+                            <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'products'); }}>
                               <Delete />
                             </IconButton>
                           </ListItemIcon>
@@ -261,6 +247,12 @@ export const query = graphql`
       }
     }
     partnerships: allMongodbPartnerships {
+      nodes {
+        _id
+        name
+      }
+    }
+    activities: allMongodbActivities {
       nodes {
         _id
         name

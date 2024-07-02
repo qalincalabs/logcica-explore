@@ -1,5 +1,5 @@
 import * as React from "react";
-import { graphql, Link, type HeadFC, type PageProps, navigate } from "gatsby";
+import { graphql, navigate, type PageProps, type HeadFC } from "gatsby";
 import {
   Avatar,
   Box,
@@ -22,25 +22,43 @@ import Markdown from "markdown-to-jsx";
 const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
 const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
 
-const PartnershipPage = ({ data }: any) => {
-  const [favorites, setFavorites] = React.useState<string[]>(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('partnershipFavorites') || '[]');
-    return storedFavorites;
+type FavoriteData = {
+  activities: string[];
+  products: string[];
+  counters: string[];
+  partnerships: string[];
+};
+
+const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
+  const [favorites, setFavorites] = React.useState<FavoriteData>({
+    activities: [],
+    products: [],
+    counters: [],
+    partnerships: [],
   });
 
   const [showFavorites, setShowFavorites] = React.useState(false);
 
+  React.useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
+    setFavorites(storedFavorites.data);
+  }, []);
+
+  const saveFavorites = (updatedFavorites: FavoriteData) => {
+    localStorage.setItem('favorites.default', JSON.stringify({ data: updatedFavorites }));
+  };
+
   const toggleFavorite = (id: string) => {
-    const updatedFavorites = favorites.includes(id)
-      ? favorites.filter(fav => fav !== id)
-      : [...favorites, id];
+    const updatedFavorites = favorites.partnerships.includes(id)
+      ? { ...favorites, partnerships: favorites.partnerships.filter(fav => fav !== id) }
+      : { ...favorites, partnerships: [...favorites.partnerships, id] };
 
     setFavorites(updatedFavorites);
-    localStorage.setItem('partnershipFavorites', JSON.stringify(updatedFavorites));
+    saveFavorites(updatedFavorites);
   };
 
   const filteredPartnerships = showFavorites
-    ? data.partnerships.nodes.filter((p: any) => favorites.includes(p._id))
+    ? data.partnerships.nodes.filter((p: any) => favorites.partnerships.includes(p._id))
     : data.partnerships.nodes;
 
   return (
@@ -113,7 +131,7 @@ const PartnershipPage = ({ data }: any) => {
               </ListItemButton>
               <ListItemIcon>
                 <IconButton onClick={() => toggleFavorite(p._id)}>
-                  {favorites.includes(p._id) ? <Star /> : <StarBorder />}
+                  {favorites.partnerships.includes(p._id) ? <Star /> : <StarBorder />}
                 </IconButton>
               </ListItemIcon>
             </ListItem>

@@ -179,8 +179,8 @@ export function ProductCardList() {
 
   const filteredList = showFavoritesOnly
     ? list.filter((item: any) => {
-        const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
-        return storedFavorites.includes(item._id);
+        const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
+        return storedFavorites.data.products.includes(item._id);
       })
     : list;
 

@@ -18,16 +18,19 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('activityFavorites') || '[]');
-    setFavorites(storedFavorites);
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
+    setFavorites(storedFavorites.data.activities);
   }, []);
 
-  const toggleFavorite = (name: string) => {
-    const updatedFavorites = favorites.includes(name)
-      ? favorites.filter(fav => fav !== name)
-      : [...favorites, name];
+  const toggleFavorite = (id: string) => {
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
+    const updatedFavorites = favorites.includes(id)
+      ? favorites.filter(fav => fav !== id)
+      : [...favorites, id];
+    
+    storedFavorites.data.activities = updatedFavorites;
     setFavorites(updatedFavorites);
-    localStorage.setItem('activityFavorites', JSON.stringify(updatedFavorites));
+    localStorage.setItem('favorites.default', JSON.stringify(storedFavorites));
   };
 
   return (
@@ -37,8 +40,8 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
           <Typography align="center" variant="h3" component="h3" mr={2}>
             {activity.name}
           </Typography>
-          <IconButton onClick={() => toggleFavorite(activity.name)}>
-            {favorites.includes(activity.name) ? <Star /> : <StarBorder />}
+          <IconButton onClick={() => toggleFavorite(activity._id)}>
+            {favorites.includes(activity._id) ? <Star /> : <StarBorder />}
           </IconButton>
         </Box>
 

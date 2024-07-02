@@ -79,7 +79,7 @@ export function NutrientListTable({ nutrientList }: any) {
             .map((n) => nutrientList.find((i: any) => i.nutrient?.code == n))
             .filter((n) => n != null)
             .map((productNutrient: any) => (
-              <TableRow key={1}>
+              <TableRow key={productNutrient.nutrient.code}>
                 <TableCell>
                   {["saturatedFat", "sugars"].includes(
                     productNutrient.nutrient.code
@@ -119,8 +119,8 @@ function netContentsText(item: any) {
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
   const [isFavorite, setIsFavorite] = React.useState<boolean>(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
-    return storedFavorites.includes(item._id);
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
+    return storedFavorites.data.products.includes(item._id);
   });
   const [tab, setTab] = React.useState("0");
 
@@ -146,11 +146,11 @@ export function ProductCard({ item }: any) {
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
-    const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
     const updatedFavorites = isFavorite
-      ? storedFavorites.filter((fav: string) => fav !== item._id)
-      : [...storedFavorites, item._id];
-    localStorage.setItem('productFavorites', JSON.stringify(updatedFavorites));
+      ? { ...storedFavorites, data: { ...storedFavorites.data, products: storedFavorites.data.products.filter((fav: string) => fav !== item._id) } }
+      : { ...storedFavorites, data: { ...storedFavorites.data, products: [...storedFavorites.data.products, item._id] } };
+    localStorage.setItem('favorites.default', JSON.stringify(updatedFavorites));
   };
 
   return (
@@ -493,40 +493,5 @@ export function ProductCard({ item }: any) {
         )}
       </Grid>
     </Card>
-  );
-}
-
-export function ProductCardList({ showFavoritesOnly }: { showFavoritesOnly: boolean }) {
-  const [products, setProducts] = React.useState<any[]>([]);
-  const [favorites, setFavorites] = React.useState<string[]>([]);
-
-  React.useEffect(() => {
-    // Fetch the product data from your source
-    // For example, you could use fetch or axios to get the data from an API
-    // For now, we will use a mock data array
-    const fetchProducts = async () => {
-      const productData = await fetch("/path/to/your/products/api"); // Adjust the path to your products API
-      const products = await productData.json();
-      setProducts(products);
-    };
-
-    fetchProducts();
-
-    const storedFavorites = JSON.parse(localStorage.getItem('productFavorites') || '[]');
-    setFavorites(storedFavorites);
-  }, []);
-
-  const filteredProducts = showFavoritesOnly
-    ? products.filter(product => favorites.includes(product._id))
-    : products;
-
-  return (
-    <Grid container spacing={2}>
-      {filteredProducts.map(product => (
-        <Grid item xs={12} sm={6} md={4} key={product._id}>
-          <ProductCard item={product} />
-        </Grid>
-      ))}
-    </Grid>
   );
 }
