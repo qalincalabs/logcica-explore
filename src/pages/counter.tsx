@@ -1,5 +1,5 @@
 import * as React from "react";
-import { graphql, Link, type HeadFC, type PageProps, navigate } from "gatsby";
+import { graphql, type HeadFC, type PageProps, navigate } from "gatsby";
 import {
   Avatar,
   Box,
@@ -8,13 +8,29 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
+  IconButton,
   Typography,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store } from "@mui/icons-material";
+import { Store, Star, StarBorder } from "@mui/icons-material";
+import { toggleFavorite, isFavoriteItem } from "../utils/favorite";
 
 const CounterPage = ({ data }: any) => {
+  const [favorites, setFavorites] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
+    setFavorites(storedFavorites.data.counters);
+  }, []);
+
+  const handleToggleFavorite = (id: string) => {
+    toggleFavorite('counters', id);
+    const updatedFavorites = isFavoriteItem('counters', id)
+      ? favorites.filter(fav => fav !== id)
+      : [...favorites, id];
+    setFavorites(updatedFavorites);
+  };
+
   return (
     <Layout>
       <Typography align="center" variant="h3">
@@ -23,7 +39,7 @@ const CounterPage = ({ data }: any) => {
       <Box display="flex" justifyContent="center" alignItems="center">
         <List>
           {data.marketplaces.nodes.map((m: any) => (
-            <ListItem>
+            <ListItem key={m._id}>
               <ListItemButton onClick={() => navigate("/marketplace/" + m._id)}>
                 <ListItemAvatar>
                   <Avatar>
@@ -34,6 +50,9 @@ const CounterPage = ({ data }: any) => {
                   primary={m.name}
                   secondary={m.availabilityStatement?.short?.markdown}
                 />
+                <IconButton onClick={(e) => { e.stopPropagation(); handleToggleFavorite(m._id); }}>
+                  {favorites.includes(m._id) ? <Star /> : <StarBorder />}
+                </IconButton>
               </ListItemButton>
             </ListItem>
           ))}

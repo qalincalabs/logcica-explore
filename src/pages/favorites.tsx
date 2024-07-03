@@ -18,21 +18,10 @@ import {
 } from "@mui/material";
 import Layout from "../components/layout";
 import { Store, Delete } from "@mui/icons-material";
-
-type FavoriteData = {
-  activities: string[];
-  products: string[];
-  counters: string[];
-  partnerships: string[];
-};
+import { getFavorites, toggleFavorite, isFavorite } from "../utils/favorite";
 
 const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
-  const [favorites, setFavorites] = useState<FavoriteData>({
-    activities: [],
-    products: [],
-    counters: [],
-    partnerships: [],
-  });
+  const [favorites, setFavorites] = useState(getFavorites());
   const [filter, setFilter] = useState({
     partnership: true,
     marketplace: true,
@@ -41,21 +30,12 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   });
 
   useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [{"targetId":"64d492895436fdcde7e37bb7"}], "products": [], "counters": [], "partnerships": []}}');
-    setFavorites(storedFavorites.data);
+    setFavorites(getFavorites());
   }, []);
 
-  const saveFavorites = (updatedFavorites: FavoriteData) => {
-    localStorage.setItem('favorites.default', JSON.stringify({ data: updatedFavorites }));
-  };
-
-  const removeFavorite = (id: string, type: keyof FavoriteData) => {
-    const updatedFavorites = {
-      ...favorites,
-      [type]: favorites[type].filter((fav) => fav !== id),
-    };
-    setFavorites(updatedFavorites);
-    saveFavorites(updatedFavorites);
+  const handleRemoveFavorite = (id: string, type: keyof typeof favorites) => {
+    toggleFavorite(type, id);
+    setFavorites(getFavorites());
   };
 
   const handleItemClick = (type: string, id: string) => {
@@ -66,7 +46,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       case 'activity':
         navigate(`/activity/${id}`);
         break;
-      
       case 'partnership':
         navigate(`/partnership/${id}`);
         break;
@@ -132,7 +111,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                       <ListItemButton>
                         <ListItemText primary={data.partnerships.nodes.find((p: any) => p._id === id)?.name || "Groupement inconnu"} />
                         <ListItemIcon>
-                          <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'partnerships'); }}>
+                          <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, 'partnerships'); }}>
                             <Delete />
                           </IconButton>
                         </ListItemIcon>
@@ -162,7 +141,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                             primary={data.marketplaces.nodes.find((m: any) => m._id === id)?.name || "Marché inconnu"}
                           />
                           <ListItemIcon>
-                            <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'counters'); }}>
+                            <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, 'counters'); }}>
                               <Delete />
                             </IconButton>
                           </ListItemIcon>
@@ -186,7 +165,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                         <ListItemButton>
                           <ListItemText primary={data.activities?.nodes?.find((a: any) => a._id === id)?.name || "Producteur inconnu"} />
                           <ListItemIcon>
-                            <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'activities'); }}>
+                            <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, 'activities'); }}>
                               <Delete />
                             </IconButton>
                           </ListItemIcon>
@@ -212,7 +191,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                         <ListItemButton>
                           <ListItemText primary={data.products.nodes.find((p: any) => p._id === id)?.name || "Produit inconnu"} />
                           <ListItemIcon>
-                            <IconButton onClick={(e) => { e.stopPropagation(); removeFavorite(id, 'products'); }}>
+                            <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, 'products'); }}>
                               <Delete />
                             </IconButton>
                           </ListItemIcon>

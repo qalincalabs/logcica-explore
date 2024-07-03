@@ -41,6 +41,8 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
+import { toggleFavorite, isFavorite } from "../utils/favorite";
+
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
 function addressText(address: any) {
@@ -118,10 +120,9 @@ function netContentsText(item: any) {
 
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
-  const [isFavorite, setIsFavorite] = React.useState<boolean>(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
-    return storedFavorites.data.products.includes(item._id);
-  });
+  const [isFavoriteState, setIsFavoriteState] = React.useState<boolean>(() =>
+    isFavorite('products', item._id)
+  );
   const [tab, setTab] = React.useState("0");
 
   const handleChange =
@@ -144,13 +145,9 @@ export function ProductCard({ item }: any) {
     setIsAddressVisible(!isAddressVisible);
   };
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
-    const updatedFavorites = isFavorite
-      ? { ...storedFavorites, data: { ...storedFavorites.data, products: storedFavorites.data.products.filter((fav: string) => fav !== item._id) } }
-      : { ...storedFavorites, data: { ...storedFavorites.data, products: [...storedFavorites.data.products, item._id] } };
-    localStorage.setItem('favorites.default', JSON.stringify(updatedFavorites));
+  const handleToggleFavorite = () => {
+    toggleFavorite('products', item._id);
+    setIsFavoriteState(!isFavoriteState);
   };
 
   return (
@@ -198,8 +195,8 @@ export function ProductCard({ item }: any) {
                 >
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
-                  <IconButton onClick={toggleFavorite}>
-                    {isFavorite ? (
+                  <IconButton onClick={handleToggleFavorite}>
+                    {isFavoriteState ? (
                       <Star color="primary" />
                     ) : (
                       <StarBorder color="primary" />
