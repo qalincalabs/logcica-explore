@@ -40,8 +40,8 @@ import {
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-
-import { toggleFavorite, isFavorite } from "../utils/favorite";
+import * as favoriteService from "../utils/favoritesService";
+import { useState } from "react";
 
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
@@ -120,9 +120,9 @@ function netContentsText(item: any) {
 
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
-  const [isFavoriteState, setIsFavoriteState] = React.useState<boolean>(() =>
-    isFavorite('products', item._id)
-  );
+
+  const [isFavorite, setIsFavorite] = useState<boolean>(favoriteService.itemExists({targetType: 'product', targetId: item._id}));
+
   const [tab, setTab] = React.useState("0");
 
   const handleChange =
@@ -143,11 +143,6 @@ export function ProductCard({ item }: any) {
 
   const handleSetIsAddressVisible = () => (event: React.SyntheticEvent) => {
     setIsAddressVisible(!isAddressVisible);
-  };
-
-  const handleToggleFavorite = () => {
-    toggleFavorite('products', item._id);
-    setIsFavoriteState(!isFavoriteState);
   };
 
   return (
@@ -195,8 +190,8 @@ export function ProductCard({ item }: any) {
                 >
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
-                  <IconButton onClick={handleToggleFavorite}>
-                    {isFavoriteState ? (
+                  <IconButton onClick={() => setIsFavorite(favoriteService.assignItemToList({targetType: 'product', targetId: item._id, assign: !isFavorite}))}>
+                    {isFavorite ? (
                       <Star color="primary" />
                     ) : (
                       <StarBorder color="primary" />

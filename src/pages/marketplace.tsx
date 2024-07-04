@@ -35,10 +35,6 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
 
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-  const handleShowFavoritesOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setShowFavoritesOnly(event.target.checked);
-  };
-
   const filteredMarketplaces = showFavoritesOnly
     ? data.marketplaces.nodes.filter((m: any) => favorites.includes(m._id))
     : data.marketplaces.nodes;

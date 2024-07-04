@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Button, Grid, FormControlLabel, Checkbox, Box } from "@mui/material";
+import { Grid, FormControlLabel, Checkbox, Box } from "@mui/material";
 import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { getFavorites, isFavoriteItem } from "../utils/favorite";
+import * as favoriteService from "../utils/favoritesService";
 
 const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
 const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
@@ -178,8 +178,10 @@ export function ProductCardList() {
     setShowFavoritesOnly(!showFavoritesOnly);
   };
 
+  const favoriteProducts = favoriteService.findItems({targetTypes: ['product']}).map(e => e.targetId)
+
   const filteredList = showFavoritesOnly
-    ? list.filter((item: any) => isFavoriteItem("products", item._id))
+    ? list.filter((item: any) => favoriteProducts.includes(item._id))
     : list;
 
   return (
