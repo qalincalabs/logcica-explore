@@ -32,7 +32,7 @@ type FavoriteItem = {
 
 type FavoriteQuery = {
   targetIds?: string[];
-  targetType?: string[];
+  targetTypes?: string[];
   listIds?: string[];
 };
 
@@ -54,7 +54,7 @@ function allLists(): FavoriteList[] {
 export function itemExists(query: FavoriteExistsQuery) {
   const items = findItems({
     targetIds: [query.targetId],
-    targetType: [query.targetType],
+    targetTypes: [query.targetType],
   });
   return isEmpty(items) == false;
 }
@@ -62,12 +62,12 @@ export function itemExists(query: FavoriteExistsQuery) {
 export function findItems(query: FavoriteQuery): FavoriteItem[] {
   if (isEmpty(query.listIds)) query.listIds = allLists().map((e) => e.id);
 
-  if (isEmpty(query.targetType)) query.targetType = collectionKeys;
+  if (isEmpty(query.targetTypes)) query.targetTypes = collectionKeys;
 
   const items = new Array<FavoriteItem>();
 
   for (const li of query.listIds || []) {
-    for (const c of query.targetType || []) {
+    for (const c of query.targetTypes || []) {
       const l = getLocalStorageItemList(li, c);
       items.push(
         ...l.map(

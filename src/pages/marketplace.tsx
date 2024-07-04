@@ -31,6 +31,7 @@ import {
   Close
 } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
+import * as favoriteService from "../utils/favoritesService";
 
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
   '&.Mui-checked': {
@@ -75,56 +76,19 @@ type FavoriteData = {
 };
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
-  const [favorites, setFavorites] = useState<FavoriteData>({
-    activities: [],
-    products: [],
-    counters: [],
-    partnerships: [],
-  });
-  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const getFavorites = () => favoriteService.findItems({targetTypes: ['counter']}).map(e => e.targetId)
+
+  const [favorites, setFavorites] = useState<string[]>(getFavorites);
+
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-
-  useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
-    setFavorites(storedFavorites.data);
-  }, []);
-
-  const saveFavorites = (updatedFavorites: FavoriteData) => {
-    localStorage.setItem('favorites.default', JSON.stringify({ data: updatedFavorites }));
-  };
-
-  const toggleFavorite = (id: string) => {
-    const updatedFavorites = favorites.counters.includes(id)
-      ? { ...favorites, counters: favorites.counters.filter(fav => fav !== id) }
-      : { ...favorites, counters: [...favorites.counters, id] };
-
-    setFavorites(updatedFavorites);
-    saveFavorites(updatedFavorites);
-  };
-
-  const handleDrawerOpen = () => {
-    setDrawerOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setDrawerOpen(false);
-  };
-
-  const removeFavorite = (id: string, type: keyof FavoriteData) => {
-    const updatedFavorites = {
-      ...favorites,
-      [type]: favorites[type].filter(fav => fav !== id),
-    };
-    setFavorites(updatedFavorites);
-    saveFavorites(updatedFavorites);
-  };
 
   const handleShowFavoritesOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowFavoritesOnly(event.target.checked);
   };
 
   const filteredMarketplaces = showFavoritesOnly
-    ? data.marketplaces.nodes.filter((m: any) => favorites.counters.includes(m._id))
+    ? data.marketplaces.nodes.filter((m: any) => favorites.includes(m._id))
     : data.marketplaces.nodes;
 
   return (
@@ -133,9 +97,6 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
         <Typography align="center" variant="h3" mr={2}>
           Marchés
         </Typography>
-        <IconButton onClick={handleDrawerOpen}>
-          <Favorite />
-        </IconButton>
       </Box>
       <Box
         sx={{
@@ -188,8 +149,11 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
                 />
               </ListItemButton>
               <ListItemIcon>
-                <IconButton onClick={() => toggleFavorite(m._id)}>
-                  {favorites.counters.includes(m._id) ? (
+                <IconButton onClick={() => {
+                  favoriteService.assignItemToList({targetType: 'counter', targetId: m._id, assign: !favorites.includes(m._id)})
+                  setFavorites(getFavorites())
+                }}>
+                  {favorites.includes(m._id) ? (
                     <Star />
                   ) : (
                     <StarBorder />
@@ -200,71 +164,6 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
           ))}
         </List>
       </Box>
-      <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
-        <DrawerHeader>
-          <Typography variant="h6">Favoris</Typography>
-          <IconButton onClick={handleDrawerClose}>
-            <Close />
-          </IconButton>
-        </DrawerHeader>
-        <Box p={2} width={250}>
-          <Typography variant="h6" style={{ color: 'black', marginTop: '16px' }}>Marchés</Typography>
-          <List>
-            {favorites.counters.map((id: string) => (
-              <ListItem key={id}>
-                <ListItemText primary={data.marketplaces.nodes.find((m: any) => m._id === id)?.name || "Marché inconnu"} />
-                <ListItemIcon>
-                  <IconButton onClick={() => removeFavorite(id, 'counters')}>
-                    <Delete />
-                  </IconButton>
-                </ListItemIcon>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <Typography variant="h6" style={{ color: 'black', marginTop: '16px' }}>Producteurs</Typography>
-          <List>
-            {favorites.activities.map((name: string) => (
-              <ListItem key={name}>
-                <ListItemText primary={data.activities?.nodes?.find((a: any) => a._id === name)?.name || name} />
-                <ListItemIcon>
-                  <IconButton onClick={() => removeFavorite(name, 'activities')}>
-                    <Delete />
-                  </IconButton>
-                </ListItemIcon>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <Typography variant="h6" style={{ color: 'black', marginTop: '16px' }}>Produits</Typography>
-          <List>
-            {favorites.products.map((id: string) => (
-              <ListItem key={id}>
-                <ListItemText primary={data.products?.nodes?.find((p: any) => p._id === id)?.name || "Produit inconnu"} />
-                <ListItemIcon>
-                  <IconButton onClick={() => removeFavorite(id, 'products')}>
-                    <Delete />
-                  </IconButton>
-                </ListItemIcon>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <Typography variant="h6" style={{ color: 'black', marginTop: '16px' }}>Groupements</Typography>
-          <List>
-            {favorites.partnerships.map((id: string) => (
-              <ListItem key={id}>
-                <ListItemText primary={data.partnerships?.nodes?.find((p: any) => p._id === id)?.name || "Groupement inconnu"} />
-                <ListItemIcon>
-                  <IconButton onClick={() => removeFavorite(id, 'partnerships')}>
-                    <Delete />
-                  </IconButton>
-                </ListItemIcon>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
     </Layout>
   );
 };
