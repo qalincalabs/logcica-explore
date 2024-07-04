@@ -38,7 +38,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     setFavorites(getFavorites());
   };
 
-  const handleItemClick = (type: string, id: string) => {
+  const handleItemClick = (type: string, id: string, activityId?: string) => {
     switch(type) {
       case 'marketplace':
         navigate(`/marketplace/${id}`);
@@ -48,6 +48,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
         break;
       case 'partnership':
         navigate(`/partnership/${id}`);
+        break;
+      case 'product':
+        navigate(`/activity/${activityId}#${id}`);
         break;
       default:
         break;
@@ -186,18 +189,20 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                 <Box>
                   <Typography variant="h6" style={{ color: 'black', marginBottom: '16px' }}>Produits</Typography>
                   <List>
-                    {filteredProductFavorites.map((id: string) => (
-                      <ListItem key={id} onClick={() => handleItemClick('product', id)}>
-                        <ListItemButton>
-                          <ListItemText primary={data.products.nodes.find((p: any) => p._id === id)?.name || "Produit inconnu"} />
-                          <ListItemIcon>
-                            <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, 'products'); }}>
-                              <Delete />
-                            </IconButton>
-                          </ListItemIcon>
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
+                    {filteredProductFavorites.map((id: string) => { 
+                      const product = data.products.nodes.find((p: any) => p._id === id)
+                      return (
+                        <ListItem key={id} onClick={() => handleItemClick('product', id, product?.producer?.activity?._id)}>
+                          <ListItemButton>
+                            <ListItemText primary={product?.name || "Produit inconnu"} />
+                            <ListItemIcon>
+                              <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, 'products'); }}>
+                                <Delete />
+                              </IconButton>
+                            </ListItemIcon>
+                          </ListItemButton>
+                        </ListItem>
+                    )})}
                   </List>
                 </Box>
               </Grid>
@@ -223,6 +228,11 @@ export const query = graphql`
       nodes {
         _id
         name
+        producer {
+          activity {
+            _id
+          }
+        }
       }
     }
     partnerships: allMongodbPartnerships {
