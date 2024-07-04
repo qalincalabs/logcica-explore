@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { graphql, PageProps } from "gatsby";
 import { Box, Grid, Paper, Stack, Typography, Link, IconButton } from "@mui/material";
 import { OpenInNew, Email, Phone, Star, StarBorder } from "@mui/icons-material";
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 import { ProductCard } from "../components/product-card";
+import * as favoriteService from "../utils/favoritesService";
 
 export default function PartnershipTemplate({ data }: PageProps<any>) {
   const activity = data.activity;
@@ -15,23 +16,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
-  const [favorites, setFavorites] = useState<string[]>([]);
-
-  useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
-    setFavorites(storedFavorites.data.activities);
-  }, []);
-
-  const toggleFavorite = (id: string) => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
-    const updatedFavorites = favorites.includes(id)
-      ? favorites.filter(fav => fav !== id)
-      : [...favorites, id];
-    
-    storedFavorites.data.activities = updatedFavorites;
-    setFavorites(updatedFavorites);
-    localStorage.setItem('favorites.default', JSON.stringify(storedFavorites));
-  };
+  const [isFavorite, setIsFavorite] = useState<boolean>(favoriteService.itemExists({targetType: 'activity', targetId: activity._id}));
 
   return (
     <Layout>
@@ -40,8 +25,8 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
           <Typography align="center" variant="h3" component="h3" mr={2}>
             {activity.name}
           </Typography>
-          <IconButton onClick={() => toggleFavorite(activity._id)}>
-            {favorites.includes(activity._id) ? <Star /> : <StarBorder />}
+          <IconButton onClick={() => setIsFavorite(favoriteService.assignItemToList({targetType: 'activity', targetId: activity._id, assign: !isFavorite}))}>
+            {isFavorite ? <Star /> : <StarBorder />}
           </IconButton>
         </Box>
 
