@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
   Badge,
 } from "@mui/material";
 import { navigate } from "gatsby";
@@ -24,33 +25,30 @@ const searchIndices = [{ name: `Activities`, title: `Activité` }];
 export default function AppTopBar() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setDrawerOpen(open);
-    };
+  const [menuDrawerOpen, setMenuDrawerOpen] = React.useState(false);
 
   const menuItems = [
     { label: "PRODUCTEURS", path: "/" },
     { label: "GROUPEMENTS", path: "/partnership" },
     { label: "MARCHÉS", path: "/marketplace" },
     { label: "PRODUITS", path: "/product" },
+    { label: "FAVORIS", path: "/favorites" }, // Ajout du bouton Favoris
   ];
+
+  const handleMenuDrawerOpen = () => {
+    setMenuDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setMenuDrawerOpen(false);
+  };
 
   const list = () => (
     <Box
       sx={{ width: 250 }}
       role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
+      onClick={handleDrawerClose}
+      onKeyDown={handleDrawerClose}
     >
       <List>
         {menuItems.map((item, index) => (
@@ -64,25 +62,25 @@ export default function AppTopBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-    <AppBar position="fixed" sx={{ height: "64px" }}>
-      <Toolbar>
-        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-          {list()}
-        </Drawer>
-        {isSmallScreen && (
-          <IconButton
-            edge="end"
-            color="inherit"
-            aria-label="menu"
-            onClick={toggleDrawer(true)}
-            sx={{
-              mr: 1
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-        )}
-        <Typography
+      <AppBar position="fixed" sx={{ height: "64px" }}>
+        <Toolbar>
+          <Drawer anchor="left" open={menuDrawerOpen} onClose={handleDrawerClose}>
+            {list()}
+          </Drawer>
+          {isSmallScreen && (
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleMenuDrawerOpen}
+              sx={{
+                mr: 1
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography
             variant="h6"
             sx={{
               whiteSpace: "nowrap",
@@ -93,42 +91,40 @@ export default function AppTopBar() {
               pl: 0
             }}
           >
-        <Badge badgeContent="beta" color="primary">
-            logCiCa explore
-        </Badge>
-        </Typography>
-        <Box
-          sx={{
-            display: { xs: "none", sm: "none", md: "flex" },
-            flexGrow: 1,
-          }}
-        >
-          <Stack direction="row" gap={1} sx={{ 
-            marginLeft: 2 
-            }}>
-            {menuItems.map((item, index) => (
-              <Button
-                key={index}
-                sx={{
-                  color: "black",
-                  fontWeight: "bold",
-                  textTransform: "uppercase",
-                  "&:hover": {
-                    backgroundColor: "#f0f0f0",
-                  },
-                }}
-                onClick={() => navigate(item.path)}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </Stack>
-        </Box>
-        <Box>
-          <Search indices={searchIndices} />
-        </Box>
-      </Toolbar>
-    </AppBar>
+            <Badge badgeContent="beta" color="primary">
+              logCiCa explore
+            </Badge>
+          </Typography>
+          <Box
+            sx={{
+              display: { xs: "none", sm: "none", md: "flex" },
+              flexGrow: 1,
+            }}
+          >
+            <Stack direction="row" gap={1} sx={{ marginLeft: 2 }}>
+              {menuItems.map((item, index) => (
+                <Button
+                  key={index}
+                  sx={{
+                    color: "black",
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    "&:hover": {
+                      backgroundColor: "#f0f0f0",
+                    },
+                  }}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Stack>
+          </Box>
+          <Box>
+            <Search indices={searchIndices} />
+          </Box>
+        </Toolbar>
+      </AppBar>
     </Box>
   );
 }
