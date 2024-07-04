@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { graphql, navigate, type PageProps, type HeadFC } from "gatsby";
 import {
   Avatar,
@@ -17,48 +17,21 @@ import {
 } from "@mui/material";
 import Layout from "../components/layout";
 import { Store, Star, StarBorder } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
+import * as favoriteService from "../utils/favoritesService";
 
 const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
 const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
 
-type FavoriteData = {
-  activities: string[];
-  products: string[];
-  counters: string[];
-  partnerships: string[];
-};
-
 const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
-  const [favorites, setFavorites] = React.useState<FavoriteData>({
-    activities: [],
-    products: [],
-    counters: [],
-    partnerships: [],
-  });
 
-  const [showFavorites, setShowFavorites] = React.useState(false);
+  const getFavorites = () => favoriteService.findItems({targetTypes: ['partnership']}).map(e => e.targetId)
 
-  React.useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites.default') || '{"data": {"activities": [], "products": [], "counters": [], "partnerships": []}}');
-    setFavorites(storedFavorites.data);
-  }, []);
+  const [favorites, setFavorites] = useState<string[]>(getFavorites);
 
-  const saveFavorites = (updatedFavorites: FavoriteData) => {
-    localStorage.setItem('favorites.default', JSON.stringify({ data: updatedFavorites }));
-  };
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-  const toggleFavorite = (id: string) => {
-    const updatedFavorites = favorites.partnerships.includes(id)
-      ? { ...favorites, partnerships: favorites.partnerships.filter(fav => fav !== id) }
-      : { ...favorites, partnerships: [...favorites.partnerships, id] };
-
-    setFavorites(updatedFavorites);
-    saveFavorites(updatedFavorites);
-  };
-
-  const filteredPartnerships = showFavorites
-    ? data.partnerships.nodes.filter((p: any) => favorites.partnerships.includes(p._id))
+  const filteredPartnerships = showFavoritesOnly
+    ? data.partnerships.nodes.filter((m: any) => favorites.includes(m._id))
     : data.partnerships.nodes;
 
   return (
@@ -80,8 +53,8 @@ const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
         <FormControlLabel
           control={
             <Checkbox
-              checked={showFavorites}
-              onChange={() => setShowFavorites(!showFavorites)}
+              checked={showFavoritesOnly}
+              onChange={() => setShowFavoritesOnly(!showFavoritesOnly)}
               name="showFavoritesOnly"
               sx={{
                 color: textColor,
@@ -130,8 +103,11 @@ const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
                 />
               </ListItemButton>
               <ListItemIcon>
-                <IconButton onClick={() => toggleFavorite(p._id)}>
-                  {favorites.partnerships.includes(p._id) ? <Star /> : <StarBorder />}
+                <IconButton onClick={() => {
+                  favoriteService.assignItemToList({targetType: 'partnership', targetId: p._id, assign: !favorites.includes(p._id)})
+                  setFavorites(getFavorites())
+                }}>
+                  {favorites.includes(p._id) ? <Star /> : <StarBorder />}
                 </IconButton>
               </ListItemIcon>
             </ListItem>

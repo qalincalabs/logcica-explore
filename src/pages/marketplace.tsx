@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { graphql, navigate, PageProps } from "gatsby";
+import React, { useState } from "react";
+import { graphql, HeadFC, navigate, PageProps } from "gatsby";
 import {
   Avatar,
   Box,
@@ -11,69 +11,21 @@ import {
   Stack,
   Typography,
   IconButton,
-  Drawer,
   ListItemIcon,
   FormControlLabel,
   Checkbox,
-  Divider,
   Button,
   ButtonGroup,
 } from "@mui/material";
-import { styled } from '@mui/material/styles';
 import Layout from "../components/layout";
 import {
   Store,
   Star,
   StarBorder,
-  Favorite,
-  Delete,
   FilterAlt,
-  Close
 } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 import * as favoriteService from "../utils/favoritesService";
-
-const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
-  '&.Mui-checked': {
-    color: 'black',
-  },
-  '&.MuiCheckbox-root': {
-    color: 'white',
-  },
-  '& .MuiSvgIcon-root': {
-    fontSize: 28,
-  },
-  '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-    borderRadius: '50%',
-  },
-  transition: theme.transitions.create(['background-color', 'border']),
-}));
-
-const FilterBox = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  border: '1px solid lightgrey',
-  borderRadius: 8,
-  backgroundColor: '#FFD700',
-  display: 'flex',
-  alignItems: 'center',
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-}));
-
-const DrawerHeader = styled(Box)(({ theme }) => ({
-  backgroundColor: '#FFD700',
-  padding: theme.spacing(2),
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-}));
-
-type FavoriteData = {
-  activities: string[];
-  products: string[];
-  counters: string[];
-  partnerships: string[];
-};
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
 
@@ -115,7 +67,7 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
               control={
                 <Checkbox
                   checked={showFavoritesOnly}
-                  onChange={handleShowFavoritesOnlyChange}
+                  onChange={() => setShowFavoritesOnly(!showFavoritesOnly)}
                   name="showFavoritesOnly"
                 />
               }
