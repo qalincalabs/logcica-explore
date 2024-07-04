@@ -99,6 +99,7 @@ export function assignItemToList(props: FavoriteItemAssignement): boolean {
 }
 
 export function removeItemFromList(props: FavoriteItemRemoval) {
+  console.log(props)
   assignItemToList({ ...props, assign: false });
 }
 
