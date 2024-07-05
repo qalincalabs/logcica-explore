@@ -31,7 +31,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     marketplace: true,
     activity: true,
     product: true,
-  });
+  } as Record<string, boolean> );
 
   const handleRemoveFavorite = (id: string, type: string) => {
     favoriteService.removeItemFromList({targetType: type, targetId: id})
