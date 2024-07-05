@@ -233,7 +233,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                         alignItems: "center",
                       }}
                     >
-                      {place.localKey ?? place.key}{" "}
+                      {place?.localKey ?? place?.key}{" "}
                       <OpenInNew sx={{ ml: 0.5 }} />
                     </Link>
                   </Stack>
