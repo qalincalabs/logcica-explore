@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
-
+import { jsPDF } from 'jspdf';
 
 export const exportToJSON = (data: any, filename: string) => {
   const json = JSON.stringify(data, null, 2);
@@ -47,4 +47,55 @@ export const exportToXLSX = (data: any, filename: string) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+export const exportToText = (data: any, filename: string) => {
+  let textContent = '';
+  if (Array.isArray(data)) {
+    data.forEach(item => {
+      textContent += JSON.stringify(item, null, 2) + '\n';
+    });
+  } else {
+    textContent = JSON.stringify(data, null, 2);
+  }
+  const blob = new Blob([textContent], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `${filename}.txt`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+export const exportToPDF = (data: any, filename: string) => {
+  const doc = new jsPDF();
+  const title = "Mes Favoris";
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text(title, 10, 10);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  let yPosition = 20;
+
+  const addSection = (title, items) => {
+    if (items.length > 0) {
+      doc.setFont("helvetica", "bold");
+      doc.text(title, 10, yPosition);
+      yPosition += 10;
+      doc.setFont("helvetica", "normal");
+      items.forEach(item => {
+        doc.text(`• ${item.name}`, 10, yPosition);
+        yPosition += 10;
+      });
+      yPosition += 10; // Add extra space after each section
+    }
+  };
+
+  addSection("Groupements", data.partnerships);
+  addSection("Marchés", data.marketplaces);
+  addSection("Producteurs", data.activities);
+  addSection("Produits", data.products);
+
+  doc.save(`${filename}.pdf`);
 };

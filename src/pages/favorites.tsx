@@ -18,9 +18,9 @@ import {
   Tooltip,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store, Delete, GetApp } from "@mui/icons-material";
+import { Store, Delete, GetApp, Facebook, WhatsApp, PictureAsPdf } from "@mui/icons-material"; // Ajout de l'icône PDF
 import * as favoriteService from "../utils/favoritesService";
-import { exportToJSON, exportToCSV, exportToXLSX } from "../utils/exportUtils";
+import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils"; // Assurez-vous que l'importation est correcte
 
 // Utility functions
 const generateShareText = (favorites, data) => {
@@ -136,7 +136,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   const filteredActivityFavorites = createFilteredList(favorites, filter.activity, 'activity');
   const filteredProductFavorites = createFilteredList(favorites, filter.product, 'product');
 
-  const exportFavorites = (format: 'json' | 'csv' | 'xlsx') => {
+  const exportFavorites = (format: 'json' | 'csv' | 'xlsx' | 'text' | 'pdf') => {
     const favoritesData = {
       partnerships: filteredPartnershipFavorites.map(id => data.partnerships.nodes.find((p: any) => p._id === id)),
       marketplaces: filteredFavorites.map(id => data.marketplaces.nodes.find((m: any) => m._id === id)),
@@ -156,8 +156,20 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       exportToCSV(csvData, 'favorites');
     } else if (format === 'xlsx') {
       exportToXLSX(favoritesData, 'favorites');
+    } else if (format === 'text') {
+      const textData = generateShareText(favorites, data);
+      exportToText(textData, 'favorites');
+    } else if (format === 'pdf') {
+      const pdfData = {
+        partnerships: filteredPartnershipFavorites.map(id => ({ name: data.partnerships.nodes.find((p: any) => p._id === id)?.name })),
+        marketplaces: filteredFavorites.map(id => ({ name: data.marketplaces.nodes.find((m: any) => m._id === id)?.name })),
+        activities: filteredActivityFavorites.map(id => ({ name: data.activities.nodes.find((a: any) => a._id === id)?.name })),
+        products: filteredProductFavorites.map(id => ({ name: data.products.nodes.find((p: any) => p._id === id)?.name }))
+      };
+      exportToPDF(pdfData, 'favorites');
     }
   };
+
 
   return (
     <Layout>
@@ -246,6 +258,13 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               <Typography variant="button" sx={{ ml: 1 }}>XLSX</Typography>
             </IconButton>
           </Tooltip>
+          <Tooltip title="Exporter en PDF">
+            <IconButton onClick={() => exportFavorites('pdf')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
+              <PictureAsPdf />
+              <Typography variant="button" sx={{ ml: 1 }}>PDF</Typography>
+            </IconButton>
+          </Tooltip>
+          
         </Box>
       </Box>
     </Layout>
