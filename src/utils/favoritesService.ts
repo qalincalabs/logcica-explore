@@ -45,7 +45,9 @@ function isEmpty(array: any[] | undefined) {
   return !Array.isArray(array) || array.length === 0;
 }
 
-const collectionKeys = ["activity", "partnership", "product", "counter"];
+const targetTypes = ["activity", "partnership", "product", "counter"];
+
+const isBrowser = typeof window !== "undefined"
 
 function allLists(): FavoriteList[] {
   return [{ id: "default", name: "default" }];
@@ -62,7 +64,7 @@ export function itemExists(query: FavoriteExistsQuery) {
 export function findItems(query: FavoriteQuery): FavoriteItem[] {
   if (isEmpty(query.listIds)) query.listIds = allLists().map((e) => e.id);
 
-  if (isEmpty(query.targetTypes)) query.targetTypes = collectionKeys;
+  if (isEmpty(query.targetTypes)) query.targetTypes = targetTypes;
 
   const items = new Array<FavoriteItem>();
 
@@ -113,25 +115,29 @@ function removeList(props: FavoriteListRemoval) {
 
 function getLocalStorageItemList(
   listId: string,
-  collectionKey: string
+  targetType: string
 ): string[] {
+
+  if (!isBrowser) return []
+
   return JSON.parse(
-    localStorage.getItem(getLocalStorageKey(listId, collectionKey)) ?? "[]"
+    localStorage.getItem(getLocalStorageKey(listId, targetType)) ?? "[]"
   );
 }
 
-function getLocalStorageKey(listId: string, collectionKey: string): string {
-  console.log("favorites.items." + listId + "." + collectionKey);
-  return "favorites.items." + listId + "." + collectionKey;
+function getLocalStorageKey(listId: string, targetType: string): string {
+  return "favorites.items." + listId + "." + targetType;
 }
 
 function saveLocalStorageItemList(
   listId: string,
-  collectionKey: string,
+  targetType: string,
   targetIds: string[]
 ) {
+  if (!isBrowser) return
+
   localStorage.setItem(
-    getLocalStorageKey(listId, collectionKey),
+    getLocalStorageKey(listId, targetType),
     JSON.stringify(targetIds)
   );
 }
