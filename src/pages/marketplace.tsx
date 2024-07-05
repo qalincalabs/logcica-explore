@@ -12,20 +12,16 @@ import {
   Typography,
   IconButton,
   ListItemIcon,
-  FormControlLabel,
-  Checkbox,
-  Button,
-  ButtonGroup,
 } from "@mui/material";
 import Layout from "../components/layout";
 import {
   Store,
   Star,
   StarBorder,
-  FilterAlt,
 } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 import * as favoriteService from "../utils/favoritesService";
+import FilterBar from "../components/filter-bar";
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
 
@@ -46,34 +42,9 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
           Marchés
         </Typography>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          textAlign: "center",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <ButtonGroup variant="outlined">
-          <Button disabled>
-            <FilterAlt />
-          </Button>
-          <Button>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showFavoritesOnly}
-                  onChange={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  name="showFavoritesOnly"
-                />
-              }
-              label="Favoris"
-            />
-          </Button>
-        </ButtonGroup>
-      </Box>
+      <FilterBar favoriteFilterToggle={showFavoritesOnly} favoriteFilterToggleCallback={() => setShowFavoritesOnly(!showFavoritesOnly)} />
       <Box display="flex" justifyContent="center" alignItems="center">
-        <List>
+        <List sx={{maxWidth: "1000px"}}>
           {filteredMarketplaces.map((m: any) => (
             <ListItem key={m._id}>
               <ListItemButton onClick={() => navigate("/marketplace/" + m._id)}>

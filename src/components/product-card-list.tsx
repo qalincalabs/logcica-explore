@@ -4,6 +4,7 @@ import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
 import LoadingButton from "@mui/lab/LoadingButton";
 import * as favoriteService from "../utils/favoritesService";
+import FilterBar from "./filter-bar";
 
 const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
 const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
@@ -186,38 +187,7 @@ export function ProductCardList() {
 
   return (
     <>
-      <Box sx={{ 
-        padding: '10px 20px', 
-        backgroundColor: backgroundColor, 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        borderBottom: '1px solid #ccc',
-        marginBottom: '20px',
-        color: textColor // Couleur du texte de la barre de filtres
-      }}>
-        <Box sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: textColor }}>Filtres :</Box>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={showFavoritesOnly}
-              onChange={toggleShowFavoritesOnly}
-              name="showFavoritesOnly"
-              sx={{
-                color: textColor,
-                '&.Mui-checked': {
-                  color: textColor,
-                },
-                '& .MuiSvgIcon-root': {
-                  fill: '#FFFFFF',
-                },
-              }}
-            />
-          }
-          label="Afficher uniquement les favoris"
-          sx={{ color: textColor }}
-        />
-      </Box>
+      <FilterBar favoriteFilterToggle={showFavoritesOnly} favoriteFilterToggleCallback={() => setShowFavoritesOnly(!showFavoritesOnly)} />
       <Grid container spacing={2}>
         {filteredList.map((item: any): any => (
           <Grid item xs={12} md={6} xl={4} key={item._id}>

@@ -12,15 +12,13 @@ import {
   Typography,
   IconButton,
   ListItemIcon,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
 import Layout from "../components/layout";
 import { Store, Star, StarBorder } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
+import FilterBar from "../components/filter-bar";
 
-const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
-const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
+
 
 const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
 
@@ -36,43 +34,14 @@ const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
 
   return (
     <Layout>
-      <Typography align="center" variant="h3">
-        Groupements
-      </Typography>
-      <Box sx={{ 
-        padding: '10px 20px', 
-        backgroundColor: backgroundColor, 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        borderBottom: '1px solid #ccc',
-        marginBottom: '20px',
-        color: textColor // Couleur du texte de la barre de filtres
-      }}>
-        <Box sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: textColor }}>Filtres :</Box>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={showFavoritesOnly}
-              onChange={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              name="showFavoritesOnly"
-              sx={{
-                color: textColor,
-                '&.Mui-checked': {
-                  color: textColor,
-                },
-                '& .MuiSvgIcon-root': {
-                  fill: '#FFFFFF',
-                },
-              }}
-            />
-          }
-          label="Afficher uniquement les favoris"
-          sx={{ color: textColor }}
-        />
+      <Box display="flex" justifyContent="center" alignItems="center" my={4}>
+        <Typography align="center" variant="h3" mr={2}>
+          Groupements
+        </Typography>
       </Box>
+      <FilterBar favoriteFilterToggle={showFavoritesOnly} favoriteFilterToggleCallback={() => setShowFavoritesOnly(!showFavoritesOnly)} />
       <Box display="flex" justifyContent="center" alignItems="center">
-        <List>
+        <List sx={{maxWidth: "1000px"}}>
           {filteredPartnerships.map((p: any) => (
             <ListItem key={p._id}>
               <ListItemButton onClick={() => navigate("/partnership/" + p._id)}>
