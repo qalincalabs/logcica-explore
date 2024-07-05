@@ -15,18 +15,15 @@ import {
   Grid,
   ButtonGroup,
   Button,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store, Delete, ContentCopy, GetApp } from "@mui/icons-material";
+import { Store, Delete, GetApp } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToCSV, exportToXLSX } from "../utils/exportUtils";
-import { FacebookShareButton, TwitterShareButton, WhatsappShareButton, FacebookIcon, TwitterIcon, WhatsappIcon } from 'react-share';
 
 // Utility functions
 const generateShareText = (favorites, data) => {
-  let text = "Mes Favoris:\n\n";
-
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
     { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
@@ -34,55 +31,26 @@ const generateShareText = (favorites, data) => {
     { key: 'products', title: 'Produits', nodes: data.products.nodes },
   ];
 
+  let shareText = "Mes Favoris:\n\n";
+
   sections.forEach(({ key, title, nodes }) => {
     if (favorites[key] && favorites[key].length > 0) {
-      text += `${title}:\n`;
+      shareText += `${title}:\n`;
       favorites[key].forEach(id => {
         const item = nodes.find(p => p._id === id);
         if (item) {
-          text += `- ${item.name}\n`;
+          shareText += `•⁠  ⁠${item.name}\n`;
         }
       });
-      text += "\n";
+      shareText += "\n";
     }
   });
 
-  return text;
+  return shareText;
 };
 
-const createFilteredList = (favorites, filterKey, dataKey, data) => {
+const createFilteredList = (favorites, filterKey, dataKey) => {
   return filterKey ? favorites.filter(f => f.targetType === dataKey).map(e => e.targetId) : [];
-};
-
-const ShareButtons = ({ shareText }) => {
-  const [copied, setCopied] = useState(false);
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-
-  const handleCopyText = () => {
-    navigator.clipboard.writeText(shareText).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  return (
-    <Box display="flex" alignItems="center" gap={1}>
-      <FacebookShareButton url={currentUrl} quote={shareText}>
-        <FacebookIcon size={32} round />
-      </FacebookShareButton>
-      <TwitterShareButton url={currentUrl} title={shareText}>
-        <TwitterIcon size={32} round />
-      </TwitterShareButton>
-      <WhatsappShareButton url={currentUrl} title={shareText}>
-        <WhatsappIcon size={32} round />
-      </WhatsappShareButton>
-      <Tooltip title={copied ? "Texte copié!" : "Copier le texte"}>
-        <IconButton onClick={handleCopyText}>
-          <ContentCopy />
-        </IconButton>
-      </Tooltip>
-    </Box>
-  );
 };
 
 const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes }) => {
@@ -96,7 +64,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
           {favorites.map((id: string) => {
             const item = dataNodes.find(p => p._id === id);
             return (
-              <ListItem key={id} onClick={() => handleItemClick(dataKey, id, item?.producer?.activity?._id)}>
+              <ListItem key={id} onClick={() => handleItemClick(dataKey, id, item?.producer?.activity?._id)} sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
                 <ListItemButton>
                   <ListItemAvatar>
                     <Avatar>
@@ -163,10 +131,10 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     }));
   };
 
-  const filteredPartnershipFavorites = createFilteredList(favorites, filter.partnership, 'partnership', data);
-  const filteredFavorites = createFilteredList(favorites, filter.marketplace, 'counter', data);
-  const filteredActivityFavorites = createFilteredList(favorites, filter.activity, 'activity', data);
-  const filteredProductFavorites = createFilteredList(favorites, filter.product, 'product', data);
+  const filteredPartnershipFavorites = createFilteredList(favorites, filter.partnership, 'partnership');
+  const filteredFavorites = createFilteredList(favorites, filter.marketplace, 'counter');
+  const filteredActivityFavorites = createFilteredList(favorites, filter.activity, 'activity');
+  const filteredProductFavorites = createFilteredList(favorites, filter.product, 'product');
 
   const exportFavorites = (format: 'json' | 'csv' | 'xlsx') => {
     const favoritesData = {
@@ -278,7 +246,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               <Typography variant="button" sx={{ ml: 1 }}>XLSX</Typography>
             </IconButton>
           </Tooltip>
-          <ShareButtons shareText={shareText} />
         </Box>
       </Box>
     </Layout>
