@@ -15,38 +15,33 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Breadcrumbs,
   Link,
   Box,
   Avatar,
-  Button,
-  Tab,
   IconButton,
-  Chip,
-  Popper,
-  Paper,
+  Tab,
   CardActions,
-  Fab,
 } from "@mui/material";
 import {
   CalendarMonth,
   LocalDining,
   CrisisAlert,
   WineBar,
-  Delete,
-  VisibilityOff,
   Agriculture,
   Blender,
   Inventory,
   SquareFoot,
+  Star,
+  StarBorder,
+  VisibilityOff,
 } from "@mui/icons-material";
 
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import * as favoriteService from "../utils/favoritesService";
+import { useState } from "react";
 
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
@@ -86,7 +81,7 @@ export function NutrientListTable({ nutrientList }: any) {
             .map((n) => nutrientList.find((i: any) => i.nutrient?.code == n))
             .filter((n) => n != null)
             .map((productNutrient: any) => (
-              <TableRow key={1}>
+              <TableRow key={productNutrient.nutrient.code}>
                 <TableCell>
                   {["saturatedFat", "sugars"].includes(
                     productNutrient.nutrient.code
@@ -126,12 +121,14 @@ function netContentsText(item: any) {
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
 
+  const [isFavorite, setIsFavorite] = useState<boolean>(favoriteService.itemExists({targetType: 'product', targetId: item._id}));
+
+  const [tab, setTab] = React.useState("0");
+
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
     };
-
-  const [tab, setTab] = React.useState("0");
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setTab(newValue);
@@ -149,13 +146,13 @@ export function ProductCard({ item }: any) {
   };
 
   return (
-    <Card style={{scrollPaddingTop: "100px", scrollMarginTop: "100px"}} id={item._id}>
+    <Card style={{ scrollPaddingTop: "100px", scrollMarginTop: "100px" }} id={item._id}>
       <Grid container>
         {item.mainImage && (
           <Grid item xs={3} sm={2} md={3}>
             <CardMedia
               component="img"
-              image={item.mainImage.url} // {`${item?.img}?w=164&h=164&fit=crop&auto=format`}
+              image={item.mainImage.url}
               alt={item.name}
               sx={{
                 objectFit: "contain",
@@ -193,6 +190,13 @@ export function ProductCard({ item }: any) {
                 >
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
+                  <IconButton onClick={() => setIsFavorite(favoriteService.assignItemToList({targetType: 'product', targetId: item._id, assign: !isFavorite}))}>
+                    {isFavorite ? (
+                      <Star color="primary" />
+                    ) : (
+                      <StarBorder color="primary" />
+                    )}
+                  </IconButton>
                 </Box>
               }
               subheader={
@@ -221,6 +225,7 @@ export function ProductCard({ item }: any) {
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(
                         (monthNumber) => (
                           <Typography
+                            key={monthNumber}
                             sx={{
                               fontSize: "0.85rem",
                               padding: "1px",
@@ -290,7 +295,7 @@ export function ProductCard({ item }: any) {
                             />
                           ) : (
                             <Avatar>
-                              item.owner.organisation?.name?.charAt(0)
+                              {item.owner.organisation?.name?.charAt(0)}
                             </Avatar>
                           )
                         }
@@ -309,7 +314,7 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </Grid>
-        {(item.references?.find((r: any) => r.system?.key == "openbatra.org") ||
+        {(item.references?.find((r: any) => r.system?.key === "openbatra.org") ||
           item.description?.short) && (
           <Box display="flex" width="100%">
             {item.description?.short && (
@@ -325,7 +330,7 @@ export function ProductCard({ item }: any) {
               </CardContent>
             )}
             {item.references?.find(
-              (r: any) => r.system?.key == "openbatra.org"
+              (r: any) => r.system?.key === "openbatra.org"
             ) && (
               <CardActions>
                 <a
@@ -333,7 +338,7 @@ export function ProductCard({ item }: any) {
                     "https://www.batra.link/batra2.0/productFull.html?gtin=" +
                     encodeURIComponent(
                       item.references.find(
-                        (r: any) => r.system?.key == "openbatra.org"
+                        (r: any) => r.system?.key === "openbatra.org"
                       ).number
                     )
                   }
@@ -378,7 +383,7 @@ export function ProductCard({ item }: any) {
               )}
               {item.allergenList &&
                 item.allergenList.map((productAllergen: any) => (
-                  <Stack direction="row" gap={1} flexGrow={1}>
+                  <Stack direction="row" gap={1} flexGrow={1} key={productAllergen.allergen._id}>
                     <CrisisAlert />
                     <Typography>
                       {productAllergen.containmentLevel.name +
@@ -447,7 +452,7 @@ export function ProductCard({ item }: any) {
                   )}
                   <IconButton
                     onClick={handleChange2("0")}
-                    sx={{ display: tab == "0" ? "none" : "block" }}
+                    sx={{ display: tab === "0" ? "none" : "block" }}
                   >
                     <VisibilityOff fontSize="small" />
                   </IconButton>
@@ -478,14 +483,6 @@ export function ProductCard({ item }: any) {
             </TabContext>
           </CardContent>
         )}
-        {/*
-          <CardActions>
-            <IconButton>
-              <AccessAlarm />
-              <CalendarMonth />
-            </IconButton>
-          </CardActions>
-          */}
       </Grid>
     </Card>
   );

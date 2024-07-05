@@ -1,5 +1,5 @@
-import * as React from "react";
-import { graphql, Link, type HeadFC, type PageProps, navigate } from "gatsby";
+import React, { useState } from "react";
+import { graphql, navigate, type PageProps, type HeadFC } from "gatsby";
 import {
   Avatar,
   Box,
@@ -10,21 +10,40 @@ import {
   ListItemText,
   Stack,
   Typography,
+  IconButton,
+  ListItemIcon,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
+import { Store, Star, StarBorder } from "@mui/icons-material";
+import * as favoriteService from "../utils/favoritesService";
+import FilterBar from "../components/filter-bar";
 
-const PartnershipPage = ({ data }: any) => {
+
+
+const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
+
+  const getFavorites = () => favoriteService.findItems({targetTypes: ['partnership']}).map(e => e.targetId)
+
+  const [favorites, setFavorites] = useState<string[]>(getFavorites);
+
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+  const filteredPartnerships = showFavoritesOnly
+    ? data.partnerships.nodes.filter((m: any) => favorites.includes(m._id))
+    : data.partnerships.nodes;
+
   return (
     <Layout>
-      <Typography align="center" variant="h3">
-        Groupements
-      </Typography>
+      <Box display="flex" justifyContent="center" alignItems="center" my={4}>
+        <Typography align="center" variant="h3" mr={2}>
+          Groupements
+        </Typography>
+      </Box>
+      <FilterBar favoriteFilterToggle={showFavoritesOnly} favoriteFilterToggleCallback={() => setShowFavoritesOnly(!showFavoritesOnly)} />
       <Box display="flex" justifyContent="center" alignItems="center">
-        <List>
-          {data.partnerships.nodes.map((p: any) => (
-            <ListItem>
+        <List sx={{maxWidth: "1000px"}}>
+          {filteredPartnerships.map((p: any) => (
+            <ListItem key={p._id}>
               <ListItemButton onClick={() => navigate("/partnership/" + p._id)}>
                 <ListItemAvatar>
                   <Avatar>
@@ -52,6 +71,14 @@ const PartnershipPage = ({ data }: any) => {
                   }
                 />
               </ListItemButton>
+              <ListItemIcon>
+                <IconButton onClick={() => {
+                  favoriteService.assignItemToList({targetType: 'partnership', targetId: p._id, assign: !favorites.includes(p._id)})
+                  setFavorites(getFavorites())
+                }}>
+                  {favorites.includes(p._id) ? <Star /> : <StarBorder />}
+                </IconButton>
+              </ListItemIcon>
             </ListItem>
           ))}
         </List>
@@ -63,19 +90,6 @@ const PartnershipPage = ({ data }: any) => {
 export default PartnershipPage;
 
 export const Head: HeadFC = () => <title>Groupements</title>;
-
-/*
-description {
-          short {
-            markdown
-          }
-        }
-        profiles {
-          key
-          type
-          link
-        }
-*/
 
 export const query = graphql`
   query {

@@ -1,8 +1,13 @@
 import * as React from "react";
-import { Button, Grid } from "@mui/material";
+import { Grid, FormControlLabel, Checkbox, Box } from "@mui/material";
 import { ProductCard } from "./product-card";
 import { graphql, useStaticQuery } from "gatsby";
 import LoadingButton from "@mui/lab/LoadingButton";
+import * as favoriteService from "../utils/favoritesService";
+import FilterBar from "./filter-bar";
+
+const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
+const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
 
 export function ProductCardList() {
   const data = useStaticQuery(graphql`
@@ -138,8 +143,9 @@ export function ProductCardList() {
 
   // State for the list
   const [list, setList] = React.useState([...products.slice(0, 24)]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = React.useState(false);
 
-  // State to trigger oad more
+  // State to trigger load more
   const [loadMore, setLoadMore] = React.useState<boolean>(false);
 
   // State of whether there is more to load
@@ -163,42 +169,54 @@ export function ProductCardList() {
     }
   }, [loadMore, hasMore]); //eslint-disable-line
 
-  //Check if there is more
+  // Check if there is more
   React.useEffect(() => {
     const isMore = list.length < products.length;
     setHasMore(isMore);
   }, [list]); //eslint-disable-line
 
-  // TODO LoadingButton was for mobile but it's not really working
+  const toggleShowFavoritesOnly = () => {
+    setShowFavoritesOnly(!showFavoritesOnly);
+  };
+
+  const favoriteProducts = favoriteService.findItems({targetTypes: ['product']}).map(e => e.targetId)
+
+  const filteredList = showFavoritesOnly
+    ? list.filter((item: any) => favoriteProducts.includes(item._id))
+    : list;
 
   return (
-    <Grid container spacing={2}>
-      {list.map((item: any): any => (
-        <Grid item xs={12} md={6} xl={4} key={item._id}>
-          <ProductCard item={item} />
+    <>
+      <FilterBar favoriteFilterToggle={showFavoritesOnly} favoriteFilterToggleCallback={() => setShowFavoritesOnly(!showFavoritesOnly)} />
+      <Grid container spacing={2}>
+        {filteredList.map((item: any): any => (
+          <Grid item xs={12} md={6} xl={4} key={item._id}>
+            <ProductCard item={item} />
+          </Grid>
+        ))}
+        <Grid
+          item
+          xs={12}
+          style={{
+            textAlign: "center", // this does the magic
+          }}
+        >
+          {hasMore ? (
+            <LoadingButton
+              onClick={handleLoadMore}
+              loading={loadMore}
+              loadingPosition="end"
+              variant="contained"
+              fullWidth
+              sx={{ backgroundColor: backgroundColor, color: textColor }} // Couleur du bouton "Load more"
+            >
+              Load more
+            </LoadingButton>
+          ) : (
+            <p>No more results</p>
+          )}
         </Grid>
-      ))}
-      <Grid
-        item
-        xs={12}
-        style={{
-          textAlign: "center", // this does the magic
-        }}
-      >
-        {hasMore ? (
-          <LoadingButton
-            onClick={handleLoadMore}
-            loading={loadMore}
-            loadingPosition="end"
-            variant="contained"
-            fullWidth
-          >
-            Load more
-          </LoadingButton>
-        ) : (
-          <p>No more results</p>
-        )}
       </Grid>
-    </Grid>
+    </>
   );
 }

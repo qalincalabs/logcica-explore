@@ -13,8 +13,6 @@ const theme = {
   faded: "#888",
 }
 
-
-
 export default function Search() {
   const indices = [
     { name: 'activity' },

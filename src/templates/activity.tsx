@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { graphql, PageProps } from "gatsby";
-import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Email, Phone, Place } from "@mui/icons-material";
+import { Box, Grid, Paper, Stack, Typography, Link, IconButton } from "@mui/material";
+import { OpenInNew, Email, Phone, Star, StarBorder } from "@mui/icons-material";
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 import { ProductCard } from "../components/product-card";
+import * as favoriteService from "../utils/favoritesService";
 
 export default function PartnershipTemplate({ data }: PageProps<any>) {
   const activity = data.activity;
@@ -15,12 +16,19 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
+  const [isFavorite, setIsFavorite] = useState<boolean>(favoriteService.itemExists({targetType: 'activity', targetId: activity._id}));
+
   return (
     <Layout>
       <Box>
-        <Typography align="center" variant="h3" component="h3">
-          {activity.name}
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
+          <Typography align="center" variant="h3" component="h3" mr={2}>
+            {activity.name}
+          </Typography>
+          <IconButton onClick={() => setIsFavorite(favoriteService.assignItemToList({targetType: 'activity', targetId: activity._id, assign: !isFavorite}))}>
+            {isFavorite ? <Star /> : <StarBorder />}
+          </IconButton>
+        </Box>
 
         {activity.description?.short?.markdown && (
           <Paper sx={{ p: 1, m: 2 }}>
@@ -50,40 +58,42 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
             </Markdown>
           </Paper>
         )}
+
         {activity.profiles?.find(
           (p: any) => p.description?.long && p.type === "web_element"
         ) && (
-            <Paper sx={{ p: 1, m: 2 }}>
-              <Markdown
-                options={{
-                  overrides: {
-                    a: {
-                      component: (props: any) => (
-                        <Link
-                          href={props.href}
-                          target="_blank"
-                          sx={{
-                            color: "primary.main",
-                            textDecoration: "underline",
-                            display: "inline-flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          {props.children} <OpenInNew sx={{ ml: 0.5 }} />
-                        </Link>
-                      ),
-                    },
+          <Paper sx={{ p: 1, m: 2 }}>
+            <Markdown
+              options={{
+                overrides: {
+                  a: {
+                    component: (props: any) => (
+                      <Link
+                        href={props.href}
+                        target="_blank"
+                        sx={{
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                      </Link>
+                    ),
                   },
-                }}
-              >
-                {
-                  activity.profiles.find(
-                    (p: any) => p.description?.long && p.type === "web_element"
-                  ).description?.long?.markdown
-                }
-              </Markdown>
-            </Paper>
-          )}
+                },
+              }}
+            >
+              {
+                activity.profiles.find(
+                  (p: any) => p.description?.long && p.type === "web_element"
+                ).description?.long?.markdown
+              }
+            </Markdown>
+          </Paper>
+        )}
+
         <Grid container>
           {place && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
@@ -154,6 +164,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
           {profiles && profiles.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={5}>
               <Box sx={{ m: 2 }}>
@@ -199,6 +210,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
           {organisation.number && organisation.legalFormShort && (
             <Grid item xs={12} sm={12} md={6} xl={6}>
               <Box sx={{ m: 2 }}>
@@ -206,10 +218,25 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                   Entreprise
                 </Typography>
                 <Paper sx={{ p: 2 }}>
-                  <Typography variant="subtitle1" component="p">
-                    <strong>Numéro : </strong>
-                    {organisation.number}
-                  </Typography>
+                  <Stack direction="row">
+                    <Typography variant="subtitle1" component="p">
+                      <strong>Numéro : </strong>
+                      {organisation.number}
+                    </Typography>
+                    <Link
+                      href={`https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=${organisation.number.match(/\d+/g).join('')}`}
+                      target="_blank"
+                      sx={{
+                        color: "primary.main",
+                        textDecoration: "underline",
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {place?.localKey ?? place?.key}{" "}
+                      <OpenInNew sx={{ ml: 0.5 }} />
+                    </Link>
+                  </Stack>
                   <Typography variant="subtitle1" component="p">
                     <strong>Forme juridique : </strong>
                     {organisation.legalFormShort}
@@ -218,6 +245,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
           {products && products.length > 0 && (
             <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
@@ -239,6 +267,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
     </Layout>
   );
 }
+
 
 export const query = graphql`
   query GetActivityAndRelatedData($id: String!) {
