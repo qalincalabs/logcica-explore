@@ -285,24 +285,12 @@ export const query = graphql`
       nodes {
         _id
         name
-        producer {
-          activity {
-            _id
-            name
-          }
-        }
       }
     }
     partnerships: allMongodbPartnerships {
       nodes {
         _id
         name
-        place
-        profiles{
-          _id
-          link
-        }
-        
       }
     }
     activities: allMongodbActivities {
