@@ -118,6 +118,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       case 'product':
         navigate(`/activity/${activityId}#${id}`);
         break;
+      case 'counter':
+          navigate(`/marketplace/${id}`);
+          break;
       default:
         navigate(`/${type}/${id}`);
         break;
@@ -285,6 +288,12 @@ export const query = graphql`
       nodes {
         _id
         name
+        producer {	
+          activity {	
+            _id	
+            name	
+          }	
+        }
       }
     }
     partnerships: allMongodbPartnerships {
