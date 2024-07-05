@@ -288,6 +288,7 @@ export const query = graphql`
         producer {
           activity {
             _id
+            name
           }
         }
       }
@@ -296,6 +297,12 @@ export const query = graphql`
       nodes {
         _id
         name
+        place
+        profiles{
+          _id
+          link
+        }
+        
       }
     }
     activities: allMongodbActivities {
