@@ -11,7 +11,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
   Badge,
 } from "@mui/material";
 import { navigate } from "gatsby";
@@ -69,39 +68,61 @@ export default function AppTopBar() {
           </Drawer>
           {isSmallScreen && (
             <IconButton
-              edge="end"
+              edge="start"
               color="inherit"
               aria-label="menu"
               onClick={handleMenuDrawerOpen}
-              sx={{
-                mr: 1
-              }}
+              sx={{ mr: 1 }}
             >
               <MenuIcon />
             </IconButton>
           )}
-          <Typography
-            variant="h6"
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              flexGrow: { xs: 1, sm: 1, md: 0 },
-              p: 3,
-              pl: 0
-            }}
-          >
-            <Badge badgeContent="beta" color="primary">
-              logCiCa explore
-            </Badge>
-          </Typography>
+          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: { xs: 'left', md: 'left' } }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem' }, // Adjust font size for different screen sizes
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: 'block',
+                }}
+              >
+                logCiCa
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem' }, // Adjust font size for different screen sizes
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: 'block',
+                }}
+              >
+                explore
+                <Badge badgeContent="beta" color="primary" sx={{ ml: 1 }} />
+              </Typography>
+            </Box>
+          </Box>
           <Box
             sx={{
-              display: { xs: "none", sm: "none", md: "flex" },
-              flexGrow: 1,
+              display: { xs: "flex", md: "flex" },
+              justifyContent: 'flex-end',
+              alignItems: 'center'
             }}
           >
-            <Stack direction="row" gap={1} sx={{ marginLeft: 2 }}>
+            <Search indices={searchIndices} />
+          </Box>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              flexGrow: 0,
+              marginLeft: 2
+            }}
+          >
+            <Stack direction="row" gap={1}>
               {menuItems.map((item, index) => (
                 <Button
                   key={index}
@@ -119,9 +140,6 @@ export default function AppTopBar() {
                 </Button>
               ))}
             </Stack>
-          </Box>
-          <Box>
-            <Search indices={searchIndices} />
           </Box>
         </Toolbar>
       </AppBar>
