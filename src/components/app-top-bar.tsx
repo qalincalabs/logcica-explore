@@ -19,7 +19,7 @@ import Search from "../components/search";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
-const searchIndices = [{ name: `Activities`, title: `Activité` }];
+const searchIndices = [{ name: 'Activities', title: 'Activité' }];
 
 export default function AppTopBar() {
   const theme = useTheme();
@@ -77,61 +77,55 @@ export default function AppTopBar() {
               <MenuIcon />
             </IconButton>
           )}
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: { xs: 'left', md: 'left' } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: { xs: 'column', md: 'row' },
+              textAlign: { xs: 'center', md: 'left' },
+            }}
+          >
+            <Box sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
               <Typography
                 variant="h6"
                 sx={{
-                  fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem' }, // Adjust font size for different screen sizes
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: 'block',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  fontSize: { xs: '1rem', md: '1.5rem' },
                 }}
               >
-                logCiCa
+                logCiCa explore
               </Typography>
-              <Typography
-                variant="h6"
+              <Badge
+                badgeContent="beta"
+                color="primary"
                 sx={{
-                  fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem' }, // Adjust font size for different screen sizes
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: 'block',
+                  position: 'absolute',
+                  top: '0.5rem',
+                  right: '-1rem',
+                  transform: 'translate(0%, -50%)',
                 }}
-              >
-                explore
-                <Badge badgeContent="beta" color="primary" sx={{ ml: 1 }} />
-              </Typography>
+              />
             </Box>
           </Box>
           <Box
             sx={{
-              display: { xs: "flex", md: "flex" },
-              justifyContent: 'flex-end',
-              alignItems: 'center'
+              display: { xs: 'none', sm: 'none', md: 'flex' },
+              flexGrow: 1,
             }}
           >
-            <Search indices={searchIndices} />
-          </Box>
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              flexGrow: 0,
-              marginLeft: 2
-            }}
-          >
-            <Stack direction="row" gap={1}>
+            <Stack direction="row" gap={1} sx={{ marginLeft: 2 }}>
               {menuItems.map((item, index) => (
                 <Button
                   key={index}
                   sx={{
-                    color: "black",
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                    "&:hover": {
-                      backgroundColor: "#f0f0f0",
+                    color: 'black',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    '&:hover': {
+                      backgroundColor: '#f0f0f0',
                     },
                   }}
                   onClick={() => navigate(item.path)}
@@ -140,6 +134,9 @@ export default function AppTopBar() {
                 </Button>
               ))}
             </Stack>
+          </Box>
+          <Box>
+            <Search indices={searchIndices} />
           </Box>
         </Toolbar>
       </AppBar>
