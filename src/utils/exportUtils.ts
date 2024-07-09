@@ -2,9 +2,9 @@ import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 
-export const exportToJSON = (data, filename) => {
+export const exportToJSON = (data: any, filename: string) => {
   const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([new TextEncoder().encode(json)], { type: "application/json;charset=utf-8" });
+  const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -14,9 +14,9 @@ export const exportToJSON = (data, filename) => {
   document.body.removeChild(link);
 };
 
-export const exportToCSV = (data, filename) => {
+export const exportToCSV = (data: any, filename: string) => {
   const csv = Papa.unparse(data);
-  const blob = new Blob([new TextEncoder().encode(csv)], { type: "text/csv;charset=utf-8" });
+  const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -26,10 +26,10 @@ export const exportToCSV = (data, filename) => {
   document.body.removeChild(link);
 };
 
-export const exportToXLSX = (data, filename) => {
+export const exportToXLSX = (data: any, filename: string) => {
   const workbook = XLSX.utils.book_new();
 
-  const createSheet = (data, sheetName) => {
+  const createSheet = (data: any, sheetName: string) => {
     const worksheet = XLSX.utils.json_to_sheet(data);
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
   };
@@ -49,7 +49,7 @@ export const exportToXLSX = (data, filename) => {
   document.body.removeChild(link);
 };
 
-export const exportToText = (data, filename) => {
+export const exportToText = (data: any, filename: string) => {
   let textContent = '';
   if (Array.isArray(data)) {
     data.forEach(item => {
@@ -58,7 +58,7 @@ export const exportToText = (data, filename) => {
   } else {
     textContent = JSON.stringify(data, null, 2);
   }
-  const blob = new Blob([new TextEncoder().encode(textContent)], { type: "text/plain;charset=utf-8" });
+  const blob = new Blob([textContent], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
