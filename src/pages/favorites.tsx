@@ -253,12 +253,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               <Typography variant="button" sx={{ ml: 1 }}>JSON</Typography>
             </IconButton>
           </Tooltip>
+          {/* 
           <Tooltip title="Exporter en CSV">
             <IconButton onClick={() => exportFavorites('csv')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
               <GetApp />
               <Typography variant="button" sx={{ ml: 1 }}>CSV</Typography>
             </IconButton>
           </Tooltip>
+          */}
           <Tooltip title="Exporter en XLSX">
             <IconButton onClick={() => exportFavorites('xlsx')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
               <GetApp />
