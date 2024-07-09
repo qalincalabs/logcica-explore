@@ -11,7 +11,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
   Badge,
 } from "@mui/material";
 import { navigate } from "gatsby";
@@ -20,7 +19,7 @@ import Search from "../components/search";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
-const searchIndices = [{ name: `Activities`, title: `Activité` }];
+const searchIndices = [{ name: 'Activities', title: 'Activité' }];
 
 export default function AppTopBar() {
   const theme = useTheme();
@@ -69,35 +68,51 @@ export default function AppTopBar() {
           </Drawer>
           {isSmallScreen && (
             <IconButton
-              edge="end"
+              edge="start"
               color="inherit"
               aria-label="menu"
               onClick={handleMenuDrawerOpen}
-              sx={{
-                mr: 1
-              }}
+              sx={{ mr: 1 }}
             >
               <MenuIcon />
             </IconButton>
           )}
-          <Typography
-            variant="h6"
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              flexGrow: { xs: 1, sm: 1, md: 0 },
-              p: 3,
-              pl: 0
-            }}
-          >
-            <Badge badgeContent="beta" color="primary">
-              logCiCa explore
-            </Badge>
-          </Typography>
           <Box
             sx={{
-              display: { xs: "none", sm: "none", md: "flex" },
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: { xs: 'column', md: 'row' },
+              textAlign: { xs: 'center', md: 'left' },
+            }}
+          >
+            <Box sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  fontSize: { xs: '1rem', md: '1.5rem' },
+                }}
+              >
+                logCiCa explore
+              </Typography>
+              <Badge
+                badgeContent="beta"
+                color="primary"
+                sx={{
+                  position: 'absolute',
+                  top: '0.5rem',
+                  right: '-1rem',
+                  transform: 'translate(0%, -50%)',
+                }}
+              />
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: { xs: 'none', sm: 'none', md: 'flex' },
               flexGrow: 1,
             }}
           >
@@ -106,11 +121,11 @@ export default function AppTopBar() {
                 <Button
                   key={index}
                   sx={{
-                    color: "black",
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                    "&:hover": {
-                      backgroundColor: "#f0f0f0",
+                    color: 'black',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    '&:hover': {
+                      backgroundColor: '#f0f0f0',
                     },
                   }}
                   onClick={() => navigate(item.path)}

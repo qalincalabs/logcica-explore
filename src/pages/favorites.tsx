@@ -16,9 +16,11 @@ import {
   ButtonGroup,
   Button,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store, Delete, GetApp, Facebook, WhatsApp, PictureAsPdf } from "@mui/icons-material"; // Ajout de l'icône PDF
+import { Store, Delete, GetApp, PictureAsPdf } from "@mui/icons-material"; // Ajout de l'icône PDF
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils"; // Assurez-vous que l'importation est correcte
 
@@ -119,8 +121,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
         navigate(`/activity/${activityId}#${id}`);
         break;
       case 'counter':
-          navigate(`/marketplace/${id}`);
-          break;
+        navigate(`/marketplace/${id}`);
+        break;
       default:
         navigate(`/${type}/${id}`);
         break;
@@ -173,6 +175,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     }
   };
 
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Layout>
@@ -180,7 +184,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
         Mes Favoris
       </Typography>
       <Box display="flex" justifyContent="center" my={2}>
-        <ButtonGroup variant="outlined">
+        <ButtonGroup variant="outlined" orientation={isSmallScreen ? "vertical" : "horizontal"}>
           <Button
             onClick={() => handleFilterChange('partnership')}
             sx={{ color: 'black', backgroundColor: filter.partnership ? 'rgba(0, 0, 0, 0.1)' : 'transparent' }}
@@ -249,12 +253,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               <Typography variant="button" sx={{ ml: 1 }}>JSON</Typography>
             </IconButton>
           </Tooltip>
+          {/* 
           <Tooltip title="Exporter en CSV">
             <IconButton onClick={() => exportFavorites('csv')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
               <GetApp />
               <Typography variant="button" sx={{ ml: 1 }}>CSV</Typography>
             </IconButton>
           </Tooltip>
+          */}
           <Tooltip title="Exporter en XLSX">
             <IconButton onClick={() => exportFavorites('xlsx')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
               <GetApp />
