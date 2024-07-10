@@ -11,18 +11,17 @@ import {
   Typography,
   IconButton,
   ListItemIcon,
-  Divider,
   Grid,
   ButtonGroup,
   Button,
   Tooltip,
+  Divider,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store, Delete, GetApp, Facebook, WhatsApp, PictureAsPdf } from "@mui/icons-material"; // Ajout de l'icône PDF
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
-import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils"; // Assurez-vous que l'importation est correcte
+import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils";
 
-// Utility functions
 const generateShareText = (favorites, data) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
@@ -50,7 +49,7 @@ const generateShareText = (favorites, data) => {
 };
 
 const createFilteredList = (favorites, filterKey, dataKey) => {
-  return filterKey ? favorites.filter(f => f.targetType === dataKey).map(e => e.targetId) : [];
+  return filterKey ? favorites.filter(f => f.targetType === dataKey) : [];
 };
 
 const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes }) => {
@@ -61,26 +60,23 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
       <Box>
         <Typography variant="h6" style={{ color: 'black', marginBottom: '16px' }}>{title}</Typography>
         <List>
-          {favorites.map((id: string) => {
-            const item = dataNodes.find(p => p._id === id);
-            return (
-              <ListItem key={id} onClick={() => handleItemClick(dataKey, id, item?.producer?.activity?._id)} sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
-                <ListItemButton>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <Store />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={item?.name || `${title} inconnu`} />
-                  <ListItemIcon>
-                    <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, dataKey); }}>
-                      <Delete />
-                    </IconButton>
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
+          {favorites.map((item) => (
+            <ListItem key={item.targetId} onClick={() => handleItemClick(dataKey, item.targetId, item?.producer?.activity?._id)} sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
+              <ListItemButton>
+                <ListItemAvatar>
+                  <Avatar>
+                    <Store />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={dataNodes.find(p => p._id === item.targetId)?.name || `${title} inconnu`} />
+                <ListItemIcon>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey, item.listId); }}>
+                    <Delete />
+                  </IconButton>
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
       </Box>
     </Grid>
@@ -88,9 +84,17 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
 };
 
 const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
-  const refreshFavorites = () => favoriteService.findItems({ listIds: ['default'] });
+  const refreshFavorites = () => {
+    const allLists = favoriteService.allLists();
+    const allFavorites = allLists.reduce((acc, list) => {
+      const favorites = favoriteService.findItems({ listIds: [list.id] });
+      acc[list.id] = favorites;
+      return acc;
+    }, {} as { [key: string]: any[] });
+    return allFavorites;
+  };
 
-  const [favorites, setFavorites] = useState(refreshFavorites());
+  const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
   const [shareText, setShareText] = useState(generateShareText(refreshFavorites(), data));
 
   const [filter, setFilter] = useState({
@@ -106,8 +110,15 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     setShareText(generateShareText(updatedFavorites, data));
   }, [data]);
 
-  const handleRemoveFavorite = (id: string, type: string) => {
-    favoriteService.removeItemFromList({ targetType: type, targetId: id });
+  const handleRemoveFavorite = (id: string, type: string, listId: string) => {
+    favoriteService.removeItemFromList({ targetType: type, targetId: id, listId });
+    const updatedFavorites = refreshFavorites();
+    setFavorites(updatedFavorites);
+    setShareText(generateShareText(updatedFavorites, data));
+  };
+
+  const handleRemoveFavoriteList = (listId: string) => {
+    favoriteService.removeList({ id: listId });
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
@@ -119,8 +130,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
         navigate(`/activity/${activityId}#${id}`);
         break;
       case 'counter':
-          navigate(`/marketplace/${id}`);
-          break;
+        navigate(`/marketplace/${id}`);
+        break;
       default:
         navigate(`/${type}/${id}`);
         break;
@@ -134,17 +145,17 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     }));
   };
 
-  const filteredPartnershipFavorites = createFilteredList(favorites, filter.partnership, 'partnership');
-  const filteredFavorites = createFilteredList(favorites, filter.marketplace, 'counter');
-  const filteredActivityFavorites = createFilteredList(favorites, filter.activity, 'activity');
-  const filteredProductFavorites = createFilteredList(favorites, filter.product, 'product');
+  const filteredPartnershipFavorites = createFilteredList(favorites['default'] || [], filter.partnership, 'partnership');
+  const filteredFavorites = createFilteredList(favorites['default'] || [], filter.marketplace, 'counter');
+  const filteredActivityFavorites = createFilteredList(favorites['default'] || [], filter.activity, 'activity');
+  const filteredProductFavorites = createFilteredList(favorites['default'] || [], filter.product, 'product');
 
   const exportFavorites = (format: 'json' | 'csv' | 'xlsx' | 'text' | 'pdf') => {
     const favoritesData = {
-      partnerships: filteredPartnershipFavorites.map(id => data.partnerships.nodes.find((p: any) => p._id === id)),
-      marketplaces: filteredFavorites.map(id => data.marketplaces.nodes.find((m: any) => m._id === id)),
-      activities: filteredActivityFavorites.map(id => data.activities.nodes.find((a: any) => a._id === id)),
-      products: filteredProductFavorites.map(id => data.products.nodes.find((p: any) => p._id === id))
+      partnerships: filteredPartnershipFavorites.map(item => data.partnerships.nodes.find((p: any) => p._id === item.targetId)),
+      marketplaces: filteredFavorites.map(item => data.marketplaces.nodes.find((m: any) => m._id === item.targetId)),
+      activities: filteredActivityFavorites.map(item => data.activities.nodes.find((a: any) => a._id === item.targetId)),
+      products: filteredProductFavorites.map(item => data.products.nodes.find((p: any) => p._id === item.targetId))
     };
 
     if (format === 'json') {
@@ -164,15 +175,16 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       exportToText(textData, 'favorites');
     } else if (format === 'pdf') {
       const pdfData = {
-        partnerships: filteredPartnershipFavorites.map(id => ({ name: data.partnerships.nodes.find((p: any) => p._id === id)?.name })),
-        marketplaces: filteredFavorites.map(id => ({ name: data.marketplaces.nodes.find((m: any) => m._id === id)?.name })),
-        activities: filteredActivityFavorites.map(id => ({ name: data.activities.nodes.find((a: any) => a._id === id)?.name })),
-        products: filteredProductFavorites.map(id => ({ name: data.products.nodes.find((p: any) => p._id === id)?.name }))
+        partnerships: filteredPartnershipFavorites.map(item => ({ name: data.partnerships.nodes.find((p: any) => p._id === item.targetId)?.name })),
+        marketplaces: filteredFavorites.map(item => ({ name: data.marketplaces.nodes.find((m: any) => m._id === item.targetId)?.name })),
+        activities: filteredActivityFavorites.map(item => ({ name: data.activities.nodes.find((a: any) => a._id === item.targetId)?.name })),
+        products: filteredProductFavorites.map(item => ({ name: data.products.nodes.find((p: any) => p._id === item.targetId)?.name }))
       };
       exportToPDF(pdfData, 'favorites');
     }
   };
 
+  const allLists = favoriteService.allLists();
 
   return (
     <Layout>
@@ -213,7 +225,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             title="Groupements"
             favorites={filteredPartnershipFavorites}
             handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
+            handleRemoveFavorite={(id) => handleRemoveFavorite(id, 'partnership', 'default')}
             dataKey="partnership"
             dataNodes={data.partnerships.nodes}
           />
@@ -221,7 +233,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             title="Marchés"
             favorites={filteredFavorites}
             handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
+            handleRemoveFavorite={(id) => handleRemoveFavorite(id, 'counter', 'default')}
             dataKey="counter"
             dataNodes={data.marketplaces.nodes}
           />
@@ -229,7 +241,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             title="Producteurs"
             favorites={filteredActivityFavorites}
             handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
+            handleRemoveFavorite={(id) => handleRemoveFavorite(id, 'activity', 'default')}
             dataKey="activity"
             dataNodes={data.activities.nodes}
           />
@@ -237,11 +249,38 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             title="Produits"
             favorites={filteredProductFavorites}
             handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
+            handleRemoveFavorite={(id) => handleRemoveFavorite(id, 'product', 'default')}
             dataKey="product"
             dataNodes={data.products.nodes}
           />
         </Grid>
+        {allLists.length > 1 && (
+          <Box mt={4} width="100%">
+            <Typography variant="h4" align="center" my={4}>
+              Nouvelles Listes de Favoris
+            </Typography>
+            <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
+              {allLists.filter(list => list.id !== 'default').map(list => (
+                <Box key={list.id} width="100%">
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="h5" style={{ marginBottom: '16px' }}>{list.name}</Typography>
+                    <IconButton onClick={() => handleRemoveFavoriteList(list.id)} sx={{ color: '#d32f2f', marginLeft: 1 }}>
+                      <DeleteForever />
+                    </IconButton>
+                  </Box>
+                  <FavoritesList
+                    title="Marchés"
+                    favorites={favorites[list.id]?.filter(item => item.targetType === 'counter') || []}
+                    handleItemClick={handleItemClick}
+                    handleRemoveFavorite={(id) => handleRemoveFavorite(id, 'counter', list.id)}
+                    dataKey="counter"
+                    dataNodes={data.marketplaces.nodes}
+                  />
+                </Box>
+              ))}
+            </Grid>
+          </Box>
+        )}
         <Box mt={4} display="flex" justifyContent="center" alignItems="center" gap={2}>
           <Tooltip title="Exporter en JSON">
             <IconButton onClick={() => exportFavorites('json')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
@@ -267,7 +306,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               <Typography variant="button" sx={{ ml: 1 }}>PDF</Typography>
             </IconButton>
           </Tooltip>
-          
         </Box>
       </Box>
     </Layout>
