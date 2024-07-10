@@ -1,7 +1,7 @@
 import * as React from "react";
 import { HeadFC, PageProps, graphql } from "gatsby";
 import { AppBar, Box, Button, Chip, Divider, Drawer, DrawerProps, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from "@mui/material";
-import { Inbox, Mail, Storefront, Event, VolunteerActivism, More } from "@mui/icons-material";
+import { Inbox, Mail, Storefront, Event, VolunteerActivism, More, ArrowDropUp, ArrowDropDown } from "@mui/icons-material";
 import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
 import { FolderList } from "../components/FolderList";
 
@@ -35,7 +35,9 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
     <div>
       <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
         <Toolbar>
-          <Button sx={{color: 'black'}} onClick={() => props.onChange(true)}>Liste</Button>
+          <IconButton color="inherit" onClick={() => props.onChange(true)}>
+            <ArrowDropUp fontSize="large" />
+          </IconButton>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton color="inherit">
             <Storefront fontSize="large"  />
@@ -46,6 +48,7 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
           <IconButton color="inherit">
             <VolunteerActivism fontSize="large"  />
           </IconButton>
+          <Box sx={{ flexGrow: 1 }} />
         </Toolbar>
       </AppBar>
       <Drawer open={props.open} anchor="bottom" onClose={() => props.onChange(false)}
@@ -57,7 +60,9 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
                 },
               }} >
         <Stack alignItems="center">
-          <Button size="small" onClick={() => props.onChange(false)}>Carte</Button>
+          <IconButton color="inherit" onClick={() => props.onChange(false)}>
+            <ArrowDropDown fontSize="large" />
+          </IconButton>
         </Stack>
         <Stack alignItems="center" overflow="auto">
 
