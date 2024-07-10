@@ -1,7 +1,7 @@
 import * as React from "react";
 import { HeadFC, PageProps, graphql } from "gatsby";
-import { AppBar, Box, Button, Divider, Drawer, DrawerProps, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
-import { Inbox, Mail, Storefront, Event, VolunteerActivism } from "@mui/icons-material";
+import { AppBar, Box, Button, Chip, Divider, Drawer, DrawerProps, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from "@mui/material";
+import { Inbox, Mail, Storefront, Event, VolunteerActivism, More } from "@mui/icons-material";
 import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
 import { FolderList } from "../components/FolderList";
 
@@ -34,7 +34,19 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
   return (
     <div>
       <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
-        <Button sx={{color: 'black'}} onClick={() => props.onChange(true)}>Open</Button>
+        <Toolbar>
+          <Button sx={{color: 'black'}} onClick={() => props.onChange(true)}>Liste</Button>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton color="inherit">
+            <Storefront fontSize="large"  />
+          </IconButton>
+          <IconButton color="inherit">
+            <Event fontSize="large" />
+          </IconButton>
+          <IconButton color="inherit">
+            <VolunteerActivism fontSize="large"  />
+          </IconButton>
+        </Toolbar>
       </AppBar>
       <Drawer open={props.open} anchor="bottom" onClose={() => props.onChange(false)}
               PaperProps={{
@@ -45,7 +57,7 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
                 },
               }} >
         <Stack alignItems="center">
-          <Button size="small" onClick={() => props.onChange(false)}>Fermer</Button>
+          <Button size="small" onClick={() => props.onChange(false)}>Carte</Button>
         </Stack>
         <Stack alignItems="center" overflow="auto">
 
@@ -76,57 +88,15 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
             </IconButton>
           </Stack>
 
-          <Divider flexItem sx={{margin: 2}} />
+          <Stack direction="row" spacing={1} useFlexGap m={2} >
+            <Chip label="Magasins" />
+            <Chip label="Marchés" />
+            <Chip label="Groupements" />
+            <Chip label="En ligne" variant="outlined" />
+          </Stack>
 
           <FolderList/>
         </Stack>
-      </Drawer>
-    </div>
-  );
-}
-
-function TemporaryDrawer(props: DrawerProps) {
-  const [open, setOpen] = React.useState(false);
-
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
-
-  const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <Inbox /> : <Mail />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <Inbox /> : <Mail />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
-
-  return (
-    <div>
-      <Button onClick={toggleDrawer(true)}>Open drawer</Button>
-      <Drawer open={open} anchor={props.anchor} onClose={toggleDrawer(false)}>
-        {DrawerList}
       </Drawer>
     </div>
   );

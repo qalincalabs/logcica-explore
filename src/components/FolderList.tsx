@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import { Image, Work, BeachAccess } from "@mui/icons-material";
+import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText } from "@mui/material";
+import { Image, Work, BeachAccess, Star, PlusOne, Add } from "@mui/icons-material";
 
 
 export function FolderList() {
@@ -12,7 +12,15 @@ export function FolderList() {
             <Image />
           </Avatar>
         </ListItemAvatar>
-        <ListItemText primary="Photos" secondary="Jan 9, 2014" />
+        <ListItemText primary="Les dingues du Marais" secondary="Paliseul" />
+        <ListItemIcon>
+          <IconButton> 
+            <Add/>
+          </IconButton>
+          <IconButton> 
+            <Star/>
+          </IconButton>
+        </ListItemIcon>
       </ListItem>
       <ListItem>
         <ListItemAvatar>
