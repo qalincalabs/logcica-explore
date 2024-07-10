@@ -50,7 +50,7 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
         <Stack alignItems="center" overflow="auto">
 
           <Stack direction="row" alignItems="center" spacing={1} useFlexGap>
-            <IconButton size="large">
+            <IconButton sx={{ border: 2, paddingTop: 2, paddingBottom:3 }} size="large">
               <Stack direction="column" alignItems="center">
                 <Storefront fontSize="large" />
                 <Typography variant="overline">
@@ -76,7 +76,7 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
             </IconButton>
           </Stack>
 
-          <Divider flexItem />
+          <Divider flexItem sx={{margin: 2}} />
 
           <FolderList/>
         </Stack>
