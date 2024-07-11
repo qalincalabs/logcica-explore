@@ -15,9 +15,14 @@ import {
   ButtonGroup,
   Button,
   Tooltip,
+  Drawer,
+  Hidden,
+  CssBaseline,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever } from "@mui/icons-material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils";
 
@@ -44,21 +49,32 @@ const createFilteredList = (favorites, filterKey, dataKey) => (
 
 const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes }) => (
   !favorites.length ? null : (
-    <Grid item xs={12} md={6} lg={3}>
-      <Box>
-        <Typography variant="h6" sx={{ color: 'black', mb: 2 }}>{title}</Typography>
+    <Grid item xs={12}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" sx={{ color: '#333', mb: 2 }}>{title}</Typography>
         <List>
           {favorites.map((item) => {
             const dataNode = dataNodes.find(p => p._id === item.targetId);
             return (
-              <ListItem key={item.targetId} onClick={() => handleItemClick(dataKey, item.targetId, dataNode?._id)} sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
+              <ListItem 
+                key={item.targetId} 
+                onClick={() => handleItemClick(dataKey, item.targetId, dataNode?._id)} 
+                sx={{ 
+                  transition: 'transform 0.3s, box-shadow 0.3s', 
+                  '&:hover': { transform: 'scale(1.02)', boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)' },
+                  borderRadius: '8px',
+                  mb: 2,
+                  bgcolor: '#fff',
+                  boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              >
                 <ListItemButton>
                   <ListItemAvatar>
-                    <Avatar>
+                    <Avatar sx={{ bgcolor: '#FFD700', color: '#fff' }}>
                       <Store />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={dataNode?.name || `${title} inconnu`} />
+                  <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
                   <ListItemIcon>
                     <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey, item.listId); }}>
                       <Delete />
@@ -75,6 +91,9 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
 );
 
 const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const refreshFavorites = () => favoriteService.allLists().reduce((acc, list) => {
     acc[list.id] = favoriteService.findItems({ listIds: [list.id] });
     return acc;
@@ -83,6 +102,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
   const [shareText, setShareText] = useState(generateShareText(favorites, data));
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedList, setSelectedList] = useState("default");
 
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
@@ -91,10 +112,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   }, [data]);
 
   const handleRemoveFavorite = (id: string, type: string, listId: string) => {
-    console.log(`Removing favorite with id: ${id}, type: ${type}, from list: ${listId}`);  // Debugging
     favoriteService.removeItemFromList({ targetType: type, targetId: id, listId });
     const updatedFavorites = refreshFavorites();
-    console.log(`Updated Favorites after removal:`, updatedFavorites);  // Debugging
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
   };
@@ -113,6 +132,11 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
 
   const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
 
+  const handleListSelect = (listId: string) => {
+    setSelectedList(listId);
+    setDrawerOpen(false);
+  };
+
   const filters = [
     { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
     { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
@@ -120,7 +144,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
   ];
 
-  const filteredFavoritesList = filters.map(({ key, dataKey }) => createFilteredList(favorites['default'] || [], filter[key], dataKey));
+  const filteredFavoritesList = filters.map(({ key, dataKey }) => createFilteredList(favorites[selectedList] || [], filter[key], dataKey));
 
   const exportFavorites = (format: 'json' | 'csv' | 'xlsx' | 'text' | 'pdf') => {
     const favoritesData = filters.reduce((acc, { key, dataKey }) => {
@@ -134,68 +158,89 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
 
   const allLists = favoriteService.allLists();
 
+  const drawerContent = (
+    <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box p={2} width="100%">
+        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#000', textAlign: 'center' }}>Listes de Favoris</Typography>
+        <List>
+          {allLists.map(list => (
+            <ListItem 
+              button 
+              key={list.id} 
+              onClick={() => handleListSelect(list.id)}
+              sx={{ borderRadius: '8px', mb: 1, bgcolor: selectedList === list.id ? '#FFD700' : 'transparent', color: selectedList === list.id ? '#fff' : '#000', transition: 'background-color 0.3s, color 0.3s' }}
+            >
+              <ListItemText primary={list.name} />
+              {list.id !== 'default' && (
+                <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
+                  <DeleteForever />
+                </IconButton>
+              )}
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Box>
+  );
+
   return (
     <Layout>
-      <Typography align="center" variant="h3" my={4}>Mes Favoris</Typography>
-      <Box display="flex" justifyContent="center" my={2}>
-        <ButtonGroup variant="outlined">
-          {filters.map(({ title, key }) => (
-            <Button key={title} onClick={() => handleFilterChange(key)}
-              sx={{ color: 'black', backgroundColor: filter[key] ? 'rgba(0, 0, 0, 0.1)' : 'transparent' }}>
-              {title}
-            </Button>
-          ))}
-        </ButtonGroup>
-      </Box>
-      <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-        <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-          {filters.map(({ title, key, dataKey, dataNodes }, index) => (
-            <FavoritesList key={title} title={title} favorites={filteredFavoritesList[index]} handleItemClick={handleItemClick}
-              handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, 'default')}
-              dataKey={dataKey} dataNodes={dataNodes} />
-          ))}
-        </Grid>
-        {allLists.length > 1 && (
-          <Box mt={4} width="100%">
-            <Typography variant="h4" align="center" my={4}>Nouvelles Listes de Favoris</Typography>
-            <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-              {allLists.filter(list => list.id !== 'default').map(list => (
-                <Box key={list.id} width="100%">
-                  <Box display="flex" alignItems="center">
-                    <Typography variant="h5" sx={{ mb: 2 }}>{list.name}</Typography>
-                    <IconButton onClick={() => handleRemoveFavoriteList(list.id)} sx={{ color: '#d32f2f', ml: 1 }}>
-                      <DeleteForever />
-                    </IconButton>
-                  </Box>
-                  <Grid container spacing={2}>
-                    {filters.map(({ title, dataKey, dataNodes }) => (
-                      <FavoritesList
-                        key={`${list.id}-${title}`}
-                        title={title}
-                        favorites={favorites[list.id]?.filter(item => item.targetType === dataKey) || []}
-                        handleItemClick={handleItemClick}
-                        handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, list.id)}
-                        dataKey={dataKey}
-                        dataNodes={dataNodes}
-                      />
-                    ))}
-                  </Grid>
-                </Box>
-              ))}
-            </Grid>
+      <CssBaseline />
+      <Grid container sx={{ height: '100vh' }}>
+        <Hidden smDown>
+          <Grid item xs={12} md={3} lg={2}>
+            <Box sx={{ height: '100%', bgcolor: 'lightgray' }}>
+              {drawerContent}
+            </Box>
+          </Grid>
+        </Hidden>
+        <Hidden mdUp>
+          <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+            {drawerContent}
+          </Drawer>
+        </Hidden>
+        <Grid item xs={12} md={9} lg={10} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Box>
+            <Box display="flex" alignItems="center" mb={2}>
+              <Hidden smUp>
+                <IconButton onClick={() => setDrawerOpen(true)}>
+                  <Menu />
+                </IconButton>
+              </Hidden>
+              <Typography align="center" variant="h3" my={4} sx={{ flexGrow: 1, fontWeight: 'bold', color: '#FFD700' }}>Mes Favoris</Typography>
+            </Box>
+            <Box display="flex" justifyContent="center" my={2}>
+              <ButtonGroup variant="outlined">
+                {filters.map(({ title, key }) => (
+                  <Button key={title} onClick={() => handleFilterChange(key)}
+                    sx={{ color: 'black', backgroundColor: filter[key] ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
+                    {title}
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </Box>
+            <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+              <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
+                {filters.map(({ title, key, dataKey, dataNodes }, index) => (
+                  <FavoritesList key={title} title={title} favorites={filteredFavoritesList[index]} handleItemClick={handleItemClick}
+                    handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
+                    dataKey={dataKey} dataNodes={dataNodes} />
+                ))}
+              </Grid>
+            </Box>
           </Box>
-        )}
-        <Box mt={4} display="flex" justifyContent="center" alignItems="center" gap={2}>
-          {['json', 'csv', 'xlsx', 'pdf'].map(format => (
-            <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
-              <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-                {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
-                <Typography variant="button" sx={{ ml: 1 }}>{format.toUpperCase()}</Typography>
-              </IconButton>
-            </Tooltip>
-          ))}
-        </Box>
-      </Box>
+          <Box mt={4} display="flex" justifyContent="center" alignItems="center" gap={2} p={2}>
+            {['json', 'csv', 'xlsx', 'pdf'].map(format => (
+              <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
+                <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
+                  {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
+                  <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+                </IconButton>
+              </Tooltip>
+            ))}
+          </Box>
+        </Grid>
+      </Grid>
     </Layout>
   );
 };
