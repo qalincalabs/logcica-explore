@@ -4,6 +4,7 @@ import {
   AppBar,
   Avatar,
   Box,
+  BoxProps,
   Button,
   ButtonGroup,
   Card,
@@ -46,20 +47,43 @@ import {
 } from "@mui/icons-material";
 import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
 import { red } from "@mui/material/colors";
+import { PropsWithChildren } from "react";
+import { wrap } from "module";
+import AppTopBar from "../components/app-top-bar";
 
 const Map: React.FC<PageProps> = () => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
+  const opportunitiesView = () => (
+    <Stack alignItems="center" overflow="auto">
+      <OpportunitiesListMenu />
+      <ListGrid />
+    </Stack>
+  );
+
   return (
     <div>
-      <PrimarySearchAppBar></PrimarySearchAppBar>
-      <p>New design</p>
+      <AppTopBar />
+      <Box>
+      <Grid container>
+        <Grid md={5} lg={4} sx={{ display: { xs: "none", md: "block" } }}>
+          {opportunitiesView()}
+        </Grid>
+        <Grid md={7} lg={8}>
+          <p>New design</p>
+        </Grid>
+      </Grid>
+      </Box>
+
       <MainBottomListDrawer
+        sx={{ display: { sm: "block", md: "none" } }}
         open={bottomDrawerOpen}
         onChange={(open) => {
           setBottomDrawerOpen(open);
         }}
-      />
+      >
+        {opportunitiesView()}
+      </MainBottomListDrawer>
     </div>
   );
 };
@@ -80,14 +104,16 @@ const opportunitiesFirstMenu = [
   },
 ];
 
-interface MainBottomListDrawerProps {
+type MainBottomListDrawerProps = {
   open: boolean;
   onChange: (open: boolean) => void;
-}
+};
 
-function MainBottomListDrawer(props: MainBottomListDrawerProps) {
+function MainBottomListDrawer(
+  props: BoxProps<"div", MainBottomListDrawerProps>
+) {
   return (
-    <div>
+    <Box sx={props.sx}>
       <AppBar position="fixed" sx={{ top: "auto", bottom: 0 }}>
         <Toolbar>
           <IconButton color="inherit" onClick={() => props.onChange(true)}>
@@ -99,6 +125,7 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps) {
         </Toolbar>
       </AppBar>
       <Drawer
+        sx={props.sx}
         open={props.open}
         anchor="bottom"
         onClose={() => props.onChange(false)}
@@ -115,12 +142,9 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps) {
             <ArrowDropDown fontSize="large" />
           </Button>
         </Stack>
-        <Stack alignItems="center" overflow="auto">
-          <OpportunitiesListMenu />
-          <ListGrid />
-        </Stack>
+        {props.children}
       </Drawer>
-    </div>
+    </Box>
   );
 }
 
@@ -130,11 +154,7 @@ function ListGrid() {
   return (
     <Box sx={{ width: "100%" }}>
       <ListSortMenu alignement={alignement} onAlignementChange={setAlignment} />
-      <Divider sx={{ marginTop: 1 }} />
-      {
-        alignement == "list" ? <FolderList /> : <FolderGrid />
-      }
-      
+      {alignement == "list" ? <FolderList /> : <FolderGrid />}
     </Box>
   );
 }
@@ -254,14 +274,10 @@ export function FolderGrid() {
   );
 
   return (
-    <Grid
-      container
-      spacing={1}
-      sx={{ width: "100%", bgcolor: "background.paper" }}
-    >
+    <Box display="flex" flex={1} gap={2} flexWrap="wrap">
       {list.map((e) => (
-        <Grid xs={12} md={6} lg={4} item>
-          <Card>
+        <Box flex={1}>
+          <Card sx={{ minWidth: "300px" }}>
             <CardHeader
               avatar={<Avatar aria-label="recipe">{e.avatar}</Avatar>}
               action={
@@ -296,9 +312,9 @@ export function FolderGrid() {
               </IconButton>
             </CardActions>
           </Card>
-        </Grid>
+        </Box>
       ))}
-    </Grid>
+    </Box>
   );
 }
 
