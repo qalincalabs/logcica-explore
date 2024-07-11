@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { graphql, HeadFC, navigate, PageProps } from "gatsby";
 import {
   Box,
   List,
@@ -159,6 +160,9 @@ export default function MainContent(props: MainContentProps) {
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl) && currentFavoriteTarget === m._id}
                   onClose={handleCloseMenu}
+                  onKeyDown={(event: any) => {
+                    event.stopPropagation();
+                  }}
                   MenuListProps={{
                     onMouseLeave: handleCloseMenu,
                   }}
@@ -172,6 +176,31 @@ export default function MainContent(props: MainContentProps) {
                     },
                   }}
                 >
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 16px",
+                    }}
+                  >
+                    <TextField
+                      value={newFavoriteListName}
+                      onChange={(e) => setNewFavoriteListName(e.target.value)}
+                      label="Nouvelle liste"
+                      size="small"
+                      sx={{ marginRight: 1, flexGrow: 1 }}
+                    />
+                    <Button
+                      onClick={handleAddFavoriteList}
+                      sx={{
+                        backgroundColor: "#FFD700",
+                        color: "#000",
+                        "&:hover": { backgroundColor: "#FFC107" },
+                      }}
+                    >
+                      Créer
+                    </Button>
+                  </MenuItem>
                   {favoriteService
                     .allLists()
                     .filter((list) => list.id !== "default")
@@ -208,31 +237,6 @@ export default function MainContent(props: MainContentProps) {
                         </IconButton>
                       </MenuItem>
                     ))}
-                  <MenuItem
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 16px",
-                    }}
-                  >
-                    <TextField
-                      value={newFavoriteListName}
-                      onChange={(e) => setNewFavoriteListName(e.target.value)}
-                      label="Nouvelle liste"
-                      size="small"
-                      sx={{ marginRight: 1, flexGrow: 1 }}
-                    />
-                    <Button
-                      onClick={handleAddFavoriteList}
-                      sx={{
-                        backgroundColor: "#FFD700",
-                        color: "#000",
-                        "&:hover": { backgroundColor: "#FFC107" },
-                      }}
-                    >
-                      Créer
-                    </Button>
-                  </MenuItem>
                 </Menu>
               </ListItemIcon>
             </ListItem>
