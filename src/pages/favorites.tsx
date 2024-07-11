@@ -44,7 +44,7 @@ const createFilteredList = (favorites, filterKey, dataKey) => (
 
 const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes }) => (
   !favorites.length ? null : (
-    <Grid item xs={12} md={3}>
+    <Grid item xs={12} md={6} lg={3}>
       <Box>
         <Typography variant="h6" sx={{ color: 'black', mb: 2 }}>{title}</Typography>
         <List>
@@ -167,17 +167,19 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                       <DeleteForever />
                     </IconButton>
                   </Box>
-                  {filters.map(({ title, dataKey, dataNodes }) => (
-                    <FavoritesList
-                      key={`${list.id}-${title}`}
-                      title={title}
-                      favorites={favorites[list.id]?.filter(item => item.targetType === dataKey) || []}
-                      handleItemClick={handleItemClick}
-                      handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, list.id)}
-                      dataKey={dataKey}
-                      dataNodes={dataNodes}
-                    />
-                  ))}
+                  <Grid container spacing={2}>
+                    {filters.map(({ title, dataKey, dataNodes }) => (
+                      <FavoritesList
+                        key={`${list.id}-${title}`}
+                        title={title}
+                        favorites={favorites[list.id]?.filter(item => item.targetType === dataKey) || []}
+                        handleItemClick={handleItemClick}
+                        handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, list.id)}
+                        dataKey={dataKey}
+                        dataNodes={dataNodes}
+                      />
+                    ))}
+                  </Grid>
                 </Box>
               ))}
             </Grid>
