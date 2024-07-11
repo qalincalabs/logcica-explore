@@ -114,7 +114,6 @@ export function removeItemFromList(props: FavoriteItemRemoval) {
 
 export function addList(props: FavoriteListCreation) {
   const lists = allLists();
-  // No verification needed
   const newList = { id: `list_${Date.now()}`, name: props.name.trim() };
   lists.push(newList);
   saveLists(lists);
