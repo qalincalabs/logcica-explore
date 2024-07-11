@@ -26,6 +26,21 @@ import * as favoriteService from "../utils/favoritesService";
 import FilterBar from "../components/filter-bar";
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
+
+  return (
+    <Layout>
+      <MainContent title="Marchés" data={data}/>
+    </Layout>
+  );
+};
+
+interface MainContentProps {
+  title: string
+  data: any
+}
+
+function MainContent(props: MainContentProps){
+
   const getAllFavorites = () => {
     const allLists = favoriteService.allLists();
     const allFavorites = allLists.reduce((acc, list) => {
@@ -110,14 +125,14 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const filteredMarketplaces = showFavoritesOnly
-    ? data.marketplaces.nodes.filter((m: any) => Object.values(favorites).flat().includes(m._id))
-    : data.marketplaces.nodes;
+    ? props.data.marketplaces.nodes.filter((m: any) => Object.values(favorites).flat().includes(m._id))
+    : props.data.marketplaces.nodes;
 
   return (
-    <Layout>
-      <Box display="flex" justifyContent="center" alignItems="center" my={4}>
+    <>
+          <Box display="flex" justifyContent="center" alignItems="center" my={4}>
         <Typography align="center" variant="h3" mr={2}>
-          Marchés
+          {props.title}
         </Typography>
       </Box>
       <FilterBar
@@ -233,9 +248,9 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </Layout>
-  );
-};
+    </>
+  )
+}
 
 export default MarketplacePage;
 
