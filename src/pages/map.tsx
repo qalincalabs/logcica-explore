@@ -6,9 +6,15 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
   Chip,
   Divider,
   Drawer,
+  Grid,
   IconButton,
   List,
   ListItem,
@@ -34,8 +40,12 @@ import {
   BeachAccess,
   Star,
   ViewModule,
+  Shop,
+  Facebook,
+  Web,
 } from "@mui/icons-material";
 import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
+import { red } from "@mui/material/colors";
 
 const Map: React.FC<PageProps> = () => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
@@ -107,14 +117,25 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps) {
         </Stack>
         <Stack alignItems="center" overflow="auto">
           <OpportunitiesListMenu />
-          <Box sx={{ width: "100%" }}>
-            <ListSortMenu />
-            <Divider sx={{ marginTop: 1 }} />
-            <FolderList />
-          </Box>
+          <ListGrid />
         </Stack>
       </Drawer>
     </div>
+  );
+}
+
+function ListGrid() {
+  const [alignement, setAlignment] = React.useState("list");
+
+  return (
+    <Box sx={{ width: "100%" }}>
+      <ListSortMenu alignement={alignement} onAlignementChange={setAlignment} />
+      <Divider sx={{ marginTop: 1 }} />
+      {
+        alignement == "list" ? <FolderList /> : <FolderGrid />
+      }
+      
+    </Box>
   );
 }
 
@@ -179,7 +200,12 @@ function OpportunitiesListMenu() {
   );
 }
 
-function ListSortMenu() {
+interface ListSortMenuProps {
+  alignement?: string;
+  onAlignementChange?: (alignement: string) => void;
+}
+
+function ListSortMenu(props: ListSortMenuProps) {
   return (
     <Box display="flex" justifyContent="space-between" m={1}>
       <ButtonGroup size="small">
@@ -187,29 +213,23 @@ function ListSortMenu() {
           <Sort fontSize="small" />
         </Button>
       </ButtonGroup>
-      <ListSortMenuToggle />
+      <ToggleButtonGroup
+        value={props.alignement}
+        color="primary"
+        size="small"
+        exclusive
+        onChange={(_, newAlignment) => {
+          if (props.onAlignementChange) props.onAlignementChange(newAlignment);
+        }}
+      >
+        <ToggleButton value="list">
+          <ViewList fontSize="small" />
+        </ToggleButton>
+        <ToggleButton value="grid">
+          <ViewModule fontSize="small" />
+        </ToggleButton>
+      </ToggleButtonGroup>
     </Box>
-  );
-}
-
-export function ListSortMenuToggle() {
-  const [alignment, setAlignment] = React.useState<string | null>("list");
-
-  return (
-    <ToggleButtonGroup
-      value={alignment}
-      color="primary"
-      size="small"
-      exclusive
-      onChange={(_, newAlignment) => setAlignment(newAlignment)}
-    >
-      <ToggleButton value="list">
-        <ViewList fontSize="small" />
-      </ToggleButton>
-      <ToggleButton value="grid">
-        <ViewModule fontSize="small" />
-      </ToggleButton>
-    </ToggleButtonGroup>
   );
 }
 
@@ -220,6 +240,67 @@ const list = [
     subtitle: "Paliseul",
   },
 ];
+
+export function FolderGrid() {
+  // add dummy data
+  list.push(
+    ...[...Array(10)].map((_, i) => {
+      return {
+        avatar: <BeachAccess />,
+        title: "Test " + i,
+        subtitle: "Paliseul",
+      };
+    })
+  );
+
+  return (
+    <Grid
+      container
+      spacing={1}
+      sx={{ width: "100%", bgcolor: "background.paper" }}
+    >
+      {list.map((e) => (
+        <Grid xs={12} md={6} lg={4} item>
+          <Card>
+            <CardHeader
+              avatar={<Avatar aria-label="recipe">{e.avatar}</Avatar>}
+              action={
+                <>
+                  <IconButton aria-label="settings">
+                    <Add />
+                  </IconButton>
+                  <IconButton aria-label="settings">
+                    <Star />
+                  </IconButton>
+                </>
+              }
+              title={e.title}
+              subheader={e.subtitle}
+            />
+            <CardContent>
+              Implanté à Froidlieu, petit village de la Calestienne situé à
+              Wellin, entre l'Ardenne et la Famenne, le Pressoir d'Hortus est un
+              lieu pour valoriser les fruits de vos vergers. Au-delà du
+              pressage, nous proposons différents services autour de ce lieu si
+              particulier qu'est le verger.
+            </CardContent>
+            <CardActions>
+              <IconButton>
+                <Web />
+              </IconButton>
+              <IconButton>
+                <Facebook />
+              </IconButton>
+              <IconButton>
+                <Shop />
+              </IconButton>
+            </CardActions>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+  );
+}
 
 export function FolderList() {
   // add dummy data
