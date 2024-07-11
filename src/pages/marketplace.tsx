@@ -20,7 +20,7 @@ import {
   Alert,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store, Star, StarBorder, Delete } from "@mui/icons-material";
+import { Store, Star, StarBorder, Delete, Add } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 import * as favoriteService from "../utils/favoritesService";
 import FilterBar from "../components/filter-bar";
@@ -56,14 +56,18 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
   const handleCloseMenu = () => {
     setAnchorEl(null);
     setCurrentFavoriteTarget(null);
+    setNewFavoriteListName("");  // Reset new favorite list name
   };
 
   const handleAddFavoriteList = () => {
-    if (newFavoriteListName) {
+    if (newFavoriteListName.trim() !== "") {
       favoriteService.addList({ name: newFavoriteListName });
       setNewFavoriteListName("");
       setFavorites(getAllFavorites());
       handleCloseMenu();
+    } else {
+      setSnackbarMessage("Le nom de la liste ne peut pas être vide.");
+      setSnackbarOpen(true);
     }
   };
 
@@ -143,90 +147,78 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
                 />
               </ListItemButton>
               <ListItemIcon>
-                <div onMouseLeave={handleCloseMenu}>
-                  <IconButton
-                    onClick={() => handleFavoriteToggle(m._id)}
-                    onMouseEnter={(e) => handleOpenMenu(e, m._id)}
-                  >
-                    {Object.values(favorites).flat().includes(m._id) ? <Star color="primary" /> : <StarBorder />}
-                  </IconButton>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl) && currentFavoriteTarget === m._id}
-                    onClose={handleCloseMenu}
-                    MenuListProps={{
-                      onMouseLeave: handleCloseMenu,
-                      sx: { padding: 0 },
-                    }}
-                    PaperProps={{
-                      elevation: 3,
-                      sx: {
-                        borderRadius: 2,
-                        padding: 1,
-                        backgroundColor: '#f0f0f0',
-                        minWidth: 250,
-                      },
-                    }}
-                  >
-                    {favoriteService.allLists().map((list) => (
-                      <MenuItem
-                        key={list.id}
-                        onClick={() => handleAddToList(list.id)}
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textAlign: 'center',
-                          padding: 1.5,
-                          backgroundColor: '#fff',
-                          borderRadius: 1,
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                          transition: 'transform 0.3s, background-color 0.3s',
-                          '&:hover': {
-                            transform: 'scale(1.05)',
-                            backgroundColor: '#d1c4e9',
-                          },
-                        }}
-                      >
-                        <Typography variant="body1" sx={{ flexGrow: 1, color: '#000', fontWeight: 'bold' }}>
-                          {list.name}
-                        </Typography>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveFavorite(currentFavoriteTarget!, list.id);
-                          }}
-                          sx={{ color: '#d32f2f', marginLeft: 2 }}
-                        >
-                          <Delete />
-                        </IconButton>
-                      </MenuItem>
-                    ))}
+                <IconButton onClick={() => handleFavoriteToggle(m._id)}>
+                  {favorites['default']?.includes(m._id) ? <Star color="primary" /> : <StarBorder />}
+                </IconButton>
+                <IconButton onClick={(e) => handleOpenMenu(e, m._id)}>
+                  <Add />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl) && currentFavoriteTarget === m._id}
+                  onClose={handleCloseMenu}
+                  MenuListProps={{
+                    onMouseLeave: handleCloseMenu,
+                  }}
+                  PaperProps={{
+                    elevation: 1,
+                    sx: {
+                      borderRadius: 1,
+                      padding: 1,
+                      backgroundColor: '#ffffff',
+                      minWidth: 200,
+                    },
+                  }}
+                >
+                  {favoriteService.allLists().filter(list => list.id !== 'default').map((list) => (
                     <MenuItem
+                      key={list.id}
+                      onClick={() => handleAddToList(list.id)}
                       sx={{
                         display: 'flex',
+                        justifyContent: 'space-between',
                         alignItems: 'center',
-                        padding: 1.5,
-                        backgroundColor: '#e8eaf6',
-                        borderRadius: 1,
-                        marginTop: 1,
+                        padding: '8px 16px',
+                        '&:hover': {
+                          backgroundColor: '#f0f0f0',
+                        },
                       }}
                     >
-                      <TextField
-                        value={newFavoriteListName}
-                        onChange={(e) => setNewFavoriteListName(e.target.value)}
-                        label="Nouvelle liste"
-                        size="small"
-                        sx={{ marginRight: 1, flexGrow: 1 }}
-                      />
-                      <Button onClick={handleAddFavoriteList} sx={{ backgroundColor: '#FFD700', color: '#000', '&:hover': { backgroundColor: '#FFC107' } }}>
-                        Créer
-                      </Button>
+                      <Typography variant="body1" sx={{ color: '#000' }}>
+                        {list.name}
+                      </Typography>
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFavorite(currentFavoriteTarget!, list.id);
+                        }}
+                        sx={{ color: '#d32f2f' }}
+                      >
+                        <Delete />
+                      </IconButton>
                     </MenuItem>
-                  </Menu>
-                </div>
+                  ))}
+                  <MenuItem
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '8px 16px',
+                    }}
+                  >
+                    <TextField
+                      value={newFavoriteListName}
+                      onChange={(e) => setNewFavoriteListName(e.target.value)}
+                      label="Nouvelle liste"
+                      size="small"
+                      sx={{ marginRight: 1, flexGrow: 1 }}
+                    />
+                    <Button onClick={handleAddFavoriteList} sx={{ backgroundColor: '#FFD700', color: '#000', '&:hover': { backgroundColor: '#FFC107' } }}>
+                      Créer
+                    </Button>
+                  </MenuItem>
+                </Menu>
               </ListItemIcon>
             </ListItem>
           ))}
