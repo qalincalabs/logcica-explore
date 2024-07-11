@@ -29,22 +29,26 @@ const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
 
   return (
     <Layout>
-      <MainContent title="Marchés" data={data}/>
+      <MainContent title="Marchés" type="counter" dataList={data.marketplaces.nodes}/>
     </Layout>
   );
 };
 
 interface MainContentProps {
   title: string
-  data: any
+  type: string
+  dataList: any
 }
 
 function MainContent(props: MainContentProps){
 
+  const type = props.type
+  const dataList = props.dataList
+
   const getAllFavorites = () => {
     const allLists = favoriteService.allLists();
     const allFavorites = allLists.reduce((acc, list) => {
-      const favorites = favoriteService.findItems({ listIds: [list.id], targetTypes: ["counter"] }).map(e => e.targetId);
+      const favorites = favoriteService.findItems({ listIds: [list.id], targetTypes: [type] }).map(e => e.targetId);
       acc[list.id] = favorites;
       return acc;
     }, {} as { [key: string]: string[] });
@@ -90,7 +94,7 @@ function MainContent(props: MainContentProps){
     const defaultFavorites = favorites['default'] || [];
     const isFavorite = defaultFavorites.includes(targetId);
     favoriteService.assignItemToList({
-      targetType: "counter",
+      targetType: type,
       targetId,
       listId: "default",
       assign: !isFavorite,
@@ -99,7 +103,7 @@ function MainContent(props: MainContentProps){
   };
 
   const handleRemoveFavorite = (targetId: string, listId: string) => {
-    favoriteService.removeItemFromList({ targetType: "counter", targetId, listId });
+    favoriteService.removeItemFromList({ targetType: type, targetId, listId });
     setFavorites(getAllFavorites());
   };
 
@@ -109,7 +113,7 @@ function MainContent(props: MainContentProps){
       setSnackbarOpen(true);
     } else {
       favoriteService.assignItemToList({
-        targetType: "counter",
+        targetType: type,
         targetId: currentFavoriteTarget!,
         listId,
         assign: true,
@@ -124,9 +128,11 @@ function MainContent(props: MainContentProps){
     setSnackbarMessage("");
   };
 
-  const filteredMarketplaces = showFavoritesOnly
-    ? props.data.marketplaces.nodes.filter((m: any) => Object.values(favorites).flat().includes(m._id))
-    : props.data.marketplaces.nodes;
+
+
+  const filteredDataList = showFavoritesOnly
+    ? dataList.filter((m: any) => Object.values(favorites).flat().includes(m._id))
+    : dataList;
 
   return (
     <>
@@ -141,7 +147,7 @@ function MainContent(props: MainContentProps){
       />
       <Box display="flex" justifyContent="center" alignItems="center">
         <List sx={{ maxWidth: "1000px" }}>
-          {filteredMarketplaces.map((m: any) => (
+          {filteredDataList.map((m: any) => (
             <ListItem key={m._id}>
               <ListItemButton onClick={() => navigate("/marketplace/" + m._id)}>
                 <ListItemAvatar>
