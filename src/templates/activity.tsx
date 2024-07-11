@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { graphql, PageProps } from "gatsby";
-import { Box, Grid, Paper, Stack, Typography, Link, IconButton } from "@mui/material";
-import { OpenInNew, Email, Phone, Star, StarBorder } from "@mui/icons-material";
+import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
+import { OpenInNew, Email, Phone } from "@mui/icons-material";
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 import { ProductCard } from "../components/product-card";
+import FavoriteIcons from "../components/FavoriteIcons";
 import * as favoriteService from "../utils/favoritesService";
 
-export default function PartnershipTemplate({ data }: PageProps<any>) {
+export default function ActivityTemplate({ data }: PageProps<any>) {
   const activity = data.activity;
   const contacts = activity.contacts;
   const profiles = activity.profiles;
@@ -16,7 +17,11 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
-  const [isFavorite, setIsFavorite] = useState<boolean>(favoriteService.itemExists({targetType: 'activity', targetId: activity._id}));
+  const [favorites, setFavorites] = useState<{ [key: string]: string[] }>(() => favoriteService.getAllFavorites("activity"));
+
+  useEffect(() => {
+    setFavorites(favoriteService.getAllFavorites("activity"));
+  }, []);
 
   return (
     <Layout>
@@ -25,9 +30,12 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
           <Typography align="center" variant="h3" component="h3" mr={2}>
             {activity.name}
           </Typography>
-          <IconButton onClick={() => setIsFavorite(favoriteService.assignItemToList({targetType: 'activity', targetId: activity._id, assign: !isFavorite}))}>
-            {isFavorite ? <Star /> : <StarBorder />}
-          </IconButton>
+          <FavoriteIcons
+            type="activity"
+            targetId={activity._id}
+            favorites={favorites}
+            setFavorites={setFavorites}
+          />
         </Box>
 
         {activity.description?.short?.markdown && (
@@ -103,11 +111,9 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 </Typography>
                 <Paper sx={{ p: 2 }}>
                   <Stack direction="row">
-                    <Typography key={place._id}>
-                      {place.title}
-                    </Typography>
+                    <Typography key={place._id}>{place.title}</Typography>
 
-                    {place.center?.coordinates &&
+                    {place.center?.coordinates && (
                       <Link
                         href={`https://www.google.com/maps/search/?api=1&query=${place.center.coordinates[1]}%2C${place.center.coordinates[0]}&query_place_id=${place.gmaps?.id}`}
                         target="_blank"
@@ -121,8 +127,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                         {place.localKey ?? place.key}{" "}
                         <OpenInNew sx={{ ml: 0.5 }} />
                       </Link>
-                    }
-
+                    )}
                   </Stack>
                 </Paper>
               </Box>
@@ -138,18 +143,22 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 <Stack spacing={2}>
                   {contacts.map((contact: any) => (
                     <Paper key={contact.mainEmail} sx={{ p: 2 }}>
-                      {contact.name &&
-                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                      {contact.name && (
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        >
                           <Typography>{contact.name}</Typography>
                         </Box>
-                      }
-                      {contact.mainEmail &&
-                        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                      )}
+                      {contact.mainEmail && (
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        >
                           <Email sx={{ mr: 1 }} />
                           <Typography>{contact.mainEmail}</Typography>
                         </Box>
-                      }
-                      {contact.mainPhoneNumber &&
+                      )}
+                      {contact.mainPhoneNumber && (
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Phone sx={{ mr: 1 }} />
                           <Typography>
@@ -157,7 +166,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                               contact.mainPhoneNumber}
                           </Typography>
                         </Box>
-                      }
+                      )}
                     </Paper>
                   ))}
                 </Stack>
@@ -174,11 +183,7 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                 <Paper sx={{ p: 1, m: 2 }}>
                   <Stack direction="column" spacing={1}>
                     {profiles.map((profile: any) => (
-                      <Stack
-                        direction="row"
-                        gap={1}
-                        key={profile.key}
-                      >
+                      <Stack direction="row" gap={1} key={profile.key}>
                         <Typography sx={{ fontWeight: "bold" }}>
                           {profile.type}
                         </Typography>
@@ -224,7 +229,9 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
                       {organisation.number}
                     </Typography>
                     <Link
-                      href={`https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=${organisation.number.match(/\d+/g).join('')}`}
+                      href={`https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=${organisation.number
+                        .match(/\d+/g)
+                        .join("")}`}
                       target="_blank"
                       sx={{
                         color: "primary.main",
@@ -267,7 +274,6 @@ export default function PartnershipTemplate({ data }: PageProps<any>) {
     </Layout>
   );
 }
-
 
 export const query = graphql`
   query GetActivityAndRelatedData($id: String!) {

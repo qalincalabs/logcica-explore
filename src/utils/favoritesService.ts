@@ -154,3 +154,13 @@ function saveLocalStorageItemList(
     JSON.stringify(targetIds)
   );
 }
+
+export function getAllFavorites(type: string): { [key: string]: string[] } {
+  const allFavoriteLists = allLists();
+  const allFavorites = allFavoriteLists.reduce((acc, list) => {
+    const favorites = findItems({ listIds: [list.id], targetTypes: [type] }).map(e => e.targetId);
+    acc[list.id] = favorites;
+    return acc;
+  }, {} as { [key: string]: string[] });
+  return allFavorites;
+}
