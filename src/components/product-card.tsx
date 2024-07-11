@@ -22,6 +22,7 @@ import {
   IconButton,
   Tab,
   CardActions,
+  Popover,
 } from "@mui/material";
 import {
   CalendarMonth,
@@ -32,16 +33,14 @@ import {
   Blender,
   Inventory,
   SquareFoot,
-  Star,
-  StarBorder,
   VisibilityOff,
 } from "@mui/icons-material";
-
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import * as favoriteService from "../utils/favoritesService";
 import { useState } from "react";
+import FavoriteIcons from "../components/FavoriteIcons";
 
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
@@ -120,8 +119,7 @@ function netContentsText(item: any) {
 
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
-
-  const [isFavorite, setIsFavorite] = useState<boolean>(favoriteService.itemExists({targetType: 'product', targetId: item._id}));
+  const [favorites, setFavorites] = useState<{ [key: string]: string[] }>(() => favoriteService.getAllFavorites("product"));
 
   const [tab, setTab] = React.useState("0");
 
@@ -190,13 +188,12 @@ export function ProductCard({ item }: any) {
                 >
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
-                  <IconButton onClick={() => setIsFavorite(favoriteService.assignItemToList({targetType: 'product', targetId: item._id, assign: !isFavorite}))}>
-                    {isFavorite ? (
-                      <Star color="primary" />
-                    ) : (
-                      <StarBorder color="primary" />
-                    )}
-                  </IconButton>
+                  <FavoriteIcons
+                    type="product"
+                    targetId={item._id}
+                    favorites={favorites}
+                    setFavorites={setFavorites}
+                  />
                 </Box>
               }
               subheader={
