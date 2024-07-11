@@ -5,19 +5,12 @@ import {
   List,
   ListItem,
   Typography,
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  TextField,
-  Button,
   Snackbar,
   Alert,
-  Popover,
 } from "@mui/material";
-import { Star, StarBorder, Delete, Add } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
 import FilterBar from "../components/filter-bar";
+import FavoriteIcons from "../components/FavoriteIcons";
 
 interface MainContentProps {
   title: string;
@@ -46,76 +39,12 @@ export default function MainContent(props: MainContentProps) {
     getAllFavorites()
   );
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [newFavoriteListName, setNewFavoriteListName] = useState<string>("");
-  const [currentFavoriteTarget, setCurrentFavoriteTarget] = useState<
-    string | null
-  >(null);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
   useEffect(() => {
     setFavorites(getAllFavorites());
   }, []);
-
-  const handleOpenMenu = (
-    event: React.MouseEvent<HTMLElement>,
-    targetId: string
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setCurrentFavoriteTarget(targetId);
-  };
-
-  const handleClosePopover = () => {
-    setAnchorEl(null);
-    setCurrentFavoriteTarget(null);
-    setNewFavoriteListName(""); // Reset new favorite list name
-  };
-
-  const handleAddFavoriteList = () => {
-    if (newFavoriteListName.trim() !== "") {
-      favoriteService.addList({ name: newFavoriteListName });
-      setNewFavoriteListName("");
-      setFavorites(getAllFavorites());
-      handleClosePopover();
-    } else {
-      setSnackbarMessage("Le nom de la liste ne peut pas être vide.");
-      setSnackbarOpen(true);
-    }
-  };
-
-  const handleFavoriteToggle = (targetId: string) => {
-    const defaultFavorites = favorites["default"] || [];
-    const isFavorite = defaultFavorites.includes(targetId);
-    favoriteService.assignItemToList({
-      targetType: type,
-      targetId,
-      listId: "default",
-      assign: !isFavorite,
-    });
-    setFavorites(getAllFavorites());
-  };
-
-  const handleRemoveFavorite = (targetId: string, listId: string) => {
-    favoriteService.removeItemFromList({ targetType: type, targetId, listId });
-    setFavorites(getAllFavorites());
-  };
-
-  const handleAddToList = (listId: string) => {
-    if (favorites[listId]?.includes(currentFavoriteTarget!)) {
-      setSnackbarMessage("Cet élément est déjà dans la liste de favoris.");
-      setSnackbarOpen(true);
-    } else {
-      favoriteService.assignItemToList({
-        targetType: type,
-        targetId: currentFavoriteTarget!,
-        listId,
-        assign: true,
-      });
-      setFavorites(getAllFavorites());
-      handleClosePopover();
-    }
-  };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -146,95 +75,12 @@ export default function MainContent(props: MainContentProps) {
           {filteredDataList.map((m: any) => (
             <ListItem key={m._id}>
               {props.listItemContent(m)}
-              <ListItemIcon>
-                <IconButton onClick={() => handleFavoriteToggle(m._id)}>
-                  {favorites["default"]?.includes(m._id) ? (
-                    <Star color="primary" />
-                  ) : (
-                    <StarBorder />
-                  )}
-                </IconButton>
-                <IconButton onClick={(e) => handleOpenMenu(e, m._id)}>
-                  <Add />
-                </IconButton>
-                <Popover
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl) && currentFavoriteTarget === m._id}
-                  onClose={handleClosePopover}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "center",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                  }}
-                >
-                  <Box sx={{ padding: 2, minWidth: 200 }}>
-                    {favoriteService
-                      .allLists()
-                      .filter((list) => list.id !== "default")
-                      .map((list) => (
-                        <MenuItem
-                          key={list.id}
-                          onClick={() => handleAddToList(list.id)}
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            padding: "8px 16px",
-                            "&:hover": {
-                              backgroundColor: "#f0f0f0",
-                            },
-                          }}
-                        >
-                          <Typography variant="body1" sx={{ color: "#000" }}>
-                            {list.name}
-                          </Typography>
-                          <IconButton
-                            edge="end"
-                            aria-label="delete"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveFavorite(
-                                currentFavoriteTarget!,
-                                list.id
-                              );
-                            }}
-                            sx={{ color: "#d32f2f" }}
-                          >
-                            <Delete />
-                          </IconButton>
-                        </MenuItem>
-                      ))}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "8px 16px",
-                      }}
-                    >
-                      <TextField
-                        value={newFavoriteListName}
-                        onChange={(e) => setNewFavoriteListName(e.target.value)}
-                        label="Nouvelle liste"
-                        size="small"
-                        sx={{ marginRight: 1, flexGrow: 1 }}
-                      />
-                      <Button
-                        onClick={handleAddFavoriteList}
-                        sx={{
-                          backgroundColor: "#FFD700",
-                          color: "#000",
-                          "&:hover": { backgroundColor: "#FFC107" },
-                        }}
-                      >
-                        Créer
-                      </Button>
-                    </Box>
-                  </Box>
-                </Popover>
-              </ListItemIcon>
+              <FavoriteIcons
+                type={type}
+                targetId={m._id}
+                favorites={favorites}
+                setFavorites={setFavorites}
+              />
             </ListItem>
           ))}
         </List>
