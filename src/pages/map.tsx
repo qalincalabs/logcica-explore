@@ -5,6 +5,7 @@ import {
   Avatar,
   Box,
   Button,
+  ButtonGroup,
   Chip,
   Divider,
   Drawer,
@@ -15,6 +16,8 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -26,11 +29,11 @@ import {
   ArrowDropUp,
   ArrowDropDown,
   Sort,
-  GridView,
   ViewList,
   Add,
   BeachAccess,
   Star,
+  ViewModule,
 } from "@mui/icons-material";
 import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
 
@@ -55,6 +58,7 @@ const opportunitiesFirstMenu = [
   {
     title: "Se nourrir",
     icon: <Storefront fontSize="large" />,
+    checked: true,
   },
   {
     title: "Rencontrer",
@@ -103,9 +107,11 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps) {
         </Stack>
         <Stack alignItems="center" overflow="auto">
           <OpportunitiesListMenu />
-          <ListSortMenu />
-          <Divider sx={{ width: "100%" }} />
-          <FolderList />
+          <Box sx={{ width: "100%" }}>
+            <ListSortMenu />
+            <Divider sx={{ marginTop: 1 }} />
+            <FolderList />
+          </Box>
         </Stack>
       </Drawer>
     </div>
@@ -116,7 +122,9 @@ function OpportunitiesBottomBarMenu() {
   return (
     <>
       {opportunitiesFirstMenu.map((m) => (
-        <IconButton color="inherit">{m.icon}</IconButton>
+        <Button color="inherit" variant={m.checked ? "outlined" : "text"}>
+          {m.icon}
+        </Button>
       ))}
     </>
   );
@@ -145,15 +153,16 @@ function OpportunitiesListMenu() {
     <>
       <Stack direction="row" alignItems="center" spacing={1} useFlexGap>
         {opportunitiesFirstMenu.map((m) => (
-          <IconButton
-            sx={{ border: 2, paddingTop: 2, paddingBottom: 3 }}
+          <Button
             size="large"
+            variant={m.checked ? "contained" : "outlined"}
+            sx={{ borderRadius: 10 }}
           >
             <Stack direction="column" alignItems="center">
               {m.icon}
-              <Typography variant="overline">{m.title}</Typography>
+              <Typography variant="caption">{m.title}</Typography>
             </Stack>
-          </IconButton>
+          </Button>
         ))}
       </Stack>
 
@@ -172,21 +181,35 @@ function OpportunitiesListMenu() {
 
 function ListSortMenu() {
   return (
-    <Box
-      sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}
-    >
-      <IconButton size="large">
-        <Sort fontSize="small" />
-      </IconButton>
-      <Stack direction="row">
-        <IconButton size="large">
-          <ViewList fontSize="small" />
-        </IconButton>
-        <IconButton size="large">
-          <GridView fontSize="small" />
-        </IconButton>
-      </Stack>
+    <Box display="flex" justifyContent="space-between" m={1}>
+      <ButtonGroup size="small">
+        <Button variant="text">
+          <Sort fontSize="small" />
+        </Button>
+      </ButtonGroup>
+      <ListSortMenuToggle />
     </Box>
+  );
+}
+
+export function ListSortMenuToggle() {
+  const [alignment, setAlignment] = React.useState<string | null>("list");
+
+  return (
+    <ToggleButtonGroup
+      value={alignment}
+      color="primary"
+      size="small"
+      exclusive
+      onChange={(_, newAlignment) => setAlignment(newAlignment)}
+    >
+      <ToggleButton value="list">
+        <ViewList fontSize="small" />
+      </ToggleButton>
+      <ToggleButton value="grid">
+        <ViewModule fontSize="small" />
+      </ToggleButton>
+    </ToggleButtonGroup>
   );
 }
 
