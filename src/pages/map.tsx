@@ -1,7 +1,7 @@
 import * as React from "react";
 import { HeadFC, PageProps, graphql } from "gatsby";
-import { AppBar, Box, Button, Chip, Divider, Drawer, DrawerProps, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from "@mui/material";
-import { Inbox, Mail, Storefront, Event, VolunteerActivism, More, ArrowDropUp, ArrowDropDown } from "@mui/icons-material";
+import { AppBar, Box, Button, ButtonGroup, Chip, Divider, Drawer, DrawerProps, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Toolbar, Typography } from "@mui/material";
+import { Inbox, Mail, Storefront, Event, VolunteerActivism, More, ArrowDropUp, ArrowDropDown, Sort, ListRounded, GridView, ViewStream, ViewList } from "@mui/icons-material";
 import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
 import { FolderList } from "../components/FolderList";
 
@@ -99,7 +99,20 @@ function MainBottomListDrawer(props: MainBottomListDrawerProps){
             <Chip label="Groupements" />
             <Chip label="En ligne" variant="outlined" />
           </Stack>
-
+          <Box sx={{ display: "flex", justifyContent: "space-between", width:"100%" }}>
+            <IconButton size="large">
+              <Sort fontSize="small" />
+            </IconButton>
+            <Stack direction="row">
+              <IconButton size="large">
+                <ViewList fontSize="small" />
+              </IconButton>
+              <IconButton size="large">
+                <GridView fontSize="small" />
+              </IconButton>
+            </Stack>
+          </Box>
+          <Divider sx={{width: "100%"}}/>
           <FolderList/>
         </Stack>
       </Drawer>
