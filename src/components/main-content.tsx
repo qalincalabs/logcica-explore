@@ -13,6 +13,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  Popover,
 } from "@mui/material";
 import { Star, StarBorder, Delete, Add } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
@@ -65,7 +66,7 @@ export default function MainContent(props: MainContentProps) {
     setCurrentFavoriteTarget(targetId);
   };
 
-  const handleCloseMenu = () => {
+  const handleClosePopover = () => {
     setAnchorEl(null);
     setCurrentFavoriteTarget(null);
     setNewFavoriteListName(""); // Reset new favorite list name
@@ -76,7 +77,7 @@ export default function MainContent(props: MainContentProps) {
       favoriteService.addList({ name: newFavoriteListName });
       setNewFavoriteListName("");
       setFavorites(getAllFavorites());
-      handleCloseMenu();
+      handleClosePopover();
     } else {
       setSnackbarMessage("Le nom de la liste ne peut pas être vide.");
       setSnackbarOpen(true);
@@ -112,7 +113,7 @@ export default function MainContent(props: MainContentProps) {
         assign: true,
       });
       setFavorites(getAllFavorites());
-      handleCloseMenu();
+      handleClosePopover();
     }
   };
 
@@ -156,88 +157,83 @@ export default function MainContent(props: MainContentProps) {
                 <IconButton onClick={(e) => handleOpenMenu(e, m._id)}>
                   <Add />
                 </IconButton>
-                <Menu
+                <Popover
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl) && currentFavoriteTarget === m._id}
-                  onClose={handleCloseMenu}
-                  onKeyDown={(event: any) => {
-                    event.stopPropagation();
+                  onClose={handleClosePopover}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
                   }}
-                  MenuListProps={{
-                    onMouseLeave: handleCloseMenu,
-                  }}
-                  PaperProps={{
-                    elevation: 1,
-                    sx: {
-                      borderRadius: 1,
-                      padding: 1,
-                      backgroundColor: "#ffffff",
-                      minWidth: 200,
-                    },
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
                   }}
                 >
-                  <MenuItem
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 16px",
-                    }}
-                  >
-                    <TextField
-                      value={newFavoriteListName}
-                      onChange={(e) => setNewFavoriteListName(e.target.value)}
-                      label="Nouvelle liste"
-                      size="small"
-                      sx={{ marginRight: 1, flexGrow: 1 }}
-                    />
-                    <Button
-                      onClick={handleAddFavoriteList}
+                  <Box sx={{ padding: 2, minWidth: 200 }}>
+                    {favoriteService
+                      .allLists()
+                      .filter((list) => list.id !== "default")
+                      .map((list) => (
+                        <MenuItem
+                          key={list.id}
+                          onClick={() => handleAddToList(list.id)}
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "8px 16px",
+                            "&:hover": {
+                              backgroundColor: "#f0f0f0",
+                            },
+                          }}
+                        >
+                          <Typography variant="body1" sx={{ color: "#000" }}>
+                            {list.name}
+                          </Typography>
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveFavorite(
+                                currentFavoriteTarget!,
+                                list.id
+                              );
+                            }}
+                            sx={{ color: "#d32f2f" }}
+                          >
+                            <Delete />
+                          </IconButton>
+                        </MenuItem>
+                      ))}
+                    <Box
                       sx={{
-                        backgroundColor: "#FFD700",
-                        color: "#000",
-                        "&:hover": { backgroundColor: "#FFC107" },
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "8px 16px",
                       }}
                     >
-                      Créer
-                    </Button>
-                  </MenuItem>
-                  {favoriteService
-                    .allLists()
-                    .filter((list) => list.id !== "default")
-                    .map((list) => (
-                      <MenuItem
-                        key={list.id}
-                        onClick={() => handleAddToList(list.id)}
+                      <TextField
+                        value={newFavoriteListName}
+                        onChange={(e) => setNewFavoriteListName(e.target.value)}
+                        label="Nouvelle liste"
+                        size="small"
+                        sx={{ marginRight: 1, flexGrow: 1 }}
+                      />
+                      <Button
+                        onClick={handleAddFavoriteList}
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          padding: "8px 16px",
-                          "&:hover": {
-                            backgroundColor: "#f0f0f0",
-                          },
+                          backgroundColor: "#FFD700",
+                          color: "#000",
+                          "&:hover": { backgroundColor: "#FFC107" },
                         }}
                       >
-                        <Typography variant="body1" sx={{ color: "#000" }}>
-                          {list.name}
-                        </Typography>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveFavorite(
-                              currentFavoriteTarget!,
-                              list.id
-                            );
-                          }}
-                          sx={{ color: "#d32f2f" }}
-                        >
-                          <Delete />
-                        </IconButton>
-                      </MenuItem>
-                    ))}
-                </Menu>
+                        Créer
+                      </Button>
+                    </Box>
+                  </Box>
+                </Popover>
               </ListItemIcon>
             </ListItem>
           ))}
