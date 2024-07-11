@@ -5,18 +5,13 @@ import {
   Avatar,
   Box,
   Button,
-  ButtonGroup,
   Chip,
   Divider,
   Drawer,
-  DrawerProps,
-  Grid,
-  Icon,
   IconButton,
   List,
   ListItem,
   ListItemAvatar,
-  ListItemButton,
   ListItemIcon,
   ListItemText,
   Stack,
@@ -24,19 +19,14 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  Inbox,
   Image,
-  Mail,
   Storefront,
   Event,
   VolunteerActivism,
-  More,
   ArrowDropUp,
   ArrowDropDown,
   Sort,
-  ListRounded,
   GridView,
-  ViewStream,
   ViewList,
   Add,
   BeachAccess,
@@ -61,11 +51,6 @@ const Map: React.FC<PageProps> = () => {
   );
 };
 
-interface MainBottomListDrawerProps {
-  open: boolean;
-  onChange: (open: boolean) => void;
-}
-
 const opportunitiesFirstMenu = [
   {
     title: "Se nourrir",
@@ -80,6 +65,11 @@ const opportunitiesFirstMenu = [
     icon: <VolunteerActivism fontSize="large" />,
   },
 ];
+
+interface MainBottomListDrawerProps {
+  open: boolean;
+  onChange: (open: boolean) => void;
+}
 
 function MainBottomListDrawer(props: MainBottomListDrawerProps) {
   return (
