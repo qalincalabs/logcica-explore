@@ -23,10 +23,12 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  ThemeProvider,
   ToggleButton,
   ToggleButtonGroup,
   Toolbar,
   Typography,
+  createTheme,
 } from "@mui/material";
 import {
   Image,
@@ -51,6 +53,48 @@ import { PropsWithChildren } from "react";
 import { wrap } from "module";
 import AppTopBar from "../components/app-top-bar";
 
+const pageStyles = {
+  fontFamily: "-apple-system, Roboto, sans-serif, serif",
+};
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#FFC300", //#ffcb01
+    }
+  },
+  components: {
+    // Name of the component
+    MuiChip: {
+      styleOverrides: {
+        root: ({ ownerState }) => ({
+          ...(ownerState.variant === 'outlined' && {
+              color: 'black',
+              borderWidth: 2
+            }),
+        }),
+      },
+      defaultProps: {
+        color: "primary",
+      },
+    }
+  },
+  typography: {
+    overline: {
+      color: "black"
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1440, // changed from 1536 to fit mac book pro
+    },
+  },
+});
+
 const Map: React.FC<PageProps> = () => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
@@ -62,29 +106,30 @@ const Map: React.FC<PageProps> = () => {
   );
 
   return (
-    <div>
-      <AppTopBar />
-      <Box>
-      <Grid container>
-        <Grid md={5} lg={4} sx={{ display: { xs: "none", md: "block" } }}>
-          {opportunitiesView()}
+    <main style={pageStyles}>
+      <ThemeProvider theme={theme}>
+        <AppTopBar />
+        <Toolbar />
+        <Grid container>
+          <Grid md={5} lg={4} sx={{ display: { xs: "none", md: "block" } }}>
+            {opportunitiesView()}
+          </Grid>
+          <Grid md={7} lg={8}>
+            <p>New design</p>
+          </Grid>
         </Grid>
-        <Grid md={7} lg={8}>
-          <p>New design</p>
-        </Grid>
-      </Grid>
-      </Box>
 
-      <MainBottomListDrawer
-        sx={{ display: { sm: "block", md: "none" } }}
-        open={bottomDrawerOpen}
-        onChange={(open) => {
-          setBottomDrawerOpen(open);
-        }}
-      >
-        {opportunitiesView()}
-      </MainBottomListDrawer>
-    </div>
+        <MainBottomListDrawer
+          sx={{ display: { sm: "block", md: "none" } }}
+          open={bottomDrawerOpen}
+          onChange={(open) => {
+            setBottomDrawerOpen(open);
+          }}
+        >
+          {opportunitiesView()}
+        </MainBottomListDrawer>
+      </ThemeProvider>
+    </main>
   );
 };
 
@@ -194,16 +239,14 @@ function OpportunitiesListMenu() {
     <>
       <Stack direction="row" alignItems="center" spacing={1} useFlexGap>
         {opportunitiesFirstMenu.map((m) => (
-          <Button
+          <IconButton
             size="large"
-            variant={m.checked ? "contained" : "outlined"}
-            sx={{ borderRadius: 10 }}
+            color="primary"
+            sx={{ flexDirection: 'column', border: m.checked ? 3 : 0  }}
           >
-            <Stack direction="column" alignItems="center">
-              {m.icon}
-              <Typography variant="caption">{m.title}</Typography>
-            </Stack>
-          </Button>
+            {m.icon}
+            <Typography variant="overline">{m.title}</Typography>
+          </IconButton>
         ))}
       </Stack>
 
