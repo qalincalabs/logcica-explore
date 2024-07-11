@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { graphql, HeadFC, navigate, PageProps } from "gatsby";
 import {
   Avatar,
@@ -9,36 +9,44 @@ import {
   Typography,
 } from "@mui/material";
 import Layout from "../components/layout";
-import { Store} from "@mui/icons-material";
+import { Store } from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 import MainContent from "../components/main-content";
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
-
   return (
     <Layout>
-      <MainContent title="Marchés" type="counter" dataList={data.marketplaces.nodes} listItemContent={MarketplaceListItem}/>
+      <MainContent
+        title="Marchés"
+        type="counter"
+        dataList={data.marketplaces.nodes}
+        listItemContent={MarketplaceListItem}
+      />
     </Layout>
   );
 };
 
-
 function MarketplaceListItem(m: any) {
-  return <ListItemButton onClick={() => navigate("/marketplace/" + m._id)}>
-    <ListItemAvatar>
-      <Avatar>
-        <Store />
-      </Avatar>
-    </ListItemAvatar>
-    <ListItemText
-      primary={m.name}
-      secondary={<Stack>
-        <Typography>{m.availabilityStatement.short.markdown}</Typography>
-        {m.description && (
-          <Markdown>{m.description.short.markdown}</Markdown>
-        )}
-      </Stack>} />
-  </ListItemButton>;
+  return (
+    <ListItemButton onClick={() => navigate("/marketplace/" + m._id)}>
+      <ListItemAvatar>
+        <Avatar>
+          <Store />
+        </Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        primary={m.name}
+        secondary={
+          <Stack>
+            <Typography>{m.availabilityStatement.short.markdown}</Typography>
+            {m.description && (
+              <Markdown>{m.description.short.markdown}</Markdown>
+            )}
+          </Stack>
+        }
+      />
+    </ListItemButton>
+  );
 }
 
 export default MarketplacePage;
@@ -94,4 +102,3 @@ export const query = graphql`
     }
   }
 `;
-
