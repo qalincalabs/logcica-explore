@@ -21,8 +21,8 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import Layout from "../components/layout";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils";
 
@@ -47,45 +47,53 @@ const createFilteredList = (favorites, filterKey, dataKey) => (
   filterKey ? favorites.filter(f => f.targetType === dataKey) : []
 );
 
-const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes }) => (
+const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes, moveSection, index, totalSections }) => (
   !favorites.length ? null : (
     <Grid item xs={12}>
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" sx={{ color: '#333', mb: 2 }}>{title}</Typography>
-        <List>
-          {favorites.map((item) => {
-            const dataNode = dataNodes.find(p => p._id === item.targetId);
-            return (
-              <ListItem 
-                key={item.targetId} 
-                onClick={() => handleItemClick(dataKey, item.targetId, dataNode?._id)} 
-                sx={{ 
-                  transition: 'transform 0.3s, box-shadow 0.3s', 
-                  '&:hover': { transform: 'scale(1.02)', boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)' },
-                  borderRadius: '8px',
-                  mb: 2,
-                  bgcolor: '#fff',
-                  boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              >
-                <ListItemButton>
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: '#FFD700', color: '#fff' }}>
-                      <Store />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
-                  <ListItemIcon>
-                    <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey, item.listId); }}>
-                      <Delete />
-                    </IconButton>
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
+        <Box>
+          <IconButton onClick={() => moveSection(index, -1)} disabled={index === 0}>
+            <ArrowUpward />
+          </IconButton>
+          <IconButton onClick={() => moveSection(index, 1)} disabled={index === totalSections - 1}>
+            <ArrowDownward />
+          </IconButton>
+        </Box>
       </Box>
+      <List>
+        {favorites.map((item) => {
+          const dataNode = dataNodes.find(p => p._id === item.targetId);
+          return (
+            <ListItem 
+              key={item.targetId} 
+              onClick={() => handleItemClick(dataKey, item.targetId, dataNode?._id)} 
+              sx={{ 
+                transition: 'transform 0.3s, box-shadow 0.3s', 
+                '&:hover': { transform: 'scale(1.02)', boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)' },
+                borderRadius: '8px',
+                mb: 2,
+                bgcolor: '#fff',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              <ListItemButton>
+                <ListItemAvatar>
+                  <Avatar sx={{ bgcolor: '#FFD700', color: '#fff' }}>
+                    <Store />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
+                <ListItemIcon>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey, item.listId); }}>
+                    <Delete />
+                  </IconButton>
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
     </Grid>
   )
 );
@@ -104,6 +112,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("default");
+  const [sectionsOrder, setSectionsOrder] = useState(["partnership", "marketplace", "activity", "product"]);
 
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
@@ -137,6 +146,13 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     setDrawerOpen(false);
   };
 
+  const moveSection = (index: number, direction: number) => {
+    const newOrder = [...sectionsOrder];
+    const [removed] = newOrder.splice(index, 1);
+    newOrder.splice(index + direction, 0, removed);
+    setSectionsOrder(newOrder);
+  };
+
   const filters = [
     { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
     { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
@@ -144,11 +160,15 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
   ];
 
-  const filteredFavoritesList = filters.map(({ key, dataKey }) => createFilteredList(favorites[selectedList] || [], filter[key], dataKey));
+  const filteredFavorites = sectionsOrder.map(sectionKey => {
+    const { key, dataKey } = filters.find(f => f.key === sectionKey);
+    return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
+  });
 
   const exportFavorites = (format: 'json' | 'csv' | 'xlsx' | 'text' | 'pdf') => {
-    const favoritesData = filters.reduce((acc, { key, dataKey }) => {
-      acc[key] = filteredFavoritesList[filters.findIndex(f => f.key === key)].map(item => data[`${key}s`]?.nodes?.find((p: any) => p._id === item.targetId));
+    const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
+      const { key, dataKey } = filters.find(f => f.key === sectionKey);
+      acc[key] = filteredFavorites[index].map(item => data[`${key}s`]?.nodes?.find((p: any) => p._id === item.targetId));
       return acc;
     }, {} as Record<string, any[]>);
     
@@ -221,11 +241,15 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             </Box>
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-                {filters.map(({ title, key, dataKey, dataNodes }, index) => (
-                  <FavoritesList key={title} title={title} favorites={filteredFavoritesList[index]} handleItemClick={handleItemClick}
-                    handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
-                    dataKey={dataKey} dataNodes={dataNodes} />
-                ))}
+                {sectionsOrder.map((sectionKey, index) => {
+                  const { title, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+                  return (
+                    <FavoritesList key={title} title={title} favorites={filteredFavorites[index]} handleItemClick={handleItemClick}
+                      handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
+                      dataKey={dataKey} dataNodes={dataNodes}
+                      moveSection={moveSection} index={index} totalSections={sectionsOrder.length} />
+                  );
+                })}
               </Grid>
             </Box>
           </Box>
