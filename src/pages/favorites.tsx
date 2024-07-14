@@ -26,6 +26,8 @@ import Layout from "../components/layout";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils";
 
+const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
+
 // Utility functions
 const generateShareText = (favorites, data) => {
   const sections = [
@@ -112,13 +114,20 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("default");
-  const [sectionsOrder, setSectionsOrder] = useState(["partnership", "marketplace", "activity", "product"]);
+  const [sectionsOrder, setSectionsOrder] = useState(() => {
+    const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
+  });
 
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
   }, [data]);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
+  }, [sectionsOrder]);
 
   const handleRemoveFavorite = (id: string, type: string, listId: string) => {
     favoriteService.removeItemFromList({ targetType: type, targetId: id, listId });
