@@ -7,6 +7,12 @@ import {
   Popover,
   Box,
   Typography,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  ListItem,
 } from "@mui/material";
 import { Star, StarBorder, Delete, Add } from "@mui/icons-material";
 import * as favoriteService from "../utils/favoritesService";
@@ -51,7 +57,6 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
       favoriteService.addList({ name: newFavoriteListName });
       setNewFavoriteListName("");
       setFavorites(favoriteService.getAllFavorites(type));
-      handleClosePopover();
     } else {
       setSnackbarMessage("Le nom de la liste ne peut pas être vide.");
       setSnackbarOpen(true);
@@ -117,39 +122,37 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
         }}
       >
         <Box sx={{ padding: 2, minWidth: 200 }}>
+        <List sx={{ width: '100%', maxWidth: 360, maxHeight:300, overflow: 'auto' }}>
           {favoriteService
             .allLists()
             .filter((list) => list.id !== "default")
-            .map((list) => (
-              <MenuItem
-                key={list.id}
-                onClick={() => handleAddToList(list.id)}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "8px 16px",
-                  "&:hover": {
-                    backgroundColor: "#f0f0f0",
-                  },
-                }}
+            .map((value) => {
+            const labelId = `checkbox-list-label-${value}`;
+
+            function handleToggle(value: string): React.MouseEventHandler<HTMLDivElement> | undefined {
+              return 
+            }
+
+            return (
+              <ListItem
+                key={value.id}
+                disablePadding
               >
-                <Typography variant="body1" sx={{ color: "#000" }}>
-                  {list.name}
-                </Typography>
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveFavorite(currentFavoriteTarget!, list.id);
-                  }}
-                  sx={{ color: "#d32f2f" }}
-                >
-                  <Delete />
-                </IconButton>
-              </MenuItem>
-            ))}
+                <ListItemButton role={undefined} onClick={handleToggle(value.id)} dense>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ 'aria-labelledby': labelId }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText id={value.id} primary={value.name} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+          </List>
           <Box
             sx={{
               display: "flex",
