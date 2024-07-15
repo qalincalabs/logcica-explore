@@ -24,7 +24,7 @@ import {
 import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import Layout from "../components/layout";
 import * as favoriteService from "../utils/favoritesService";
-import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils";
+import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
@@ -143,9 +143,18 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     setShareText(generateShareText(updatedFavorites, data));
   };
 
-  const handleItemClick = (type: string, id: string) => {
-    const paths = { product: `/activity/${id}`, counter: `/marketplace/${id}` };
-    navigate(paths[type] || `/${type}/${id}`);
+  const handleItemClick = (type: string, id: string, activityId?: string) => {
+    switch (type) {
+      case 'product':
+        navigate(`/activity/${activityId}#${id}`);
+        break;
+      case 'counter':
+        navigate(`/marketplace/${id}`);
+        break;
+      default:
+        navigate(`/${type}/${id}`);
+        break;
+    }
   };
 
   const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
@@ -174,15 +183,27 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
   });
 
-  const exportFavorites = (format: 'json' | 'csv' | 'xlsx' | 'text' | 'pdf') => {
+  const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
+    const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
     const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
-      const { key, dataKey } = filters.find(f => f.key === sectionKey);
-      acc[key] = filteredFavorites[index].map(item => data[`${key}s`]?.nodes?.find((p: any) => p._id === item.targetId));
+      const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+      acc[key] = filteredFavorites[index].map(item => {
+        const node = dataNodes.find((p: any) => p._id === item.targetId);
+        const activity = key === 'activities' ? { activityId: node?._id, activityName: node?.name } : { 
+          activityId: node?.producer?.activity?._id,
+          activityName: node?.producer?.activity?.name 
+        };
+        return { 
+          id: node?._id,
+          name: node?.name,
+          ...activity
+        };
+      });
       return acc;
     }, {} as Record<string, any[]>);
     
-    const exportFunctions = { json: exportToJSON, csv: exportToCSV, xlsx: exportToXLSX, text: exportToText, pdf: exportToPDF };
-    exportFunctions[format](favoritesData, 'favorites');
+    const exportFunctions = { json: exportToJSON, xlsx: exportToXLSX, pdf: exportToPDF };
+    exportFunctions[format](favoritesData, selectedListName);
   };
 
   const allLists = favoriteService.allLists();
@@ -248,6 +269,16 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                 ))}
               </ButtonGroup>
             </Box>
+            <Box display="flex" justifyContent="center" my={2}>
+              {['json', 'xlsx', 'pdf'].map(format => (
+                <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
+                  <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
+                    {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
+                    <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+                  </IconButton>
+                </Tooltip>
+              ))}
+            </Box>
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
                 {sectionsOrder.map((sectionKey, index) => {
@@ -261,16 +292,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                 })}
               </Grid>
             </Box>
-          </Box>
-          <Box mt={4} display="flex" justifyContent="center" alignItems="center" gap={2} p={2}>
-            {['json', 'csv', 'xlsx', 'pdf'].map(format => (
-              <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
-                <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-                  {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
-                  <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
-                </IconButton>
-              </Tooltip>
-            ))}
           </Box>
         </Grid>
       </Grid>
