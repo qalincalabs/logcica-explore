@@ -72,15 +72,15 @@ export default function MarketplaceTemplate({ data }: any) {
               <Paper sx={{ p: 1 }}>
                 <Stack direction="row">
                   <Typography variant="h6" onClick={() => navigate("/activity/" + stall.manager.activity._id)}>
-                    {stall.manager.activity.name}
+                    {stall.manager.activity?.name ?? stall.name }
                   </Typography>
-                  {stall.manager.activity.profiles?.find(
+                  {stall.manager.activity?.profiles?.find(
                     (p: any) => p.type == "facebook"
                   ) && (
                     <a
                       href={
                         "https://www.facebook.com/" +
-                        stall.manager.activity.profiles.find(
+                        stall.manager.activity?.profiles?.find(
                           (p: any) => p.type == "facebook"
                         ).localKey
                       }
@@ -90,12 +90,12 @@ export default function MarketplaceTemplate({ data }: any) {
                       </IconButton>
                     </a>
                   )}
-                  {stall.manager.activity.profiles?.find(
+                  {stall.manager.activity?.profiles?.find(
                     (p: any) => p.type == "website"
                   ) && (
                     <a
                       href={
-                        stall.manager.activity.profiles.find(
+                        stall.manager.activity?.profiles.find(
                           (p: any) => p.type == "website"
                         ).link
                       }
@@ -114,7 +114,7 @@ export default function MarketplaceTemplate({ data }: any) {
                   )}
                 </Stack>
                 <Typography variant="subtitle1">
-                  {stall.manager.activity.place.name}
+                  {stall.manager.activity?.place.name}
                 </Typography>
                 <Typography variant="body2">
                   {stall.catalog.description.short.markdown}
