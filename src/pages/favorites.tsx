@@ -29,7 +29,7 @@ import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
 // Utility functions
-const generateShareText = (favorites, data) => {
+const generateShareText = (favorites: any, data: any) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
     { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
@@ -69,7 +69,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
           return (
             <ListItem 
               key={item.targetId} 
-              onClick={() => handleItemClick(dataKey, item.targetId, dataNode?._id)} 
+              onClick={() => handleItemClick(dataKey, item.targetId, dataNode?.producer?.activity?._id)} 
               sx={{ 
                 transition: 'transform 0.3s, box-shadow 0.3s', 
                 '&:hover': { transform: 'scale(1.02)', boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)' },
@@ -144,18 +144,19 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const handleItemClick = (type: string, id: string, activityId?: string) => {
+    navigate(getLink(type, id, activityId))
+  };
+
+  const getLink = (type: string, id: string, activityId?: string) => {
     switch (type) {
       case 'product':
-        navigate(`/activity/${activityId}#${id}`);
-        break;
+        return `/activity/${activityId}#${id}`;
       case 'counter':
-        navigate(`/marketplace/${id}`);
-        break;
+        return `/marketplace/${id}`;
       default:
-        navigate(`/${type}/${id}`);
-        break;
+        return `/${type}/${id}`;
     }
-  };
+  }
 
   const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
 
@@ -189,14 +190,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
       acc[key] = filteredFavorites[index].map(item => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
-        const activity = key === 'activities' ? { activityId: node?._id, activityName: node?.name } : { 
-          activityId: node?.producer?.activity?._id,
-          activityName: node?.producer?.activity?.name 
-        };
         return { 
-          id: node?._id,
-          name: node?.name,
-          ...activity
+          id: node._id,
+          name: node?.name
         };
       });
       return acc;
