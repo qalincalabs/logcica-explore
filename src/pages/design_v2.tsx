@@ -476,7 +476,7 @@ export function FolderList() {
               <Image />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={i} secondary={e.subtitle} />
+          <ListItemText primary={e.title} secondary={e.subtitle} />
           <ListItemIcon>
             <IconButton>
               <Add />
