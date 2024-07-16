@@ -14,7 +14,13 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CalendarMonth, Facebook, Language, Place, ShoppingBasket } from "@mui/icons-material";
+import {
+  CalendarMonth,
+  Facebook,
+  Language,
+  Place,
+  ShoppingBasket,
+} from "@mui/icons-material";
 import Markdown from "markdown-to-jsx";
 import Layout from "../components/layout";
 
@@ -42,7 +48,7 @@ export default function MarketplaceTemplate({ data }: any) {
           {marketplace.name}
         </Typography>
         <Paper variant="outlined" sx={{ p: 1, m: 1 }}>
-          {marketplace.availabilityStatement && (
+          {marketplace.availabilityStatement?.short?.markdown && (
             <Stack direction="row" gap={1} flexGrow={1}>
               <CalendarMonth />
               <Typography>
@@ -71,8 +77,14 @@ export default function MarketplaceTemplate({ data }: any) {
             <Grid item xs={12} sm={6} md={4} xl={3}>
               <Paper sx={{ p: 1 }}>
                 <Stack direction="row">
-                  <Typography variant="h6" onClick={() => navigate("/activity/" + stall.manager.activity._id)}>
-                    {stall.manager.activity?.name ?? stall.name }
+                  <Typography
+                    variant="h6"
+                    onClick={() => {
+                      if (stall.manager?.activity)
+                        navigate("/activity/" + stall.manager.activity._id);
+                    }}
+                  >
+                    {stall.manager.activity?.name ?? stall.name}
                   </Typography>
                   {stall.manager.activity?.profiles?.find(
                     (p: any) => p.type == "facebook"
@@ -105,20 +117,22 @@ export default function MarketplaceTemplate({ data }: any) {
                       </IconButton>
                     </a>
                   )}
-                  {stall.actions?.map((a: any) => 
-                      <a href={a.url}>
+                  {stall.actions?.map((a: any) => (
+                    <a href={a.url}>
                       <IconButton size="small" sx={{ color: "black" }}>
                         <ShoppingBasket />
                       </IconButton>
                     </a>
-                  )}
+                  ))}
                 </Stack>
                 <Typography variant="subtitle1">
                   {stall.manager.activity?.place.name}
                 </Typography>
-                <Typography variant="body2">
-                  {stall.catalog.description.short.markdown}
-                </Typography>
+                {stall.catalog?.description?.short?.markdown && (
+                  <Typography variant="body2">
+                    {stall.catalog.description.short.markdown}
+                  </Typography>
+                )}
               </Paper>
             </Grid>
           ))}
