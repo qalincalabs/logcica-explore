@@ -22,6 +22,8 @@ import {
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
   Stack,
   ThemeProvider,
   ToggleButton,
@@ -46,6 +48,13 @@ import {
   Shop,
   Facebook,
   Web,
+  Folder,
+  LocationCity,
+  Place,
+  MapRounded,
+  MyLocation,
+  Settings,
+  Hexagon,
 } from "@mui/icons-material";
 import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
 import { red } from "@mui/material/colors";
@@ -61,27 +70,27 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#FFC300", //#ffcb01
-    }
+    },
   },
   components: {
     // Name of the component
     MuiChip: {
       styleOverrides: {
         root: ({ ownerState }) => ({
-          ...(ownerState.variant === 'outlined' && {
-              color: 'black',
-              borderWidth: 2
-            }),
+          ...(ownerState.variant === "outlined" && {
+            color: "black",
+            borderWidth: 2,
+          }),
         }),
       },
       defaultProps: {
         color: "primary",
       },
-    }
+    },
   },
   typography: {
     overline: {
-      color: "black"
+      color: "black",
     },
   },
   breakpoints: {
@@ -105,10 +114,75 @@ const Map: React.FC<PageProps> = () => {
     </Stack>
   );
 
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
+
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
   return (
     <main style={pageStyles}>
       <ThemeProvider theme={theme}>
-        <AppTopBar />
+        <AppBar>
+          <Toolbar>
+            <Button color="secondary" startIcon={<Hexagon></Hexagon>} >
+              logCiCa
+            </Button>
+            <Button sx={{ flexGrow: 1, backgroundColor:"white" }} variant="contained">
+              Chercher
+            </Button>
+            <Button
+              color="secondary"
+              onClick={handleOpenNavMenu}
+              startIcon={<Place/>}
+            >Paliseul</Button>
+            <Menu
+              id="menu-geo"
+              anchorEl={anchorElNav}
+              keepMounted
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+            >
+              <MenuItem>
+                <IconButton>
+                  <MyLocation></MyLocation>
+                </IconButton>
+                <p>Me géolocaliser</p>
+              </MenuItem>
+            </Menu>
+            <IconButton color="secondary" onClick={handleOpenUserMenu}><Settings></Settings></IconButton>
+            <Menu
+              id="menu-user"
+              anchorEl={anchorElUser}
+              keepMounted
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem>
+                <IconButton>
+                  <Star></Star>
+                </IconButton>
+                <p>Mes favoris</p>
+              </MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
         <Toolbar />
         <Grid container>
           <Grid md={5} lg={4} sx={{ display: { xs: "none", md: "block" } }}>
@@ -242,7 +316,7 @@ function OpportunitiesListMenu() {
           <IconButton
             size="large"
             color="primary"
-            sx={{ flexDirection: 'column', border: m.checked ? 3 : 0  }}
+            sx={{ flexDirection: "column", border: m.checked ? 3 : 0 }}
           >
             {m.icon}
             <Typography variant="overline">{m.title}</Typography>
