@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
-import { jsPDF } from 'jspdf';
+import { jsPDF } from "jspdf";
 
 export const exportToJSON = (data: any, filename: string) => {
   const json = JSON.stringify(data, null, 2);
@@ -68,34 +68,27 @@ export const exportToText = (data: any, filename: string) => {
   document.body.removeChild(link);
 };
 
-export const exportToPDF = (data: any, filename: string) => {
+export const exportToPDF = (favoritesData: Record<string, any[]>, filename: string) => {
   const doc = new jsPDF();
-  const title = "Mes Favoris";
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text(title, 10, 10);
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-  let yPosition = 20;
+  let yPosition = 10;
 
-  const addSection = (title, items) => {
-    if (items.length > 0) {
+  const addSection = (title: string, items: any[]) => {
+    if (Array.isArray(items) && items.length > 0) {
       doc.setFont("helvetica", "bold");
       doc.text(title, 10, yPosition);
       yPosition += 10;
       doc.setFont("helvetica", "normal");
-      items.forEach(item => {
-        doc.text(`• ${item.name}`, 10, yPosition);
+
+      items.forEach((item) => {
+        doc.text(item.name, 10, yPosition);
         yPosition += 10;
       });
-      yPosition += 10; // Add extra space after each section
     }
   };
 
-  addSection("Groupements", data.partnerships);
-  addSection("Marchés", data.marketplaces);
-  addSection("Producteurs", data.activities);
-  addSection("Produits", data.products);
+  Object.keys(favoritesData).forEach((key) => {
+    addSection(key.charAt(0).toUpperCase() + key.slice(1), favoritesData[key]);
+  });
 
   doc.save(`${filename}.pdf`);
 };

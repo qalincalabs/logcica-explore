@@ -11,21 +11,25 @@ import {
   Typography,
   IconButton,
   ListItemIcon,
-  Divider,
   Grid,
   ButtonGroup,
   Button,
   Tooltip,
-  useMediaQuery,
+  Drawer,
+  Hidden,
+  CssBaseline,
   useTheme,
+  useMediaQuery,
 } from "@mui/material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import Layout from "../components/layout";
-import { Store, Delete, GetApp, PictureAsPdf } from "@mui/icons-material"; // Ajout de l'icône PDF
 import * as favoriteService from "../utils/favoritesService";
-import { exportToJSON, exportToCSV, exportToXLSX, exportToText, exportToPDF } from "../utils/exportUtils"; // Assurez-vous que l'importation est correcte
+import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
+
+const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
 // Utility functions
-const generateShareText = (favorites, data) => {
+const generateShareText = (favorites: any, data: any) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
     { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
@@ -33,74 +37,96 @@ const generateShareText = (favorites, data) => {
     { key: 'products', title: 'Produits', nodes: data.products.nodes },
   ];
 
-  let shareText = "Mes Favoris:\n\n";
-
-  sections.forEach(({ key, title, nodes }) => {
-    if (favorites[key] && favorites[key].length > 0) {
-      shareText += `${title}:\n`;
-      favorites[key].forEach(id => {
-        const item = nodes.find(p => p._id === id);
-        if (item) {
-          shareText += `•⁠  ⁠${item.name}\n`;
-        }
-      });
-      shareText += "\n";
+  return sections.reduce((text, { key, title, nodes }) => {
+    if (favorites[key]?.length) {
+      text += `${title}:\n${favorites[key].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
     }
-  });
-
-  return shareText;
+    return text;
+  }, "Mes Favoris:\n\n");
 };
 
-const createFilteredList = (favorites, filterKey, dataKey) => {
-  return filterKey ? favorites.filter(f => f.targetType === dataKey).map(e => e.targetId) : [];
-};
+const createFilteredList = (favorites, filterKey, dataKey) => (
+  filterKey ? favorites.filter(f => f.targetType === dataKey) : []
+);
 
-const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes }) => {
-  if (favorites.length === 0) return null;
-
-  return (
-    <Grid item xs={12} md={3}>
-      <Box>
-        <Typography variant="h6" style={{ color: 'black', marginBottom: '16px' }}>{title}</Typography>
-        <List>
-          {favorites.map((id: string) => {
-            const item = dataNodes.find(p => p._id === id);
-            return (
-              <ListItem key={id} onClick={() => handleItemClick(dataKey, id, item?.producer?.activity?._id)} sx={{ transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
-                <ListItemButton>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <Store />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={item?.name || `${title} inconnu`} />
-                  <ListItemIcon>
-                    <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(id, dataKey); }}>
-                      <Delete />
-                    </IconButton>
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
+const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes, moveSection, index, totalSections }) => (
+  !favorites.length ? null : (
+    <Grid item xs={12}>
+      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography variant="h6" sx={{ color: '#333', mb: 2 }}>{title}</Typography>
+        <Box>
+          <IconButton onClick={() => moveSection(index, -1)} disabled={index === 0}>
+            <ArrowUpward />
+          </IconButton>
+          <IconButton onClick={() => moveSection(index, 1)} disabled={index === totalSections - 1}>
+            <ArrowDownward />
+          </IconButton>
+        </Box>
       </Box>
+      <List>
+        {favorites.map((item) => {
+          const dataNode = dataNodes.find(p => p._id === item.targetId);
+          return (
+            <ListItem 
+              key={item.targetId} 
+              onClick={() => handleItemClick(dataKey, item.targetId, dataNode?.producer?.activity?._id)} 
+              sx={{ 
+                transition: 'transform 0.3s, box-shadow 0.3s', 
+                '&:hover': { transform: 'scale(1.02)', boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)' },
+                borderRadius: '8px',
+                mb: 2,
+                bgcolor: '#fff',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              <ListItemButton>
+                <ListItemAvatar>
+                  <Avatar sx={{ bgcolor: '#FFD700', color: '#fff' }}>
+                    <Store />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
+                <ListItemIcon>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey, item.listId); }}>
+                    <Delete />
+                  </IconButton>
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
     </Grid>
-  );
-};
+  )
+);
 
 const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
-  const refreshFavorites = () => favoriteService.findItems({ listIds: ['default'] });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [favorites, setFavorites] = useState(refreshFavorites());
-  const [shareText, setShareText] = useState(generateShareText(refreshFavorites(), data));
+  const refreshFavorites = () => favoriteService.allLists().reduce((acc, list) => {
+    acc[list.id] = favoriteService.findItems({ listIds: [list.id] });
+    return acc;
+  }, {} as { [key: string]: any[] });
 
-  const [filter, setFilter] = useState({
-    partnership: true,
-    marketplace: true,
-    activity: true,
-    product: true,
-  } as Record<string, boolean>);
+  const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
+  const [shareText, setShareText] = useState(generateShareText(favorites, data));
+  const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedList, setSelectedList] = useState("default");
+
+  const [sectionsOrder, setSectionsOrder] = useState(() => {
+    if(typeof window == "undefined")
+      return ["partnership", "marketplace", "activity", "product"];
+    const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
+  });
+
+  useEffect(() => {
+    if(typeof window !== "undefined")
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
+  }, [sectionsOrder]);
+
 
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
@@ -108,174 +134,168 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     setShareText(generateShareText(updatedFavorites, data));
   }, [data]);
 
-  const handleRemoveFavorite = (id: string, type: string) => {
-    favoriteService.removeItemFromList({ targetType: type, targetId: id });
+  const handleRemoveFavorite = (id: string, type: string, listId: string) => {
+    favoriteService.removeItemFromList({ targetType: type, targetId: id, listId });
+    const updatedFavorites = refreshFavorites();
+    setFavorites(updatedFavorites);
+    setShareText(generateShareText(updatedFavorites, data));
+  };
+
+  const handleRemoveFavoriteList = (listId: string) => {
+    favoriteService.removeList({ id: listId });
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
   };
 
   const handleItemClick = (type: string, id: string, activityId?: string) => {
+    navigate(getLink(type, id, activityId))
+  };
+
+  const getLink = (type: string, id: string, activityId?: string) => {
     switch (type) {
       case 'product':
-        navigate(`/activity/${activityId}#${id}`);
-        break;
+        return `/activity/${activityId}#${id}`;
       case 'counter':
-        navigate(`/marketplace/${id}`);
-        break;
+        return `/marketplace/${id}`;
       default:
-        navigate(`/${type}/${id}`);
-        break;
+        return `/${type}/${id}`;
     }
+  }
+
+  const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
+
+  const handleListSelect = (listId: string) => {
+    setSelectedList(listId);
+    setDrawerOpen(false);
   };
 
-  const handleFilterChange = (name: string) => {
-    setFilter(prevFilter => ({
-      ...prevFilter,
-      [name]: !prevFilter[name]
-    }));
+  const moveSection = (index: number, direction: number) => {
+    const newOrder = [...sectionsOrder];
+    const [removed] = newOrder.splice(index, 1);
+    newOrder.splice(index + direction, 0, removed);
+    setSectionsOrder(newOrder);
   };
 
-  const filteredPartnershipFavorites = createFilteredList(favorites, filter.partnership, 'partnership');
-  const filteredFavorites = createFilteredList(favorites, filter.marketplace, 'counter');
-  const filteredActivityFavorites = createFilteredList(favorites, filter.activity, 'activity');
-  const filteredProductFavorites = createFilteredList(favorites, filter.product, 'product');
+  const filters = [
+    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
+    { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
+    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
+    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
+  ];
 
-  const exportFavorites = (format: 'json' | 'csv' | 'xlsx' | 'text' | 'pdf') => {
-    const favoritesData = {
-      partnerships: filteredPartnershipFavorites.map(id => data.partnerships.nodes.find((p: any) => p._id === id)),
-      marketplaces: filteredFavorites.map(id => data.marketplaces.nodes.find((m: any) => m._id === id)),
-      activities: filteredActivityFavorites.map(id => data.activities.nodes.find((a: any) => a._id === id)),
-      products: filteredProductFavorites.map(id => data.products.nodes.find((p: any) => p._id === id))
-    };
+  const filteredFavorites = sectionsOrder.map(sectionKey => {
+    const { key, dataKey } = filters.find(f => f.key === sectionKey);
+    return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
+  });
 
-    if (format === 'json') {
-      exportToJSON(favoritesData, 'favorites');
-    } else if (format === 'csv') {
-      const csvData = [
-        ...favoritesData.partnerships.map((p: any) => ({ type: 'partnership', ...p })),
-        ...favoritesData.marketplaces.map((m: any) => ({ type: 'marketplace', ...m })),
-        ...favoritesData.activities.map((a: any) => ({ type: 'activity', ...a })),
-        ...favoritesData.products.map((p: any) => ({ type: 'product', ...p })),
-      ];
-      exportToCSV(csvData, 'favorites');
-    } else if (format === 'xlsx') {
-      exportToXLSX(favoritesData, 'favorites');
-    } else if (format === 'text') {
-      const textData = generateShareText(favorites, data);
-      exportToText(textData, 'favorites');
-    } else if (format === 'pdf') {
-      const pdfData = {
-        partnerships: filteredPartnershipFavorites.map(id => ({ name: data.partnerships.nodes.find((p: any) => p._id === id)?.name })),
-        marketplaces: filteredFavorites.map(id => ({ name: data.marketplaces.nodes.find((m: any) => m._id === id)?.name })),
-        activities: filteredActivityFavorites.map(id => ({ name: data.activities.nodes.find((a: any) => a._id === id)?.name })),
-        products: filteredProductFavorites.map(id => ({ name: data.products.nodes.find((p: any) => p._id === id)?.name }))
-      };
-      exportToPDF(pdfData, 'favorites');
-    }
+  const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
+    const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
+    const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
+      const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+      acc[key] = filteredFavorites[index].map(item => {
+        const node = dataNodes.find((p: any) => p._id === item.targetId);
+        return { 
+          id: node._id,
+          name: node?.name
+        };
+      });
+      return acc;
+    }, {} as Record<string, any[]>);
+    
+    const exportFunctions = { json: exportToJSON, xlsx: exportToXLSX, pdf: exportToPDF };
+    exportFunctions[format](favoritesData, selectedListName);
   };
 
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const allLists = favoriteService.allLists();
+
+  const drawerContent = (
+    <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box p={2} width="100%">
+        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#000', textAlign: 'center' }}>Listes de Favoris</Typography>
+        <List>
+          {allLists.map(list => (
+            <ListItem 
+              button 
+              key={list.id} 
+              onClick={() => handleListSelect(list.id)}
+              sx={{ borderRadius: '8px', mb: 1, bgcolor: selectedList === list.id ? '#FFD700' : 'transparent', color: selectedList === list.id ? '#fff' : '#000', transition: 'background-color 0.3s, color 0.3s' }}
+            >
+              <ListItemText primary={list.name} />
+              {list.id !== 'default' && (
+                <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
+                  <DeleteForever />
+                </IconButton>
+              )}
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Box>
+  );
 
   return (
     <Layout>
-      <Typography align="center" variant="h3" my={4}>
-        Mes Favoris
-      </Typography>
-      <Box display="flex" justifyContent="center" my={2}>
-        <ButtonGroup variant="outlined" orientation={isSmallScreen ? "vertical" : "horizontal"}>
-          <Button
-            onClick={() => handleFilterChange('partnership')}
-            sx={{ color: 'black', backgroundColor: filter.partnership ? 'rgba(0, 0, 0, 0.1)' : 'transparent' }}
-          >
-            Groupements
-          </Button>
-          <Button
-            onClick={() => handleFilterChange('marketplace')}
-            sx={{ color: 'black', backgroundColor: filter.marketplace ? 'rgba(0, 0, 0, 0.1)' : 'transparent' }}
-          >
-            Marchés
-          </Button>
-          <Button
-            onClick={() => handleFilterChange('activity')}
-            sx={{ color: 'black', backgroundColor: filter.activity ? 'rgba(0, 0, 0, 0.1)' : 'transparent' }}
-          >
-            Producteurs
-          </Button>
-          <Button
-            onClick={() => handleFilterChange('product')}
-            sx={{ color: 'black', backgroundColor: filter.product ? 'rgba(0, 0, 0, 0.1)' : 'transparent' }}
-          >
-            Produits
-          </Button>
-        </ButtonGroup>
-      </Box>
-      <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-        <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-          <FavoritesList
-            title="Groupements"
-            favorites={filteredPartnershipFavorites}
-            handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
-            dataKey="partnership"
-            dataNodes={data.partnerships.nodes}
-          />
-          <FavoritesList
-            title="Marchés"
-            favorites={filteredFavorites}
-            handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
-            dataKey="counter"
-            dataNodes={data.marketplaces.nodes}
-          />
-          <FavoritesList
-            title="Producteurs"
-            favorites={filteredActivityFavorites}
-            handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
-            dataKey="activity"
-            dataNodes={data.activities.nodes}
-          />
-          <FavoritesList
-            title="Produits"
-            favorites={filteredProductFavorites}
-            handleItemClick={handleItemClick}
-            handleRemoveFavorite={handleRemoveFavorite}
-            dataKey="product"
-            dataNodes={data.products.nodes}
-          />
+      <CssBaseline />
+      <Grid container sx={{ height: '100vh' }}>
+        <Hidden smDown>
+          <Grid item xs={12} md={3} lg={2}>
+            <Box sx={{ height: '100%', bgcolor: 'lightgray' }}>
+              {drawerContent}
+            </Box>
+          </Grid>
+        </Hidden>
+        <Hidden mdUp>
+          <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+            {drawerContent}
+          </Drawer>
+        </Hidden>
+        <Grid item xs={12} md={9} lg={10} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Box>
+            <Box display="flex" alignItems="center" mb={2}>
+              <Hidden smUp>
+                <IconButton onClick={() => setDrawerOpen(true)}>
+                  <Menu />
+                </IconButton>
+              </Hidden>
+              <Typography align="center" variant="h3" my={4} sx={{ flexGrow: 1, fontWeight: 'bold', color: '#FFD700' }}>Mes Favoris</Typography>
+            </Box>
+            <Box display="flex" justifyContent="center" my={2}>
+              <ButtonGroup variant="outlined">
+                {filters.map(({ title, key }) => (
+                  <Button key={title} onClick={() => handleFilterChange(key)}
+                    sx={{ color: 'black', backgroundColor: filter[key] ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
+                    {title}
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </Box>
+            <Box display="flex" justifyContent="center" my={2}>
+              {['json', 'xlsx', 'pdf'].map(format => (
+                <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
+                  <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
+                    {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
+                    <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+                  </IconButton>
+                </Tooltip>
+              ))}
+            </Box>
+            <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+              <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
+                {sectionsOrder.map((sectionKey, index) => {
+                  const { title, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+                  return (
+                    <FavoritesList key={title} title={title} favorites={filteredFavorites[index]} handleItemClick={handleItemClick}
+                      handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
+                      dataKey={dataKey} dataNodes={dataNodes}
+                      moveSection={moveSection} index={index} totalSections={sectionsOrder.length} />
+                  );
+                })}
+              </Grid>
+            </Box>
+          </Box>
         </Grid>
-        <Box mt={4} display="flex" justifyContent="center" alignItems="center" gap={2}>
-          <Tooltip title="Exporter en JSON">
-            <IconButton onClick={() => exportFavorites('json')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-              <GetApp />
-              <Typography variant="button" sx={{ ml: 1 }}>JSON</Typography>
-            </IconButton>
-          </Tooltip>
-          {/* 
-          <Tooltip title="Exporter en CSV">
-            <IconButton onClick={() => exportFavorites('csv')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-              <GetApp />
-              <Typography variant="button" sx={{ ml: 1 }}>CSV</Typography>
-            </IconButton>
-          </Tooltip>
-          */}
-          <Tooltip title="Exporter en XLSX">
-            <IconButton onClick={() => exportFavorites('xlsx')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-              <GetApp />
-              <Typography variant="button" sx={{ ml: 1 }}>XLSX</Typography>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Exporter en PDF">
-            <IconButton onClick={() => exportFavorites('pdf')} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-              <PictureAsPdf />
-              <Typography variant="button" sx={{ ml: 1 }}>PDF</Typography>
-            </IconButton>
-          </Tooltip>
-          
-        </Box>
-      </Box>
+      </Grid>
     </Layout>
   );
 };

@@ -1,42 +1,42 @@
-type FavoriteListCreation = {
+export type FavoriteListCreation = {
   name: string;
 };
 
-type FavoriteListRemoval = {
+export type FavoriteListRemoval = {
   id: string;
 };
 
-type FavoriteItemRemoval = {
+export type FavoriteItemRemoval = {
   targetId: string;
   targetType: string;
   listId?: string;
 };
 
-type FavoriteItemAssignement = {
+export type FavoriteItemAssignement = {
   targetId: string;
   targetType: string;
   listId?: string;
   assign: boolean;
 };
 
-type FavoriteList = {
+export type FavoriteList = {
   id: string;
   name: string;
 };
 
-type FavoriteItem = {
+export type FavoriteItem = {
   targetId: string;
   targetType: string;
   listId: string;
 };
 
-type FavoriteQuery = {
+export type FavoriteQuery = {
   targetIds?: string[];
   targetTypes?: string[];
   listIds?: string[];
 };
 
-type FavoriteExistsQuery = {
+export type FavoriteExistsQuery = {
   targetId: string;
   targetType: string;
 };
@@ -47,10 +47,18 @@ function isEmpty(array: any[] | undefined) {
 
 const targetTypes = ["activity", "partnership", "product", "counter"];
 
-const isBrowser = typeof window !== "undefined"
+const isBrowser = typeof window !== "undefined";
 
-function allLists(): FavoriteList[] {
-  return [{ id: "default", name: "default" }];
+export function allLists(): FavoriteList[] {
+  if (!isBrowser) return [];
+  const lists = localStorage.getItem("favorites.lists");
+  return lists ? JSON.parse(lists) : [{ id: "default", name: "default" }];
+}
+
+function saveLists(lists: FavoriteList[]) {
+  if (isBrowser) {
+    localStorage.setItem("favorites.lists", JSON.stringify(lists));
+  }
 }
 
 export function itemExists(query: FavoriteExistsQuery) {
@@ -58,7 +66,7 @@ export function itemExists(query: FavoriteExistsQuery) {
     targetIds: [query.targetId],
     targetTypes: [query.targetType],
   });
-  return isEmpty(items) == false;
+  return !isEmpty(items);
 }
 
 export function findItems(query: FavoriteQuery): FavoriteItem[] {
@@ -79,7 +87,7 @@ export function findItems(query: FavoriteQuery): FavoriteItem[] {
     }
   }
 
-  if (isEmpty(query.targetIds) == false) {
+  if (!isEmpty(query.targetIds)) {
     return items.filter((i) => query.targetIds?.includes(i.targetId));
   } else {
     return items;
@@ -101,24 +109,29 @@ export function assignItemToList(props: FavoriteItemAssignement): boolean {
 }
 
 export function removeItemFromList(props: FavoriteItemRemoval) {
-  console.log(props)
   assignItemToList({ ...props, assign: false });
 }
 
-function addList(props: FavoriteListCreation) {
-  // create localstorage favorites.items.6683b8e04ae580cb8e5724d4
+export function addList(props: FavoriteListCreation) {
+  const lists = allLists();
+  const newList = { id: `list_${Date.now()}`, name: props.name.trim() };
+  lists.push(newList);
+  saveLists(lists);
 }
 
-function removeList(props: FavoriteListRemoval) {
-  // remove list from localstorage favorites.lists
+export function removeList(props: FavoriteListRemoval) {
+  let lists = allLists();
+  lists = lists.filter((list) => list.id !== props.id);
+  saveLists(lists);
+
+  // Remove all items from the deleted list
+  for (const type of targetTypes) {
+    localStorage.removeItem(getLocalStorageKey(props.id, type));
+  }
 }
 
-function getLocalStorageItemList(
-  listId: string,
-  targetType: string
-): string[] {
-
-  if (!isBrowser) return []
+function getLocalStorageItemList(listId: string, targetType: string): string[] {
+  if (!isBrowser) return [];
 
   return JSON.parse(
     localStorage.getItem(getLocalStorageKey(listId, targetType)) ?? "[]"
@@ -134,10 +147,20 @@ function saveLocalStorageItemList(
   targetType: string,
   targetIds: string[]
 ) {
-  if (!isBrowser) return
+  if (!isBrowser) return;
 
   localStorage.setItem(
     getLocalStorageKey(listId, targetType),
     JSON.stringify(targetIds)
   );
+}
+
+export function getAllFavorites(type: string): { [key: string]: string[] } {
+  const allFavoriteLists = allLists();
+  const allFavorites = allFavoriteLists.reduce((acc, list) => {
+    const favorites = findItems({ listIds: [list.id], targetTypes: [type] }).map(e => e.targetId);
+    acc[list.id] = favorites;
+    return acc;
+  }, {} as { [key: string]: string[] });
+  return allFavorites;
 }
