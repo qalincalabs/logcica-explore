@@ -114,20 +114,25 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("default");
+
   const [sectionsOrder, setSectionsOrder] = useState(() => {
+    if(typeof window == "undefined")
+      return ["partnership", "marketplace", "activity", "product"];
     const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
     return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
   });
+
+  useEffect(() => {
+    if(typeof window !== "undefined")
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
+  }, [sectionsOrder]);
+
 
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
   }, [data]);
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
-  }, [sectionsOrder]);
 
   const handleRemoveFavorite = (id: string, type: string, listId: string) => {
     favoriteService.removeItemFromList({ targetType: type, targetId: id, listId });
