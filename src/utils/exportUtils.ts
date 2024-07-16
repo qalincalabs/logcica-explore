@@ -4,7 +4,7 @@ import { jsPDF } from "jspdf";
 
 export const exportToJSON = (data: any, filename: string) => {
   const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([new TextEncoder().encode(json)], { type: "application/json;charset=utf-8" });
+  const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -16,7 +16,7 @@ export const exportToJSON = (data: any, filename: string) => {
 
 export const exportToCSV = (data: any, filename: string) => {
   const csv = Papa.unparse(data);
-  const blob = new Blob([new TextEncoder().encode(csv)], { type: "text/csv;charset=utf-8" });
+  const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -58,7 +58,7 @@ export const exportToText = (data: any, filename: string) => {
   } else {
     textContent = JSON.stringify(data, null, 2);
   }
-  const blob = new Blob([new TextEncoder().encode(textContent)], { type: "text/plain;charset=utf-8" });
+  const blob = new Blob([textContent], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
