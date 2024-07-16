@@ -410,7 +410,6 @@ export function FolderGrid() {
 
   return (
     <Box display="flex" flex={1} gap={2} flexWrap="wrap">
-      <ListSubheader sx={{width: "100%"}} >Moins de 10km</ListSubheader>
       {list.map((e) => (
         <Box flex={1}>
           <Card sx={{ minWidth: "300px" }}>
@@ -468,15 +467,16 @@ export function FolderList() {
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-      <ListSubheader>Moins de 10km</ListSubheader>
-      {list.map((e) => (
+      {list.map((e,i) => (
+        <>
+        <ListSubheader sx={{width:"100%", display:  i == 0 || i == 5 ? "block": "none" }}>Moins de {i*2+5}km</ListSubheader>
         <ListItem>
           <ListItemAvatar>
             <Avatar>
               <Image />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={e.title} secondary={e.subtitle} />
+          <ListItemText primary={i} secondary={e.subtitle} />
           <ListItemIcon>
             <IconButton>
               <Add />
@@ -486,6 +486,7 @@ export function FolderList() {
             </IconButton>
           </ListItemIcon>
         </ListItem>
+        </>
       ))}
     </List>
   );
