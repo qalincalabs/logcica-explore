@@ -17,12 +17,6 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
-  const [favorites, setFavorites] = useState<{ [key: string]: string[] }>(() => favoriteService.getAllFavorites("activity"));
-
-  useEffect(() => {
-    setFavorites(favoriteService.getAllFavorites("activity"));
-  }, []);
-
   return (
     <Layout>
       <Box>
@@ -33,8 +27,6 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
           <FavoriteIcons
             type="activity"
             targetId={activity._id}
-            favorites={favorites}
-            setFavorites={setFavorites}
           />
         </Box>
 

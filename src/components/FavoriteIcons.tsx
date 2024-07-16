@@ -22,25 +22,25 @@ interface FavoriteIconsProps {
   targetId: string;
 }
 
-const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
-  type,
-  targetId,
-}) => {
-
+const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [newFavoriteListName, setNewFavoriteListName] = useState<string>("");
   const [currentFavoriteTarget, setCurrentFavoriteTarget] = useState<
     string | null
   >(null);
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
-  const [selectedItems, setSelectedItems] = useState<favoriteService.FavoriteItem[]>([]);
-  const [favoriteLists, setFavoriteLists] = useState<favoriteService.FavoriteList[]>([])
+  const [selectedItems, setSelectedItems] = useState<
+    favoriteService.FavoriteItem[]
+  >([]);
+  const [favoriteLists, setFavoriteLists] = useState<
+    favoriteService.FavoriteList[]
+  >([]);
 
   useEffect(() => {
-    setSelectedItems(favoriteService.findItems({targetIds: [targetId], targetTypes: [type]}))
-    setFavoriteLists(favoriteService.allLists())
+    setSelectedItems(
+      favoriteService.findItems({ targetIds: [targetId], targetTypes: [type] })
+    );
+    setFavoriteLists(favoriteService.allLists());
   }, []);
 
   const handleOpenPopover = (
@@ -58,33 +58,49 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
   };
 
   const handleAddFavoriteList = () => {
-    if (newFavoriteListName.trim() !== "") {
-      favoriteService.addList({ name: newFavoriteListName });
-      setNewFavoriteListName("");
-      setFavoriteLists(favoriteService.allLists());
-    } else {
-      setSnackbarMessage("Le nom de la liste ne peut pas être vide.");
-      setSnackbarOpen(true);
-    }
+    if (newFavoriteListName.trim() == "") return;
+
+    favoriteService.addList({ name: newFavoriteListName });
+    setNewFavoriteListName("");
+    setFavoriteLists(favoriteService.allLists());
   };
 
-  function handleToggle(assignement: favoriteService.FavoriteItemAssignement, e: any) {
+  function handleToggle(
+    assignement: favoriteService.FavoriteItemAssignement,
+    e: any
+  ) {
     e.preventDefault();
-    favoriteService.assignItemToList(assignement) 
-    setSelectedItems(favoriteService.findItems({targetIds: [assignement.targetId], targetTypes: [assignement.targetType]}))
-    return
+    favoriteService.assignItemToList(assignement);
+    setSelectedItems(
+      favoriteService.findItems({
+        targetIds: [assignement.targetId],
+        targetTypes: [assignement.targetType],
+      })
+    );
+    return;
   }
 
-  const favouriteChecked =  selectedItems.some(f => f.listId == "default" && f.targetId == targetId && f.targetType == type)
+  const favouriteChecked = selectedItems.some(
+    (f) =>
+      f.listId == "default" && f.targetId == targetId && f.targetType == type
+  );
 
   return (
     <>
-      <IconButton onClick={e => handleToggle({listId: "default", targetId: targetId, targetType: type, assign: !favouriteChecked},e)}>
-        {favouriteChecked ? (
-          <Star color="primary" />
-        ) : (
-          <StarBorder />
-        )}
+      <IconButton
+        onClick={(e) =>
+          handleToggle(
+            {
+              listId: "default",
+              targetId: targetId,
+              targetType: type,
+              assign: !favouriteChecked,
+            },
+            e
+          )
+        }
+      >
+        {favouriteChecked ? <Star color="primary" /> : <StarBorder />}
       </IconButton>
       <IconButton onClick={(e) => handleOpenPopover(e, targetId)}>
         <Add />
@@ -103,33 +119,57 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
         }}
       >
         <Box sx={{ padding: 2, minWidth: 200 }}>
-        <List sx={{ width: '100%', maxWidth: 360, maxHeight:300, overflow: 'auto' }}>
-          { favoriteLists.filter(l => l.name != "default").map((value) => {
-            const labelId = `checkbox-list-label-${value}`;
+          <List
+            sx={{
+              width: "100%",
+              maxWidth: 360,
+              maxHeight: 300,
+              overflow: "auto",
+            }}
+          >
+            {favoriteLists
+              .filter((l) => l.name != "default")
+              .map((value) => {
+                const labelId = `checkbox-list-label-${value}`;
 
+                const listChecked = selectedItems.some(
+                  (i) =>
+                    i.listId == value.id &&
+                    i.targetId == targetId &&
+                    i.targetType == type
+                );
 
-            const listChecked =  selectedItems.some(i => i.listId == value.id && i.targetId == targetId && i.targetType == type)
-
-            return (
-              <ListItem
-                key={value.id}
-                disablePadding
-              >
-                <ListItemButton role={undefined} onClick={e => handleToggle({listId: value.id, targetId: targetId, targetType: type, assign: !listChecked}, e)} dense>
-                  <ListItemIcon>
-                    <Checkbox
-                      edge="start"
-                      tabIndex={-1}
-                      checked={listChecked}
-                      disableRipple
-                      inputProps={{ 'aria-labelledby': labelId }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText id={value.id} primary={value.name} />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
+                return (
+                  <ListItem key={value.id} disablePadding>
+                    <ListItemButton
+                      role={undefined}
+                      onClick={(e) =>
+                        handleToggle(
+                          {
+                            listId: value.id,
+                            targetId: targetId,
+                            targetType: type,
+                            assign: !listChecked,
+                          },
+                          e
+                        )
+                      }
+                      dense
+                    >
+                      <ListItemIcon>
+                        <Checkbox
+                          edge="start"
+                          tabIndex={-1}
+                          checked={listChecked}
+                          disableRipple
+                          inputProps={{ "aria-labelledby": labelId }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText id={value.id} primary={value.name} />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
           </List>
           <Box
             sx={{
@@ -161,6 +201,5 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
     </>
   );
 };
-
 
 export default FavoriteIcons;

@@ -31,13 +31,6 @@ export default function MainContent(props: MainContentProps) {
   );
 
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
-
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-    setSnackbarMessage("");
-  };
 
   const filteredDataList = showFavoritesOnly
     ? dataList.filter((m: any) =>
@@ -69,15 +62,6 @@ export default function MainContent(props: MainContentProps) {
           ))}
         </List>
       </Box>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="info">
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </>
   );
 }
