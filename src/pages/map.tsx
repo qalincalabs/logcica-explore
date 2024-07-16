@@ -11,17 +11,17 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  CardMedia,
   Chip,
-  Divider,
   Drawer,
   Grid,
   IconButton,
+  InputBase,
   List,
   ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
   Menu,
   MenuItem,
   Stack,
@@ -48,19 +48,14 @@ import {
   Shop,
   Facebook,
   Web,
-  Folder,
-  LocationCity,
   Place,
-  MapRounded,
   MyLocation,
-  Settings,
   Hexagon,
+  AccountCircle,
+  FilterAlt,
+  MoreVert,
+  Settings,
 } from "@mui/icons-material";
-import PrimarySearchAppBar from "../components/PrimaryAppSearchBar";
-import { red } from "@mui/material/colors";
-import { PropsWithChildren } from "react";
-import { wrap } from "module";
-import AppTopBar from "../components/app-top-bar";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
@@ -70,6 +65,9 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#FFC300", //#ffcb01
+    },
+    secondary: {
+      main: "#000000", //#ffcb01
     },
   },
   components: {
@@ -140,18 +138,23 @@ const Map: React.FC<PageProps> = () => {
     <main style={pageStyles}>
       <ThemeProvider theme={theme}>
         <AppBar>
-          <Toolbar>
-            <Button color="secondary" startIcon={<Hexagon></Hexagon>} >
-              logCiCa
+          <Toolbar color="secondary">
+            <Button color="secondary" startIcon={<Hexagon></Hexagon>}>
+              Explore
             </Button>
-            <Button sx={{ flexGrow: 1, backgroundColor:"white" }} variant="contained">
-              Chercher
-            </Button>
+            <Box display="flex" sx={{ flexGrow: 1, m:1, backgroundColor: "white", borderRadius:2 }}>
+              <InputBase sx={{ flexGrow: 1 }}></InputBase>
+              <IconButton color="secondary">
+                <FilterAlt />
+              </IconButton>
+            </Box>
             <Button
               color="secondary"
               onClick={handleOpenNavMenu}
-              startIcon={<Place/>}
-            >Paliseul</Button>
+              startIcon={<Place />}
+            >
+              Paliseul
+            </Button>
             <Menu
               id="menu-geo"
               anchorEl={anchorElNav}
@@ -166,11 +169,13 @@ const Map: React.FC<PageProps> = () => {
                 <p>Me géolocaliser</p>
               </MenuItem>
             </Menu>
-            <IconButton color="secondary" onClick={handleOpenUserMenu}><Settings></Settings></IconButton>
+
+            <IconButton color="secondary" onClick={handleOpenUserMenu}>
+              <AccountCircle />
+            </IconButton>
             <Menu
               id="menu-user"
               anchorEl={anchorElUser}
-              keepMounted
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
@@ -178,7 +183,13 @@ const Map: React.FC<PageProps> = () => {
                 <IconButton>
                   <Star></Star>
                 </IconButton>
-                <p>Mes favoris</p>
+                <p>Favoris</p>
+              </MenuItem>
+              <MenuItem>
+                <IconButton>
+                  <Settings></Settings>
+                </IconButton>
+                <p>Préférences</p>
               </MenuItem>
             </Menu>
           </Toolbar>
@@ -241,6 +252,7 @@ function MainBottomListDrawer(
           <Box sx={{ flexGrow: 1 }} />
           <OpportunitiesBottomBarMenu />
           <Box sx={{ flexGrow: 1 }} />
+          <MoreVert />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -350,6 +362,7 @@ function ListSortMenu(props: ListSortMenuProps) {
           <Sort fontSize="small" />
         </Button>
       </ButtonGroup>
+      <Box flexGrow={1} ></Box>
       <ToggleButtonGroup
         value={props.alignement}
         color="primary"
@@ -366,6 +379,11 @@ function ListSortMenu(props: ListSortMenuProps) {
           <ViewModule fontSize="small" />
         </ToggleButton>
       </ToggleButtonGroup>
+      <ButtonGroup size="small">
+        <Button variant="text">
+          <MoreVert fontSize="small" />
+        </Button>
+      </ButtonGroup>
     </Box>
   );
 }
@@ -392,6 +410,7 @@ export function FolderGrid() {
 
   return (
     <Box display="flex" flex={1} gap={2} flexWrap="wrap">
+      <ListSubheader sx={{width: "100%"}} >Moins de 10km</ListSubheader>
       {list.map((e) => (
         <Box flex={1}>
           <Card sx={{ minWidth: "300px" }}>
@@ -449,6 +468,7 @@ export function FolderList() {
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+      <ListSubheader>Moins de 10km</ListSubheader>
       {list.map((e) => (
         <ListItem>
           <ListItemAvatar>
