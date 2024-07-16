@@ -42,6 +42,8 @@ import * as favoriteService from "../utils/favoritesService";
 import { useState } from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
 
+const collectionType = 'product'
+
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
 function addressText(address: any) {
@@ -119,7 +121,6 @@ function netContentsText(item: any) {
 
 export function ProductCard({ item }: any) {
   const [expanded, setExpanded] = React.useState<string | false>(false);
-  const [favorites, setFavorites] = useState<{ [key: string]: string[] }>(() => favoriteService.getAllFavorites("product"));
 
   const [tab, setTab] = React.useState("0");
 
@@ -189,10 +190,8 @@ export function ProductCard({ item }: any) {
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
                   <FavoriteIcons
-                    type="product"
+                    type={collectionType}
                     targetId={item._id}
-                    favorites={favorites}
-                    setFavorites={setFavorites}
                   />
                 </Box>
               }

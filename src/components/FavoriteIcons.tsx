@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IconButton,
   MenuItem,
@@ -20,16 +20,13 @@ import * as favoriteService from "../utils/favoritesService";
 interface FavoriteIconsProps {
   type: string;
   targetId: string;
-  favorites: { [key: string]: string[] };
-  setFavorites: (favorites: { [key: string]: string[] }) => void;
 }
 
 const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
   type,
   targetId,
-  favorites,
-  setFavorites,
 }) => {
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [newFavoriteListName, setNewFavoriteListName] = useState<string>("");
   const [currentFavoriteTarget, setCurrentFavoriteTarget] = useState<
@@ -37,6 +34,14 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
   >(null);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+
+  const [selectedItems, setSelectedItems] = useState<favoriteService.FavoriteItem[]>([]);
+  const [favoriteLists, setFavoriteLists] = useState<favoriteService.FavoriteList[]>([])
+
+  useEffect(() => {
+    setSelectedItems(favoriteService.findItems({targetIds: [targetId], targetTypes: [type]}))
+    setFavoriteLists(favoriteService.allLists())
+  }, []);
 
   const handleOpenPopover = (
     event: React.MouseEvent<HTMLElement>,
@@ -56,50 +61,26 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
     if (newFavoriteListName.trim() !== "") {
       favoriteService.addList({ name: newFavoriteListName });
       setNewFavoriteListName("");
-      setFavorites(favoriteService.getAllFavorites(type));
+      setFavoriteLists(favoriteService.allLists());
     } else {
       setSnackbarMessage("Le nom de la liste ne peut pas être vide.");
       setSnackbarOpen(true);
     }
   };
 
-  const handleFavoriteToggle = (targetId: string) => {
-    const defaultFavorites = favorites["default"] || [];
-    const isFavorite = defaultFavorites.includes(targetId);
-    favoriteService.assignItemToList({
-      targetType: type,
-      targetId,
-      listId: "default",
-      assign: !isFavorite,
-    });
-    setFavorites(favoriteService.getAllFavorites(type));
-  };
+  function handleToggle(assignement: favoriteService.FavoriteItemAssignement, e: any) {
+    e.preventDefault();
+    favoriteService.assignItemToList(assignement) 
+    setSelectedItems(favoriteService.findItems({targetIds: [assignement.targetId], targetTypes: [assignement.targetType]}))
+    return
+  }
 
-  const handleRemoveFavorite = (targetId: string, listId: string) => {
-    favoriteService.removeItemFromList({ targetType: type, targetId, listId });
-    setFavorites(favoriteService.getAllFavorites(type));
-  };
-
-  const handleAddToList = (listId: string) => {
-    if (favorites[listId]?.includes(currentFavoriteTarget!)) {
-      setSnackbarMessage("Cet élément est déjà dans la liste de favoris.");
-      setSnackbarOpen(true);
-    } else {
-      favoriteService.assignItemToList({
-        targetType: type,
-        targetId: currentFavoriteTarget!,
-        listId,
-        assign: true,
-      });
-      setFavorites(favoriteService.getAllFavorites(type));
-      handleClosePopover();
-    }
-  };
+  const favouriteChecked =  selectedItems.some(f => f.listId == "default" && f.targetId == targetId && f.targetType == type)
 
   return (
     <>
-      <IconButton onClick={() => handleFavoriteToggle(targetId)}>
-        {favorites["default"]?.includes(targetId) ? (
+      <IconButton onClick={e => handleToggle({listId: "default", targetId: targetId, targetType: type, assign: !favouriteChecked},e)}>
+        {favouriteChecked ? (
           <Star color="primary" />
         ) : (
           <StarBorder />
@@ -123,26 +104,23 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
       >
         <Box sx={{ padding: 2, minWidth: 200 }}>
         <List sx={{ width: '100%', maxWidth: 360, maxHeight:300, overflow: 'auto' }}>
-          {favoriteService
-            .allLists()
-            .filter((list) => list.id !== "default")
-            .map((value) => {
+          { favoriteLists.filter(l => l.name != "default").map((value) => {
             const labelId = `checkbox-list-label-${value}`;
 
-            function handleToggle(value: string): React.MouseEventHandler<HTMLDivElement> | undefined {
-              return 
-            }
+
+            const listChecked =  selectedItems.some(i => i.listId == value.id && i.targetId == targetId && i.targetType == type)
 
             return (
               <ListItem
                 key={value.id}
                 disablePadding
               >
-                <ListItemButton role={undefined} onClick={handleToggle(value.id)} dense>
+                <ListItemButton role={undefined} onClick={e => handleToggle({listId: value.id, targetId: targetId, targetType: type, assign: !listChecked}, e)} dense>
                   <ListItemIcon>
                     <Checkbox
                       edge="start"
                       tabIndex={-1}
+                      checked={listChecked}
                       disableRipple
                       inputProps={{ 'aria-labelledby': labelId }}
                     />
@@ -183,5 +161,6 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({
     </>
   );
 };
+
 
 export default FavoriteIcons;
