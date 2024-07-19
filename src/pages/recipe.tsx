@@ -48,6 +48,7 @@ export const query = graphql`
   {
     recipes: allMongodbRecipes {
       nodes {
+        _id
         name
       }
     }

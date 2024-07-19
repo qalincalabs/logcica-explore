@@ -172,4 +172,25 @@ exports.createPages = async function ({ actions, graphql }: any) {
       context: { id: _id },
     });
   });
+
+  const { data: recipesQuery } = await graphql(`
+    query {
+      allMongodbRecipes {
+        nodes {
+          _id
+          name
+        }
+      }
+    }
+  `);
+  recipesQuery.allMongodbRecipes.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/recipe.tsx`);
+
+    actions.createPage({
+      path: "/recipe/" + _id,
+      component: component,
+      context: { id: _id },
+    });
+  });
 };
