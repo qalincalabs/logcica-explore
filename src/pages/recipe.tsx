@@ -17,8 +17,8 @@ const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
     <Layout>
       <MainContent
         title="Recettes"
-        type="partnership"
-        dataList={data.partnerships.nodes}
+        type="recipe"
+        dataList={data.recipes.nodes}
         listItemContent={PartnershipListItem}
       />
     </Layout>
@@ -27,7 +27,7 @@ const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
 
 function PartnershipListItem(p: any) {
   return (
-    <ListItemButton onClick={() => navigate("/partnership/" + p._id)}>
+    <ListItemButton onClick={() => navigate("/recipe/" + p._id)}>
       <ListItemAvatar>
         <Avatar>
           <Store />
@@ -35,24 +35,6 @@ function PartnershipListItem(p: any) {
       </ListItemAvatar>
       <ListItemText
         primary={p.name}
-        secondary={
-          <Stack>
-            {p.area && (
-              <Typography sx={{ fontWeight: "bold" }}>{p.area.name}</Typography>
-            )}
-            {p.profiles.find(
-              (p: any) => p.description?.short && p.type == "website"
-            )?.description?.short && (
-              <Typography>
-                {
-                  p.profiles.find(
-                    (p: any) => p.description?.short && p.type == "website"
-                  )?.description?.short?.markdown
-                }
-              </Typography>
-            )}
-          </Stack>
-        }
       />
     </ListItemButton>
   );
@@ -60,31 +42,13 @@ function PartnershipListItem(p: any) {
 
 export default PartnershipPage;
 
-export const Head: HeadFC = () => <title>Groupements</title>;
+export const Head: HeadFC = () => <title>Recettes</title>;
 
 export const query = graphql`
-  query {
-    partnerships: allMongodbPartnerships(
-      sort: [{ name: ASC }]
-      filter: {
-        categories: { elemMatch: { _id: { eq: "64d4ceeca4d6089295a8a753" } } }
-      }
-    ) {
+  {
+    recipes: allMongodbRecipes {
       nodes {
-        _id
         name
-        area {
-          name
-        }
-        profiles {
-          type
-          link
-          description {
-            short {
-              markdown
-            }
-          }
-        }
       }
     }
   }
