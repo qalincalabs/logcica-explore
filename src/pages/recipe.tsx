@@ -35,6 +35,12 @@ function PartnershipListItem(p: any) {
       </ListItemAvatar>
       <ListItemText
         primary={p.name}
+        secondary={
+          <Stack>
+            <Typography sx={{fontWeight: "bold"}}>{p.description.short.markdown}</Typography>
+            <Typography>Proposé par : {p.author.organisation.name}</Typography>
+          </Stack>
+        }
       />
     </ListItemButton>
   );
@@ -50,6 +56,16 @@ export const query = graphql`
       nodes {
         _id
         name
+        description {
+          short {
+            markdown
+          }
+        }
+        author {
+          organisation {
+            name
+          }
+        }
       }
     }
   }
