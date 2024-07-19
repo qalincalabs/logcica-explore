@@ -31,7 +31,8 @@ export default function AppTopBar() {
     { label: "GROUPEMENTS", path: "/partnership" },
     { label: "MARCHÉS", path: "/marketplace" },
     { label: "PRODUITS", path: "/product" },
-    { label: "FAVORIS", path: "/favorites" }, // Ajout du bouton Favoris
+    { label: "RECETTES", path: "/recipe" },
+    { label: "FAVORIS", path: "/favorites" } // Ajout du bouton Favoris
   ];
 
   const handleMenuDrawerOpen = () => {
