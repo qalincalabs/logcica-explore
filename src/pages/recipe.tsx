@@ -12,20 +12,20 @@ import Layout from "../components/layout";
 import { Store } from "@mui/icons-material";
 import MainContent from "../components/main-content";
 
-const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
+const RecipePage: React.FC<PageProps> = ({ data }: any) => {
   return (
     <Layout>
       <MainContent
         title="Recettes"
         type="recipe"
         dataList={data.recipes.nodes}
-        listItemContent={PartnershipListItem}
+        listItemContent={RecipeListItem}
       />
     </Layout>
   );
 };
 
-function PartnershipListItem(p: any) {
+function RecipeListItem(p: any) {
   return (
     <ListItemButton onClick={() => navigate("/recipe/" + p._id)}>
       <ListItemAvatar>
@@ -46,7 +46,7 @@ function PartnershipListItem(p: any) {
   );
 }
 
-export default PartnershipPage;
+export default RecipePage;
 
 export const Head: HeadFC = () => <title>Recettes</title>;
 
