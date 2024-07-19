@@ -64,6 +64,7 @@ const config: GatsbyConfig = {
       { name: "GROUPEMENTS", url: "/partnership" },
       { name: "MARCHÉS", url: "/marketplace" },
       { name: "PRODUITS", url: "/product" },
+      {name:"EVÉNEMENTS", url: "/event"}
     ],
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
