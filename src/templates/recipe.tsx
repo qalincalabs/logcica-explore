@@ -31,7 +31,7 @@ import {
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 
-export default function PartnershipTemplate({ data }: any) {
+export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
 
   return (
@@ -48,7 +48,14 @@ export default function PartnershipTemplate({ data }: any) {
           </Typography>
         </Paper>
 
-        <InformationsListCard recipe={recipe} />
+        <Grid container spacing={2}>
+          <Grid xs={8}>
+            <InformationsListCard recipe={recipe} />
+          </Grid>
+          <Grid xs={4}>
+            <CreatorsListCard recipe={recipe} />
+          </Grid>
+        </Grid>
 
         <IngredientListCard recipe={recipe} />
 
@@ -57,21 +64,66 @@ export default function PartnershipTemplate({ data }: any) {
   );
 }
 
-export function InformationsListCard({ recipe }: any) {
+export function SubtitleTemplate({ text }: any) {
+  return (
+    <Typography
+      sx={{
+        textAlign: "center",
+        color: "#ffcb01",
+        fontFamily: "-apple-system, Roboto, sans-serif, serif",
+        fontStyle: "bold",
+      }}
+      variant={"h6"}
+    >
+      {text} :
+    </Typography>
+  )
+}
+
+export function CreatorsListCard({ recipe }: any) {
   return (
     <Box sx={{
-      display: "flex",
-      flexDirection: "left",
       p: 2,
+      m: 2
     }}>
       <Paper
         elevation={7}
         square={false}
-        sx={{ display: 'flex' }}
+        sx={{ display: 'flex', justifyContent: 'space-around' }}
+      >
+        <CardContent >
+          <SubtitleTemplate text={"Partnership"} />
+          <Typography sx={{ textAlign: 'center' }}>
+            {recipe.author.partnership.name}
+          </Typography>
+        </CardContent>
+
+        <CardContent>
+          <SubtitleTemplate text={"Organisation"} />
+          <Typography sx={{ textAlign: 'center' }}>
+            {recipe.author.organisation.name}
+          </Typography>
+        </CardContent>
+
+      </Paper>
+    </Box>
+  )
+}
+
+export function InformationsListCard({ recipe }: any) {
+  return (
+    <Box sx={{
+      p: 2,
+      m: 2
+    }}>
+      <Paper
+        elevation={7}
+        square={false}
+        sx={{ display: 'flex', justifyContent: 'space-around' }}
       >
         <CardContent>
-          <SubtitleTemplate text={"Difficulty"} />
           <Typography sx={{ textAlign: 'center' }}>
+            <SubtitleTemplate text={"Difficulty"} />
             {recipe.difficulty.name}
           </Typography>
         </CardContent>
@@ -92,22 +144,6 @@ export function InformationsListCard({ recipe }: any) {
 
       </Paper>
     </Box>
-  )
-}
-
-export function SubtitleTemplate({ text }: any) {
-  return (
-    <Typography
-      sx={{
-        textAlign: "center",
-        color: "#ffcb01",
-        fontFamily: "-apple-system, Roboto, sans-serif, serif",
-        fontStyle: "bold",
-      }}
-      variant={"h6"}
-    >
-      {text} :
-    </Typography>
   )
 }
 
@@ -166,6 +202,9 @@ export const query = graphql`
       categories
       author {
         organisation {
+          name
+        }
+        partnership {
           name
         }
       }

@@ -97,6 +97,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       }
       type mongodbRecipesAuthor implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
+        partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
       type mongodbRecipes implements Node {
         difficulty: mongodbCategories @link(by: "mongodb_id")
