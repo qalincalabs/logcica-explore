@@ -54,11 +54,13 @@ export default function RecipeTemplate({ data }: any) {
           {recipe.name}
         </Typography>
 
-        <Paper elevation={7}>
+        {recipe.description?.short?.markdown &&(
+          <Paper elevation={7}>
           <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
             {recipe.description.short.markdown}
           </Typography>
-        </Paper>
+          </Paper>
+        )}
 
         <Grid container spacing={2}>
           <Grid xs={8}>
@@ -97,12 +99,14 @@ export function CreatorsListCard({ recipe }: any) {
         square={false}
         sx={{ display: 'flex', justifyContent: 'space-around' }}
       >
-        <CardContent >
-          <SubtitleTemplate text={"Partnership"} />
-          <Typography sx={{ textAlign: 'center' }}>
-            {recipe.author.partnership.name}
-          </Typography>
-        </CardContent>
+        {recipe.author?.partnership?.name && (
+          <CardContent >
+            <SubtitleTemplate text={"Partnership"} />
+            <Typography sx={{ textAlign: 'center' }}>
+              {recipe.author.partnership.name}
+            </Typography>
+          </CardContent>
+        )}
 
         <CardContent>
           <SubtitleTemplate text={"Organisation"} />

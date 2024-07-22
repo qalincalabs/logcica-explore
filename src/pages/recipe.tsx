@@ -37,8 +37,8 @@ function RecipeListItem(p: any) {
         primary={p.name}
         secondary={
           <Stack>
-            <Typography sx={{fontWeight: "bold"}}>{p.description.short.markdown}</Typography>
-            <Typography>Proposé par : {p.author.organisation.name}</Typography>
+            {p.description?.short?.markdown && (<Typography sx={{fontWeight: "bold"}}>{p.description.short.markdown}</Typography>)} 
+            {p.author?.organisation?.name && (<Typography>Proposé par : {p.author.organisation.name}</Typography>)}
           </Stack>
         }
       />
