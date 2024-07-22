@@ -21,10 +21,12 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Share } from "@mui/icons-material";
 import Layout from "../components/layout";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
+import sha256 from 'crypto-js/sha256';
+import Base64 from 'crypto-js/enc-base64';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
@@ -127,7 +129,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
   }, [sectionsOrder]);
 
-
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
@@ -161,7 +162,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       default:
         return `/${type}/${id}`;
     }
-  }
+  };
 
   const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
 
@@ -208,6 +209,20 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const allLists = favoriteService.allLists();
+
+  const generateShareURL = () => {
+    const shareData = sectionsOrder.reduce((acc, sectionKey, index) => {
+      const { dataNodes } = filters.find(f => f.key === sectionKey);
+      acc[sectionKey] = filteredFavorites[index].map(item => {
+        const node = dataNodes.find((p: any) => p._id === item.targetId);
+        return node._id;
+      });
+      return acc;
+    }, {} as Record<string, any[]>);
+
+    const hash = Base64.stringify(sha256(JSON.stringify(shareData)));
+    return `${window.location.origin}/share#${hash}`;
+  };
 
   const drawerContent = (
     <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -271,14 +286,21 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               </ButtonGroup>
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
-              {['json', 'xlsx', 'pdf'].map(format => (
-                <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
-                  <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-                    {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
-                    <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+              <ButtonGroup variant="outlined">
+                {['json', 'xlsx', 'pdf'].map(format => (
+                  <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
+                    <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
+                      {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
+                      <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+                    </IconButton>
+                  </Tooltip>
+                ))}
+                <Tooltip title="Partager">
+                  <IconButton onClick={() => { const url = generateShareURL(); navigator.clipboard.writeText(url); alert(`URL de partage copiée: ${url}`); }}>
+                    <Share />
                   </IconButton>
                 </Tooltip>
-              ))}
+              </ButtonGroup>
             </Box>
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
