@@ -90,12 +90,13 @@ export const query = graphql`
         categories {
           name
         }
+          
         manager {
           organisation {
             name
           }
         }
-        profiles
+        
       }
     }
   }

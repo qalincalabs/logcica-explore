@@ -12,6 +12,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
   const place = event.place || {};
   const manager = event.manager?.organisation || {};
   const categories = event.categories || [];
+  const profiles = event.profiles || [];
   const formattedFrom = event.timeRange && event.timeRange.from ? format(new Date(event.timeRange.from), 'PPPpp') : null;
   const formattedTo = event.timeRange && event.timeRange.to ? format(new Date(event.timeRange.to), 'PPPpp') : null;
 
@@ -113,6 +114,36 @@ export default function EventTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
+          {profiles && profiles.length > 0 && (
+            <Grid item xs={12} sm={12} md={6} xl={4}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Profils
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Stack>
+                    {profiles.map((profile: any) => (
+                      <Link
+                        key={profile.key}
+                        href={profile.link}
+                        target="_blank"
+                        sx={{
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          my: 0.5
+                        }}
+                      >
+                        {profile.type}: {event.name} ({profile.localKey}) <OpenInNew sx={{ ml: 0.5 }} />
+                      </Link>
+                    ))}
+                  </Stack>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
         </Grid>
 
         {formattedFrom && formattedTo && (
@@ -162,6 +193,12 @@ export const query = graphql`
           id
           title
         }
+      }
+      profiles {
+        type
+        localKey
+        key
+        link
       }
       manager {
         organisation {
