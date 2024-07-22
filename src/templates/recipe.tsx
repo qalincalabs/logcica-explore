@@ -44,7 +44,11 @@ export default function RecipeTemplate({ data }: any) {
 
   return (
     <Layout>
-      <Box sx={{ p: 2 }}>
+      <Box
+        sx={{
+          p: 2
+        }}
+      >
 
         <Typography align="center" variant="h3" component="h3" sx={{ mb: 3 }}>
           {recipe.name}
@@ -82,22 +86,6 @@ export default function RecipeTemplate({ data }: any) {
   );
 }
 
-export function SubtitleTemplate({ text }: any) {
-  return (
-    <Typography
-      sx={{
-        textAlign: "center",
-        color: "#ffcb01",
-        fontFamily: "-apple-system, Roboto, sans-serif, serif",
-        fontStyle: "bold",
-      }}
-      variant={"h6"}
-    >
-      {text} :
-    </Typography>
-  )
-}
-
 export function CreatorsListCard({ recipe }: any) {
   return (
     <Box sx={{
@@ -132,7 +120,7 @@ export function StepsCard({ recipe }: any) {
   return (
     <Box sx={{
       p: 2,
-      m: 2
+      m: 1
     }}>
       <Paper
         elevation={7}
@@ -204,13 +192,14 @@ export function InformationsListCard({ recipe }: any) {
 export function CookTimeListCard({ recipe }: any) {
   return (
     <Box sx={{
-      p: 2
+      p: 2,
+      m: 1
     }}>
       <Paper
         elevation={7}
-        sx={{ direction: 'column' }}
+        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >
-        <AccessAlarmsIcon />
+        <AccessAlarmsIcon sx={{ fontSize: 30 }} />
         <Typography sx={{ textAlign: 'center' }}>
           <SubtitleTemplate text={"Total Time"} />
           {recipe.totalTime}
@@ -233,6 +222,7 @@ export function IngredientListCard({ recipe }: any) {
   return (
     <Box sx={{
       p: 2,
+      m: 1
     }}>
       <Paper
         elevation={7}
@@ -269,6 +259,22 @@ export function IngredientListCard({ recipe }: any) {
         </List>
       </Paper>
     </Box>
+  )
+}
+
+export function SubtitleTemplate({ text }: any) {
+  return (
+    <Typography
+      sx={{
+        textAlign: "center",
+        color: "#ffcb01",
+        fontFamily: "-apple-system, Roboto, sans-serif, serif",
+        fontStyle: "bold",
+      }}
+      variant={"h6"}
+    >
+      {text} :
+    </Typography>
   )
 }
 
