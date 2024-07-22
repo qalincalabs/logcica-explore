@@ -11,6 +11,14 @@ import {
   Stack,
   Typography,
   Link as MuiLink,
+  Table,
+  TableContainer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Checkbox,
+  ListItemIcon
 } from "@mui/material";
 import {
   Email,
@@ -34,16 +42,65 @@ export default function PartnershipTemplate({ data }: any) {
           {recipe.name}
         </Typography>
 
-        <Paper>
+        <Paper elevation={7}>
           <Typography sx={{fontSize: 'h7.fontSize', textAlign: 'center'}}>
             {recipe.description.short.markdown}
           </Typography>
         </Paper>
 
+        <IngredientListCard recipe={recipe} />
+
       </Box>
     </Layout>
   );
 }
+
+
+export function IngredientListCard({ recipe }: any) {
+  // const recipe = data.recipe;
+  return (
+    <Box sx={{
+      display: "flex",
+      flexDirection: "left",
+      p : 2,
+    }}>
+      <Paper 
+        elevation={7} 
+        square={false}
+      >
+        <Typography 
+        sx={{
+          textAlign:"center",
+          color:"#ffcb01",
+          fontFamily:"-apple-system, Roboto, sans-serif, serif",
+          fontStyle:"bold",
+        }}
+        variant={"h6"}
+        >
+          Ingrédients :
+        </Typography>
+
+        <List>
+          {recipe.ingredientList.map((ingredient) => {
+            return (
+              <ListItem key={ingredient} disablePadding>
+                <ListItemButton role={undefined} dense>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      disableRipple
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={ingredient.name}></ListItemText>
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Paper>
+    </Box>
+  )
+} 
 
 export const query = graphql`
   query ($id: String!) {
