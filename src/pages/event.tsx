@@ -28,8 +28,8 @@ const EventPage: React.FC<PageProps> = ({ data }: any) => {
 };
 
 function EventListItem(event: any) {
-  const formattedFrom = event.timeRange && event.timeRange.from ? format(new Date(event.timeRange.from), 'PPPpp') : null;
-  const formattedTo = event.timeRange && event.timeRange.to ? format(new Date(event.timeRange.to), 'PPPpp') : null;
+  const formattedFrom = event.timeRange?.from ? format(new Date(event.timeRange.from), 'PPPpp') : null;
+  const formattedTo = event.timeRange?.to ? format(new Date(event.timeRange.to), 'PPPpp') : null;
 
   return (
     <ListItemButton onClick={() => navigate("/event/" + event._id)}>
@@ -47,12 +47,12 @@ function EventListItem(event: any) {
             ) : (
               <Typography>No time range available</Typography>
             )}
-            {event.place && event.place.address && (
+            {event.place?.address && (
               <Typography>
                 {event.place.address.street}, {event.place.address.locality}
               </Typography>
             )}
-            {event.description && (
+            {event.description?.short?.markdown && (
               <Markdown>{event.description.short.markdown}</Markdown>
             )}
           </Stack>
@@ -87,16 +87,6 @@ export const query = graphql`
             locality
           }
         }
-        categories {
-          name
-        }
-          
-        manager {
-          organisation {
-            name
-          }
-        }
-        
       }
     }
   }
