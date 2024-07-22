@@ -25,13 +25,14 @@ import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, 
 import Layout from "../components/layout";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
+import LZString from 'lz-string';
 import sha256 from 'crypto-js/sha256';
 import Base64 from 'crypto-js/enc-base64';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
 // Utility functions
-const generateShareText = (favorites: any, data: any) => {
+const generateShareText = (favorites, data) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
     { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
@@ -50,6 +51,8 @@ const generateShareText = (favorites: any, data: any) => {
 const createFilteredList = (favorites, filterKey, dataKey) => (
   filterKey ? favorites.filter(f => f.targetType === dataKey) : []
 );
+
+const hashId = (id) => Base64.stringify(sha256(id));
 
 const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes, moveSection, index, totalSections }) => (
   !favorites.length ? null : (
@@ -102,7 +105,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
   )
 );
 
-const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
+const FavoritesPage: React.FC<PageProps> = ({ data }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -197,7 +200,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       acc[key] = filteredFavorites[index].map(item => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
         return { 
-          id: node._id,
+          id: hashId(node._id),
           name: node?.name
         };
       });
@@ -215,13 +218,16 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       const { dataNodes } = filters.find(f => f.key === sectionKey);
       acc[sectionKey] = filteredFavorites[index].map(item => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
-        return node._id;
+        return {
+          id: hashId(node._id),
+          name: node?.name
+        };
       });
       return acc;
     }, {} as Record<string, any[]>);
 
-    const hash = Base64.stringify(sha256(JSON.stringify(shareData)));
-    return `${window.location.origin}/share#${hash}`;
+    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(shareData));
+    return `${window.location.origin}/share#${compressedData}`;
   };
 
   const drawerContent = (
