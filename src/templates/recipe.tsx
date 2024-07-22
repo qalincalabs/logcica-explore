@@ -28,7 +28,15 @@ import {
   Place,
   OpenInNew
 } from "@mui/icons-material";
+import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
+import EuroIcon from '@mui/icons-material/Euro';
 import Layout from "../components/layout";
+import ContrastIcon from '@mui/icons-material/Contrast';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import FiberSmartRecordIcon from '@mui/icons-material/FiberSmartRecord';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+
 import Markdown from "markdown-to-jsx";
 
 export default function RecipeTemplate({ data }: any) {
@@ -57,7 +65,17 @@ export default function RecipeTemplate({ data }: any) {
           </Grid>
         </Grid>
 
-        <IngredientListCard recipe={recipe} />
+        <Grid container spacing={3}>
+          <Grid xs={2}>
+            <IngredientListCard recipe={recipe} />
+          </Grid>
+          <Grid xs={8}>
+            <StepsCard recipe={recipe} />
+          </Grid>
+          <Grid xs={2}>
+            <CookTimeListCard recipe={recipe} />
+          </Grid>
+        </Grid>
 
       </Box>
     </Layout>
@@ -110,6 +128,24 @@ export function CreatorsListCard({ recipe }: any) {
   )
 }
 
+export function StepsCard({ recipe }: any) {
+  return (
+    <Box sx={{
+      p: 2,
+      m: 2
+    }}>
+      <Paper
+        elevation={7}
+        sx={{ display: 'flex', justifyContent: 'space-around' }}
+      >
+        <Typography>
+          {recipe.stepStatement.short.markdown}
+        </Typography>
+      </Paper>
+    </Box>
+  )
+}
+
 export function InformationsListCard({ recipe }: any) {
   return (
     <Box sx={{
@@ -118,28 +154,46 @@ export function InformationsListCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        square={false}
         sx={{ display: 'flex', justifyContent: 'space-around' }}
       >
-        <CardContent>
-          <Typography sx={{ textAlign: 'center' }}>
+        <CardContent sx={{ display: 'flex' }}>
+          <Stack sx={{ p: 2 }}>
+            {/* <EuroIcon sx={{fontSize: 30}}/> */}
+            <FitnessCenterIcon sx={{ fontSize: 30 }} />
+          </Stack>
+          <Stack>
             <SubtitleTemplate text={"Difficulty"} />
-            {recipe.difficulty.name}
-          </Typography>
+            <Typography sx={{ textAlign: 'center' }}>
+              {recipe.difficulty.name}
+            </Typography>
+          </Stack>
         </CardContent>
 
-        <CardContent>
-          <SubtitleTemplate text={"Seasonality"} />
-          <Typography sx={{ textAlign: 'center' }}>
-            {recipe.seasonality.name}
-          </Typography>
+        <CardContent sx={{ display: 'flex' }}>
+          <Stack sx={{ p: 2 }}>
+            <ContrastIcon sx={{ fontSize: 30 }} />
+            {/* <EditCalendarIcon sx={{fontSize: 30}}/> */}
+            {/* <FiberSmartRecordIcon sx={{fontSize: 30}}/> */}
+          </Stack>
+          <Stack>
+            <SubtitleTemplate text={"Seasonality"} />
+            <Typography sx={{ textAlign: 'center' }}>
+              {recipe.seasonality.name}
+            </Typography>
+          </Stack>
         </CardContent>
 
-        <CardContent>
-          <SubtitleTemplate text={"costCategory"} />
-          <Typography sx={{ textAlign: 'center' }}>
-            {recipe.costCategory.name}
-          </Typography>
+        <CardContent sx={{ display: 'flex' }}>
+          <Stack sx={{ p: 2 }}>
+            {/* <EuroIcon sx={{fontSize: 30}}/> */}
+            <MonetizationOnIcon sx={{ fontSize: 30 }} />
+          </Stack>
+          <Stack>
+            <SubtitleTemplate text={"costCategory"} />
+            <Typography sx={{ textAlign: 'center' }}>
+              {recipe.costCategory.name}
+            </Typography>
+          </Stack>
         </CardContent>
 
       </Paper>
@@ -147,12 +201,37 @@ export function InformationsListCard({ recipe }: any) {
   )
 }
 
+export function CookTimeListCard({ recipe }: any) {
+  return (
+    <Box sx={{
+      p: 2
+    }}>
+      <Paper
+        elevation={7}
+        sx={{ direction: 'column' }}
+      >
+        <AccessAlarmsIcon />
+        <Typography sx={{ textAlign: 'center' }}>
+          <SubtitleTemplate text={"Total Time"} />
+          {recipe.totalTime}
+        </Typography>
+        <Typography sx={{ textAlign: 'center' }}>
+          <SubtitleTemplate text={"Prep Time"} />
+          {recipe.prepTime}
+        </Typography>
+        <Typography sx={{ textAlign: 'center' }}>
+          <SubtitleTemplate text={"Cook Time"} />
+          {recipe.cookTime}
+        </Typography>
+      </Paper>
+    </Box>
+
+  )
+}
 
 export function IngredientListCard({ recipe }: any) {
   return (
     <Box sx={{
-      display: "flex",
-      flexDirection: "left",
       p: 2,
     }}>
       <Paper
