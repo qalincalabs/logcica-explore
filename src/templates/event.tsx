@@ -8,13 +8,13 @@ import FavoriteIcons from "../components/FavoriteIcons";
 import { format } from 'date-fns';
 
 export default function EventTemplate({ data }: PageProps<any>) {
-  const event = data.event;
+  const event = data.event || {};
   const place = event.place || {};
   const manager = event.manager?.organisation || {};
   const categories = event.categories || [];
   const profiles = event.profiles || [];
-  const formattedFrom = event.timeRange && event.timeRange.from ? format(new Date(event.timeRange.from), 'PPPpp') : null;
-  const formattedTo = event.timeRange && event.timeRange.to ? format(new Date(event.timeRange.to), 'PPPpp') : null;
+  const formattedFrom = event.timeRange?.from ? format(new Date(event.timeRange.from), 'PPPpp') : null;
+  const formattedTo = event.timeRange?.to ? format(new Date(event.timeRange.to), 'PPPpp') : null;
 
   return (
     <Layout>
@@ -50,13 +50,13 @@ export default function EventTemplate({ data }: PageProps<any>) {
                 },
               }}
             >
-              {event.description?.short?.markdown}
+              {event.description.short.markdown}
             </Markdown>
           </Paper>
         )}
 
         <Grid container>
-          {place && place.address && (
+          {place.address && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
@@ -85,7 +85,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
             </Grid>
           )}
 
-          {manager && manager.name && (
+          {manager.name && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
@@ -98,7 +98,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
             </Grid>
           )}
 
-          {categories && categories.length > 0 && (
+          {categories.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
@@ -115,7 +115,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
             </Grid>
           )}
 
-          {profiles && profiles.length > 0 && (
+          {profiles.length > 0 && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
@@ -199,11 +199,6 @@ export const query = graphql`
         localKey
         key
         link
-      }
-      manager {
-        organisation {
-          name
-        }
       }
       categories {
         name
