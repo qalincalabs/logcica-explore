@@ -43,10 +43,12 @@ export default function PartnershipTemplate({ data }: any) {
         </Typography>
 
         <Paper elevation={7}>
-          <Typography sx={{fontSize: 'h7.fontSize', textAlign: 'center'}}>
+          <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
             {recipe.description.short.markdown}
           </Typography>
         </Paper>
+
+        <InformationsListCard recipe={recipe} />
 
         <IngredientListCard recipe={recipe} />
 
@@ -55,27 +57,80 @@ export default function PartnershipTemplate({ data }: any) {
   );
 }
 
-
-export function IngredientListCard({ recipe }: any) {
-  // const recipe = data.recipe;
+export function InformationsListCard({ recipe }: any) {
   return (
     <Box sx={{
       display: "flex",
       flexDirection: "left",
-      p : 2,
+      p: 2,
     }}>
-      <Paper 
-        elevation={7} 
+      <Paper
+        elevation={7}
+        square={false}
+        sx={{ display: 'flex' }}
+      >
+        <CardContent>
+          <SubtitleTemplate text={"Difficulty"} />
+          <Typography sx={{ textAlign: 'center' }}>
+            {recipe.difficulty.name}
+          </Typography>
+        </CardContent>
+
+        <CardContent>
+          <SubtitleTemplate text={"Seasonality"} />
+          <Typography sx={{ textAlign: 'center' }}>
+            {recipe.seasonality.name}
+          </Typography>
+        </CardContent>
+
+        <CardContent>
+          <SubtitleTemplate text={"costCategory"} />
+          <Typography sx={{ textAlign: 'center' }}>
+            {recipe.costCategory.name}
+          </Typography>
+        </CardContent>
+
+      </Paper>
+    </Box>
+  )
+}
+
+export function SubtitleTemplate({ text }: any) {
+  return (
+    <Typography
+      sx={{
+        textAlign: "center",
+        color: "#ffcb01",
+        fontFamily: "-apple-system, Roboto, sans-serif, serif",
+        fontStyle: "bold",
+      }}
+      variant={"h6"}
+    >
+      {text} :
+    </Typography>
+  )
+}
+
+
+export function IngredientListCard({ recipe }: any) {
+  return (
+    <Box sx={{
+      display: "flex",
+      flexDirection: "left",
+      p: 2,
+    }}>
+      <Paper
+        elevation={7}
         square={false}
       >
-        <Typography 
-        sx={{
-          textAlign:"center",
-          color:"#ffcb01",
-          fontFamily:"-apple-system, Roboto, sans-serif, serif",
-          fontStyle:"bold",
-        }}
-        variant={"h6"}
+        <Typography
+          sx={{
+            textAlign: "center",
+            color: "#ffcb01",
+            fontFamily: "-apple-system, Roboto, sans-serif, serif",
+            fontStyle: "bold",
+          }}
+          variant={"h6"}
         >
           Ingrédients :
         </Typography>
@@ -100,7 +155,7 @@ export function IngredientListCard({ recipe }: any) {
       </Paper>
     </Box>
   )
-} 
+}
 
 export const query = graphql`
   query ($id: String!) {
@@ -115,9 +170,15 @@ export const query = graphql`
         }
       }
       yieldStatement
-      costCategory
-      difficulty
-      seasonality
+      costCategory {
+        name
+      }
+      difficulty {
+        name
+      }
+      seasonality {
+        name
+      }
       description {
         short {
           markdown
