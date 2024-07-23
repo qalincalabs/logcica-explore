@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LZString from "lz-string";
 import { navigate, PageProps } from "gatsby";
 import { Box, Typography, Grid, Button, CssBaseline } from "@mui/material";
@@ -7,16 +7,16 @@ import * as favoriteService from "../../../utils/favoritesService";
 import { FavoriteListContent } from "../../../components/favorite-list-content";
 
 const SharePage = ({ params }: PageProps) => {
-  const hash = params[`hash`];
-  const decompressedData = LZString.decompressFromEncodedURIComponent(hash);
+  const [exportedList, setExportedList] = useState({name: "Loading", data: {}});
 
-  const exportedList = JSON.parse(decompressedData);
-  const sharedFavorites = exportedList.data;
+  useEffect(() => {
+    if (typeof window == "undefined") return;
 
-  const handleAddToFavorites = () => {
-    favoriteService.importList(exportedList);
-    navigate("/favorites");
-  };
+    const hash = params[`hash`];
+    const decompressedData = LZString.decompressFromEncodedURIComponent(hash);
+
+    setExportedList(JSON.parse(decompressedData));
+  }, []);
 
   return (
     <Layout>
@@ -48,12 +48,15 @@ const SharePage = ({ params }: PageProps) => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleAddToFavorites}
+                onClick={() => {
+                  favoriteService.importList(exportedList);
+                  navigate("/favorites");
+                }}
               >
                 Ajouter à mes favoris
               </Button>
             </Box>
-            <FavoriteListContent favorites={sharedFavorites} />
+            <FavoriteListContent favorites={exportedList.data} />
           </Box>
         </Grid>
       </Grid>

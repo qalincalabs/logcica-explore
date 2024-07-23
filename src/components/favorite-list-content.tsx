@@ -13,7 +13,11 @@ import {
 import { graphql, useStaticQuery } from "gatsby";
 import React from "react";
 
-export function FavoriteListContent({ favorites }: Record<string, string[]>) {
+interface FavoriteListContent {
+    favorites: Record<string, string[]>;
+  }
+
+export function FavoriteListContent({ favorites }: FavoriteListContent) {
   const data = useStaticQuery(graphql`
     query {
       marketplaces: allMongodbCounters(
@@ -111,10 +115,10 @@ export function FavoriteListContent({ favorites }: Record<string, string[]>) {
                 </Box>
                 <List>
                   {favorites[dataKey].map((item) => {
-                    const dataNode = dataNodes.find((p) => p._id === item);
+                    const dataNode = dataNodes.find((p: any) => p._id === item);
                     return (
                       <ListItem
-                        key={item.id}
+                        key={item}
                         sx={{
                           transition: "transform 0.3s, box-shadow 0.3s",
                           "&:hover": {
