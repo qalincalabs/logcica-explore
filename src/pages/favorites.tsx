@@ -222,7 +222,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
     }, {} as Record<string, any[]>);
 
     const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(shareData));
-    return `${window.location.origin}/share#${compressedData}`;
+    return `${window.location.origin}/share/list/${compressedData}`;
   };
 
   const drawerContent = (
@@ -359,3 +359,4 @@ export const query = graphql`
     }
   }
 `;
+

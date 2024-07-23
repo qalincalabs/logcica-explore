@@ -19,24 +19,26 @@ import {
   useTheme,
 } from "@mui/material";
 import { Store, Menu } from "@mui/icons-material";
-import Layout from "../components/layout";
-import * as favoriteService from "../utils/favoritesService";
+import Layout from "../../../components/layout";
+import * as favoriteService from "../../../utils/favoritesService";
+import { FavoriteListContent } from "../../../components/favorite-list-content";
 
-const SharePage = ({ data }) => {
+const SharePage = ({ data, params }) => {
+
   const theme = useTheme();
 
   const [sharedFavorites, setSharedFavorites] = useState(null);
   const [listName, setListName] = useState("Partagés");
 
   useEffect(() => {
-    const hash = window.location.hash.substring(1);
+    const hash = params[`hash`]
     if (hash) {
       const decompressedData = LZString.decompressFromEncodedURIComponent(hash);
       const favorites = JSON.parse(decompressedData);
+      console.log(favorites)
       setSharedFavorites(favorites);
     }
   }, []);
-
 
   // TODO: directly create a method in favoritesService to create a list from shared content
   const handleAddToFavorites = () => {
@@ -75,7 +77,7 @@ const SharePage = ({ data }) => {
                 Ajouter à mes favoris
               </Button>
             </Box>
-            {favoriteList(data, sharedFavorites)}
+            <FavoriteListContent favorites={sharedFavorites} data={data} />
           </Box>
         </Grid>
       </Grid>
@@ -119,54 +121,3 @@ export const query = graphql`
     }
   }
 `;
-
-function favoriteList(data, sharedFavorites: never) {
-  
-  const filters = [
-    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data?.partnerships?.nodes || [] },
-    { key: 'counter', title: 'Marchés', dataKey: 'counter', dataNodes: data?.marketplaces?.nodes || [] },
-    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data?.activities?.nodes || [] },
-    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data?.products?.nodes || [] },
-  ];
-  
-  return <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-    <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-      {filters.map(({ title, dataKey, dataNodes }) => (
-        sharedFavorites[dataKey]?.length > 0 && (
-          <Grid item xs={12} key={dataKey}>
-            <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Typography variant="h6" sx={{ color: '#333', mb: 2 }}>{title}</Typography>
-            </Box>
-            <List>
-              {sharedFavorites[dataKey].map(item => {
-                const dataNode = dataNodes.find(p => p._id === item.id);
-                return (
-                  <ListItem
-                    key={item.id}
-                    sx={{
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': { transform: 'scale(1.02)', boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)' },
-                      borderRadius: '8px',
-                      mb: 2,
-                      bgcolor: '#fff',
-                      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
-                    }}
-                  >
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: '#FFD700', color: '#fff' }}>
-                          <Store />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </List>
-          </Grid>
-        )
-      ))}
-    </Grid>
-  </Box>;
-}
