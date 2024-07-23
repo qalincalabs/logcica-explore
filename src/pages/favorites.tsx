@@ -337,11 +337,11 @@ export const query = graphql`
       nodes {
         _id
         name
-        producer {	
-          activity {	
-            _id	
-            name	
-          }	
+        producer { 
+          activity { 
+            _id 
+            name 
+          } 
         }
       }
     }

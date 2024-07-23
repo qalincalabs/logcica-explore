@@ -112,11 +112,12 @@ export function removeItemFromList(props: FavoriteItemRemoval) {
   assignItemToList({ ...props, assign: false });
 }
 
-export function addList(props: FavoriteListCreation) {
+export function addList(props: FavoriteListCreation): FavoriteList {
   const lists = allLists();
   const newList = { id: `list_${Date.now()}`, name: props.name.trim() };
   lists.push(newList);
   saveLists(lists);
+  return newList;
 }
 
 export function removeList(props: FavoriteListRemoval) {

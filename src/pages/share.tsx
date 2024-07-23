@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import LZString from 'lz-string';
-import { graphql, navigate } from "gatsby";
+import { navigate, graphql } from "gatsby";
 import {
   Avatar,
   Box,
@@ -11,10 +11,8 @@ import {
   ListItemText,
   Typography,
   IconButton,
-  ListItemIcon,
   Grid,
   Button,
-  Tooltip,
   Drawer,
   Hidden,
   CssBaseline,
@@ -30,6 +28,7 @@ const SharePage = ({ data }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [sharedFavorites, setSharedFavorites] = useState(null);
+  const [listName, setListName] = useState("Partagés");
 
   useEffect(() => {
     const hash = window.location.hash.substring(1);
@@ -42,20 +41,29 @@ const SharePage = ({ data }) => {
 
   const handleAddToFavorites = () => {
     if (sharedFavorites) {
-      Object.keys(sharedFavorites).forEach(sectionKey => {
-        sharedFavorites[sectionKey].forEach(item => {
-          favoriteService.assignItemToList({ targetId: item.id, targetType: sectionKey, assign: true });
+      const newList = favoriteService.addList({ name: listName });
+      if (newList && newList.id) {
+        const newListId = newList.id;
+        Object.keys(sharedFavorites).forEach(sectionKey => {
+          const sectionItems = sharedFavorites[sectionKey];
+          if (Array.isArray(sectionItems)) {
+            sectionItems.forEach(item => {
+              favoriteService.assignItemToList({ targetId: item.id, targetType: sectionKey, listId: newListId, assign: true });
+            });
+          }
         });
-      });
-      navigate('/');
+        navigate('/');
+      } else {
+        console.error('Failed to create a new favorite list.');
+      }
     }
   };
 
   const filters = [
-    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
-    { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
-    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
-    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
+    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data?.partnerships?.nodes || [] },
+    { key: 'counter', title: 'Marchés', dataKey: 'counter', dataNodes: data?.marketplaces?.nodes || [] },
+    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data?.activities?.nodes || [] },
+    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data?.products?.nodes || [] },
   ];
 
   if (!sharedFavorites) return <Typography>Chargement...</Typography>;
