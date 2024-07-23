@@ -57,13 +57,7 @@ export default function RecipeTemplate({ data }: any) {
         <Grid container>
           {recipe.description?.short?.markdown && (
             <Grid item xs={12} sm={8} sx={{ display: 'flex' }} >
-              <Box sx={{ m: 1, flexGrow: 1 }}>
-                <Paper elevation={7} sx={{ height: '100%' }}>
-                  <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
-                    {recipe.description.short.markdown}
-                  </Typography>
-                </Paper>
-              </Box>
+              <DescriptionCard recipe={recipe} />
             </Grid>
           )}
           <Grid item xs={12} sm={4}>
@@ -87,6 +81,18 @@ export default function RecipeTemplate({ data }: any) {
       </Box>
     </Layout>
   );
+}
+
+export function DescriptionCard({ recipe }: any) {
+  return (
+    <Box sx={{ m: 1, flexGrow: 1 }}>
+      <Paper elevation={7} sx={{ height: '100%' }}>
+        <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
+          {recipe.description.short.markdown}
+        </Typography>
+      </Paper>
+    </Box>
+  )
 }
 
 export function CreatorsListCard({ recipe }: any) {
