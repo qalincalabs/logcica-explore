@@ -137,9 +137,9 @@ export function removeList(props: FavoriteListRemoval) {
 
 export function renameList(props: FavoriteListRename) {
   let lists = allLists();
-  const listIndex = lists.findIndex((list) => list.id === props.id);
-  if (listIndex !== -1) {
-    lists[listIndex].name = props.name.trim();
+  const list = lists.find((list) => list.id === props.id);
+  if (list) {
+    list.name = props.name.trim();
     saveLists(lists);
   }
 }
