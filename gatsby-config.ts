@@ -72,15 +72,6 @@ const config: GatsbyConfig = {
   graphqlTypegen: true,
   plugins: ["gatsby-plugin-styled-components"],
 };
-module.exports = {
-  plugins: [
-    // autres plugins
-    {
-      resolve: `gatsby-plugin-create-client-paths`,
-      options: { prefixes: [`/share/*`] },
-    },
-  ],
-};
 
 
 export default config;
