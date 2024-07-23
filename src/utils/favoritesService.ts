@@ -2,6 +2,11 @@ export type FavoriteListCreation = {
   name: string;
 };
 
+export type FavoriteListImport = {
+  name: string
+  data: Record<string, string[]>
+}
+
 export type FavoriteListRemoval = {
   id: string;
 };
@@ -55,6 +60,10 @@ export function allLists(): FavoriteList[] {
   return lists ? JSON.parse(lists) : [{ id: "default", name: "default" }];
 }
 
+export function findListById(id: string){
+  return allLists().find(list => list.id === id)
+}
+
 function saveLists(lists: FavoriteList[]) {
   if (isBrowser) {
     localStorage.setItem("favorites.lists", JSON.stringify(lists));
@@ -92,6 +101,26 @@ export function findItems(query: FavoriteQuery): FavoriteItem[] {
   } else {
     return items;
   }
+}
+
+export function importList(props: FavoriteListImport){
+  const list = addList({name: props.name})
+  const targetTypes = Object.keys(props.data)
+
+  const items = [] as FavoriteItemAssignement[]
+
+  console.log(targetTypes)
+  console.log(props.data)
+
+  for(const targetType of targetTypes){
+    items.push( ...props.data[targetType].map(i => ({targetType: targetType, targetId: i, listId: list.id, assign: true})))
+  }
+
+  assignItemsToList(items)
+}
+
+export function assignItemsToList(props: FavoriteItemAssignement[]): boolean[] {
+  return props.map(p => assignItemToList(p))
 }
 
 export function assignItemToList(props: FavoriteItemAssignement): boolean {

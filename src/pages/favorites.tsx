@@ -190,6 +190,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
 
   const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
     const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
+
     const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
       const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
       acc[key] = filteredFavorites[index].map(item => {
@@ -209,19 +210,19 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
   const allLists = favoriteService.allLists();
 
   const generateShareURL = () => {
-    const shareData = sectionsOrder.reduce((acc, sectionKey, index) => {
-      const { dataNodes } = filters.find(f => f.key === sectionKey);
-      acc[sectionKey] = filteredFavorites[index].map(item => {
-        const node = dataNodes.find((p: any) => p._id === item.targetId);
-        return {
-          id: node._id,
-          name: node?.name
-        };
-      });
-      return acc;
-    }, {} as Record<string, any[]>);
 
-    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(shareData));
+    const list = favoriteService.findListById(selectedList)
+    const items = favoriteService.findItems({listIds: [selectedList]})
+
+    const exportedList = {
+      ...list,
+      data: items.reduce((acc, curr) => {
+        let {targetId, targetType} = curr;
+        return {...acc, [targetType]: [...(acc[targetType] || []), targetId]};
+    }, {} as Record<string,string[]>)
+    }
+
+    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
     return `${window.location.origin}/share/list/${compressedData}`;
   };
 

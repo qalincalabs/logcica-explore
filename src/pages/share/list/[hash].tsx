@@ -23,45 +23,21 @@ import Layout from "../../../components/layout";
 import * as favoriteService from "../../../utils/favoritesService";
 import { FavoriteListContent } from "../../../components/favorite-list-content";
 
-const SharePage = ({ data, params }) => {
+const SharePage = ({ params }) => {
 
-  const theme = useTheme();
+  const hash = params[`hash`]
+  const decompressedData = LZString.decompressFromEncodedURIComponent(hash);
 
-  const [sharedFavorites, setSharedFavorites] = useState(null);
-  const [listName, setListName] = useState("Partagés");
+  const exportedList = JSON.parse(decompressedData);
+  const sharedFavorites = exportedList.data
 
-  useEffect(() => {
-    const hash = params[`hash`]
-    if (hash) {
-      const decompressedData = LZString.decompressFromEncodedURIComponent(hash);
-      const favorites = JSON.parse(decompressedData);
-      console.log(favorites)
-      setSharedFavorites(favorites);
-    }
-  }, []);
+  console.log(exportedList)
 
   // TODO: directly create a method in favoritesService to create a list from shared content
   const handleAddToFavorites = () => {
-    if (sharedFavorites) {
-      const newList = favoriteService.addList({ name: listName });
-      if (newList && newList.id) {
-        const newListId = newList.id;
-        Object.keys(sharedFavorites).forEach(sectionKey => {
-          const sectionItems = sharedFavorites[sectionKey];
-          if (Array.isArray(sectionItems)) {
-            sectionItems.forEach(item => {
-              favoriteService.assignItemToList({ targetId: item.id, targetType: sectionKey, listId: newListId, assign: true });
-            });
-          }
-        });
-        navigate('/');
-      } else {
-        console.error('Failed to create a new favorite list.');
-      }
-    }
+    favoriteService.importList(exportedList)
+    navigate('/');
   };
-
-  if (!sharedFavorites) return <Typography>Chargement...</Typography>;
 
   return (
     <Layout>
@@ -77,7 +53,7 @@ const SharePage = ({ data, params }) => {
                 Ajouter à mes favoris
               </Button>
             </Box>
-            <FavoriteListContent favorites={sharedFavorites} data={data} />
+            <FavoriteListContent favorites={sharedFavorites} />
           </Box>
         </Grid>
       </Grid>
@@ -87,6 +63,7 @@ const SharePage = ({ data, params }) => {
 
 export default SharePage;
 
+/*
 export const query = graphql`
   query {
     marketplaces: allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
@@ -121,3 +98,4 @@ export const query = graphql`
     }
   }
 `;
+*/

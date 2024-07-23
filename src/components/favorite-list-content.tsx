@@ -3,7 +3,7 @@ import { Box, Grid, Typography, List, ListItem, ListItemButton, ListItemAvatar, 
 import { graphql, useStaticQuery } from "gatsby";
 import React from "react";
 
-export function FavoriteListContent({data, favorites}: any) {
+export function FavoriteListContent({data = {}, favorites}: any) {
   
     const filters = [
       { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data?.partnerships?.nodes || [] },
