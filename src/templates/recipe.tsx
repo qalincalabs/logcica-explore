@@ -151,7 +151,7 @@ export function InformationsListCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}
+        sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: { xs: 'column', sm:'row' }, justifyContent: { sm: 'space-evenly'} , alignItems: 'center' }}
       >
         <CardContent sx={{ display: 'flex' }}>
           <Stack sx={{ p: 2 }}>
@@ -206,25 +206,25 @@ export function CookTimeListCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', height: '100%' }}
+        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', flexDirection: { xs: 'column', sm:'row' }, justifyContent: { sm: 'space-evenly'}, height: '100%' }}
       >
         <AccessAlarmsIcon sx={{ fontSize: 30 }} />
 
-        <CardContent>
+        <CardContent sx={{ display: 'flex' }}>
           <Typography sx={{ textAlign: 'center' }}>
             <SubtitleTemplate text={"Total Time"} />
             {recipe.totalTime}
           </Typography>
         </CardContent>
 
-        <CardContent>
+        <CardContent sx={{ display: 'flex' }}>
           <Typography sx={{ textAlign: 'center' }}>
             <SubtitleTemplate text={"Prep Time"} />
             {recipe.prepTime}
           </Typography>
         </CardContent>
         
-        <CardContent>
+        <CardContent sx={{ display: 'flex' }}>
           <Typography sx={{ textAlign: 'center' }}>
             <SubtitleTemplate text={"Cook Time"} />
             {recipe.cookTime}
