@@ -60,22 +60,36 @@ export default function RecipeTemplate({ data }: any) {
               <DescriptionCard recipe={recipe} />
             </Grid>
           )}
-          <Grid item xs={12} sm={4}>
-            <CreatorsListCard recipe={recipe} />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <InformationsListCard recipe={recipe} />
-          </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <CookTimeListCard recipe={recipe} />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <IngredientListCard recipe={recipe} />
-          </Grid>
-          <Grid item xs={12} md={9}>
-            <StepsCard recipe={recipe} />
-          </Grid>
+          {(recipe.author?.organisation?.name || recipe.author?.partnership?.name) && (
+            <Grid item xs={12} sm={4}>
+              <CreatorsListCard recipe={recipe} />
+            </Grid>
+          )}
+
+          {(recipe.difficulty?.name || recipe.seasonality?.name || recipe.costCategory?.name) && (
+            <Grid item xs={12} sm={6}>
+              <InformationsListCard recipe={recipe} />
+            </Grid>
+          )}
+
+          {(recipe.cookTime || recipe.prepTime || recipe.totalTime) && (
+            <Grid item xs={12} sm={6}>
+              <CookTimeListCard recipe={recipe} />
+            </Grid>
+          )}
+
+          {recipe.ingredientList && (
+            <Grid item xs={12} md={3}>
+              <IngredientListCard recipe={recipe} />
+            </Grid>
+          )}
+
+          {recipe.stepStatement?.short?.markdown && (
+            <Grid item xs={12} md={9}>
+              <StepsCard recipe={recipe} />
+            </Grid>
+          )}
         </Grid>
 
       </Box>
@@ -112,12 +126,14 @@ export function CreatorsListCard({ recipe }: any) {
           </CardContent>
         )}
 
-        <CardContent>
-          <SubtitleTemplate text={"Organisation"} />
-          <Typography sx={{ textAlign: 'center' }}>
-            {recipe.author.organisation.name}
-          </Typography>
-        </CardContent>
+        {recipe.author?.organisation?.name && (
+          <CardContent>
+            <SubtitleTemplate text={"Organisation"} />
+            <Typography sx={{ textAlign: 'center' }}>
+              {recipe.author.organisation.name}
+            </Typography>
+          </CardContent>
+        )}
 
       </Paper>
     </Box>
@@ -141,6 +157,7 @@ export function StepsCard({ recipe }: any) {
         </Typography>
       </Paper>
     </Box>
+
   )
 }
 
@@ -151,48 +168,54 @@ export function InformationsListCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: { xs: 'column', sm:'row' }, justifyContent: { sm: 'space-evenly'} , alignItems: 'center' }}
+        sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: { sm: 'space-evenly' }, alignItems: 'center' }}
       >
-        <CardContent sx={{ display: 'flex' }}>
-          <Stack sx={{ p: 2 }}>
-            {/* <EuroIcon sx={{fontSize: 30}}/> */}
-            <FitnessCenterIcon sx={{ fontSize: 30 }} />
-          </Stack>
-          <Stack>
-            <SubtitleTemplate text={"Difficulty"} />
-            <Typography sx={{ textAlign: 'center' }}>
-              {recipe.difficulty.name}
-            </Typography>
-          </Stack>
-        </CardContent>
 
-        <CardContent sx={{ display: 'flex' }}>
-          <Stack sx={{ p: 2 }}>
-            <ContrastIcon sx={{ fontSize: 30 }} />
-            {/* <EditCalendarIcon sx={{fontSize: 30}}/> */}
-            {/* <FiberSmartRecordIcon sx={{fontSize: 30}}/> */}
-          </Stack>
-          <Stack>
-            <SubtitleTemplate text={"Seasonality"} />
-            <Typography sx={{ textAlign: 'center' }}>
-              {recipe.seasonality.name}
-            </Typography>
-          </Stack>
-        </CardContent>
+        {recipe.difficulty?.name && (
+          <CardContent sx={{ display: 'flex' }}>
+            <Stack sx={{ p: 2 }}>
+              {/* <EuroIcon sx={{fontSize: 30}}/> */}
+              <FitnessCenterIcon sx={{ fontSize: 30 }} />
+            </Stack>
+            <Stack>
+              <SubtitleTemplate text={"Difficulty"} />
+              <Typography sx={{ textAlign: 'center' }}>
+                {recipe.difficulty.name}
+              </Typography>
+            </Stack>
+          </CardContent>
+        )}
 
-        <CardContent sx={{ display: 'flex' }}>
-          <Stack sx={{ p: 2 }}>
-            {/* <EuroIcon sx={{fontSize: 30}}/> */}
-            <MonetizationOnIcon sx={{ fontSize: 30 }} />
-          </Stack>
-          <Stack>
-            <SubtitleTemplate text={"costCategory"} />
-            <Typography sx={{ textAlign: 'center' }}>
-              {recipe.costCategory.name}
-            </Typography>
-          </Stack>
-        </CardContent>
+        {recipe.seasonnality?.name && (
+          <CardContent sx={{ display: 'flex' }}>
+            <Stack sx={{ p: 2 }}>
+              <ContrastIcon sx={{ fontSize: 30 }} />
+              {/* <EditCalendarIcon sx={{fontSize: 30}}/> */}
+              {/* <FiberSmartRecordIcon sx={{fontSize: 30}}/> */}
+            </Stack>
+            <Stack>
+              <SubtitleTemplate text={"Seasonality"} />
+              <Typography sx={{ textAlign: 'center' }}>
+                {recipe.seasonality.name}
+              </Typography>
+            </Stack>
+          </CardContent>
+        )}
 
+        {recipe.costCategory?.name && (
+          <CardContent sx={{ display: 'flex' }}>
+            <Stack sx={{ p: 2 }}>
+              {/* <EuroIcon sx={{fontSize: 30}}/> */}
+              <MonetizationOnIcon sx={{ fontSize: 30 }} />
+            </Stack>
+            <Stack>
+              <SubtitleTemplate text={"costCategory"} />
+              <Typography sx={{ textAlign: 'center' }}>
+                {recipe.costCategory.name}
+              </Typography>
+            </Stack>
+          </CardContent>
+        )}
       </Paper>
     </Box>
   )
@@ -206,31 +229,37 @@ export function CookTimeListCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', flexDirection: { xs: 'column', sm:'row' }, justifyContent: { sm: 'space-evenly'}, height: '100%' }}
+        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: { sm: 'space-evenly' }, height: '100%' }}
       >
         <AccessAlarmsIcon sx={{ fontSize: 30 }} />
 
-        <CardContent sx={{ display: 'flex' }}>
-          <Typography sx={{ textAlign: 'center' }}>
-            <SubtitleTemplate text={"Total Time"} />
-            {recipe.totalTime}
-          </Typography>
-        </CardContent>
+        {recipe.totalTime && (
+          <CardContent sx={{ display: 'flex' }}>
+            <Typography sx={{ textAlign: 'center' }}>
+              <SubtitleTemplate text={"Total Time"} />
+              {recipe.totalTime}
+            </Typography>
+          </CardContent>
+        )}
 
-        <CardContent sx={{ display: 'flex' }}>
-          <Typography sx={{ textAlign: 'center' }}>
-            <SubtitleTemplate text={"Prep Time"} />
-            {recipe.prepTime}
-          </Typography>
-        </CardContent>
-        
-        <CardContent sx={{ display: 'flex' }}>
-          <Typography sx={{ textAlign: 'center' }}>
-            <SubtitleTemplate text={"Cook Time"} />
-            {recipe.cookTime}
-          </Typography>
-        </CardContent>
-        
+        {recipe.prepTime && (
+          <CardContent sx={{ display: 'flex' }}>
+            <Typography sx={{ textAlign: 'center' }}>
+              <SubtitleTemplate text={"Prep Time"} />
+              {recipe.prepTime}
+            </Typography>
+          </CardContent>
+        )}
+
+        {recipe.cookTime && (
+          <CardContent sx={{ display: 'flex' }}>
+            <Typography sx={{ textAlign: 'center' }}>
+              <SubtitleTemplate text={"Cook Time"} />
+              {recipe.cookTime}
+            </Typography>
+          </CardContent>
+        )}
+
       </Paper>
     </Box>
 
@@ -246,14 +275,14 @@ export function IngredientListCard({ recipe }: any) {
       <Paper
         elevation={7}
         square={false}
-        
+
       >
         <SubtitleTemplate text={"Ingrédients"} />
 
-        <List sx= {{display: 'flex', flexFlow: { xs: 'row wrap', md: 'column nowrap'}, overflow: 'auto'}}>
+        <List sx={{ display: 'flex', flexFlow: { xs: 'row wrap', md: 'column nowrap' }, overflow: 'auto' }}>
           {recipe.ingredientList.map((ingredient) => {
             return (
-              <ListItem key={ingredient} disablePadding sx={{width: 'auto'}} >
+              <ListItem key={ingredient} disablePadding sx={{ width: 'auto' }} >
                 <ListItemButton role={undefined} dense>
                   <ListItemIcon>
                     <Checkbox
