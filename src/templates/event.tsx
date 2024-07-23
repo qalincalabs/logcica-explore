@@ -1,11 +1,12 @@
 import React from "react";
 import { graphql, PageProps } from "gatsby";
 import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Event as EventIcon, AccessTime as AccessTimeIcon } from "@mui/icons-material";
+import { OpenInNew, Event as EventIcon } from "@mui/icons-material";
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 import FavoriteIcons from "../components/FavoriteIcons";
 import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 export default function EventTemplate({ data }: PageProps<any>) {
   const event = data.event || {};
@@ -13,8 +14,8 @@ export default function EventTemplate({ data }: PageProps<any>) {
   const manager = event.manager?.organisation || {};
   const categories = event.categories || [];
   const profiles = event.profiles || [];
-  const formattedFrom = event.timeRange?.from ? format(new Date(event.timeRange.from), 'PPPpp') : null;
-  const formattedTo = event.timeRange?.to ? format(new Date(event.timeRange.to), 'PPPpp') : null;
+  const formattedFrom = event.timeRange?.from ? format(new Date(event.timeRange.from), 'PPP p', { locale: fr }) : null;
+  const formattedTo = event.timeRange?.to ? format(new Date(event.timeRange.to), 'PPP p', { locale: fr }) : null;
 
   return (
     <Layout>
