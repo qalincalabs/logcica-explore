@@ -15,7 +15,7 @@ const SharePage = ({ params }: PageProps) => {
 
   const handleAddToFavorites = () => {
     favoriteService.importList(exportedList);
-    navigate("/");
+    navigate("/favorites");
   };
 
   return (
