@@ -55,6 +55,7 @@ import {
   FilterAlt,
   MoreVert,
   Settings,
+  SoupKitchen,
 } from "@mui/icons-material";
 
 const pageStyles = {
@@ -229,6 +230,10 @@ const opportunitiesFirstMenu = [
     icon: <Event fontSize="large" />,
   },
   {
+    title: "Cuisiner",
+    icon: <SoupKitchen fontSize="large" />,
+  },
+  {
     title: "Participer",
     icon: <VolunteerActivism fontSize="large" />,
   },
@@ -326,9 +331,11 @@ function OpportunitiesListMenu() {
       <Stack direction="row" alignItems="center" spacing={1} useFlexGap>
         {opportunitiesFirstMenu.map((m) => (
           <IconButton
-            size="large"
+            size="medium"
             color="primary"
-            sx={{ flexDirection: "column", border: m.checked ? 3 : 0 }}
+            sx={{ flexDirection: "column", border: m.checked ? 3 : 0,
+                  paddingBottom: 2
+             }}
           >
             {m.icon}
             <Typography variant="overline">{m.title}</Typography>
