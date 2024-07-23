@@ -54,32 +54,33 @@ export default function RecipeTemplate({ data }: any) {
           {recipe.name}
         </Typography>
 
-        {recipe.description?.short?.markdown &&(
-          <Paper elevation={7}>
-          <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
-            {recipe.description.short.markdown}
-          </Typography>
-          </Paper>
-        )}
-
-        <Grid container spacing={2}>
-          <Grid xs={8}>
-            <InformationsListCard recipe={recipe} />
-          </Grid>
-          <Grid xs={4}>
+        <Grid container>
+          {recipe.description?.short?.markdown && (
+            <Grid item xs={12} sm={8} sx={{ display: 'flex' }} >
+              <Box sx={{ m: 1, flexGrow: 1 }}>
+                <Paper elevation={7} sx={{ height: '100%' }}>
+                  <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
+                    {recipe.description.short.markdown}
+                  </Typography>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
+          <Grid item xs={12} sm={4}>
             <CreatorsListCard recipe={recipe} />
           </Grid>
-        </Grid>
+          <Grid item xs={12} sm={6}>
+            <InformationsListCard recipe={recipe} />
+          </Grid>
 
-        <Grid container spacing={3}>
-          <Grid xs={2}>
+          <Grid item xs={12} sm={6}>
+            <CookTimeListCard recipe={recipe} />
+          </Grid>
+          <Grid item xs={12} md={3}>
             <IngredientListCard recipe={recipe} />
           </Grid>
-          <Grid xs={8}>
+          <Grid item xs={12} md={9}>
             <StepsCard recipe={recipe} />
-          </Grid>
-          <Grid xs={2}>
-            <CookTimeListCard recipe={recipe} />
           </Grid>
         </Grid>
 
@@ -90,10 +91,7 @@ export default function RecipeTemplate({ data }: any) {
 
 export function CreatorsListCard({ recipe }: any) {
   return (
-    <Box sx={{
-      p: 2,
-      m: 2
-    }}>
+    <Box sx={{ m: 1 }}>
       <Paper
         elevation={7}
         square={false}
@@ -123,15 +121,17 @@ export function CreatorsListCard({ recipe }: any) {
 export function StepsCard({ recipe }: any) {
   return (
     <Box sx={{
-      p: 2,
-      m: 1
+      m: 1,
+      flexGrow: 1
     }}>
       <Paper
         elevation={7}
         sx={{ display: 'flex', justifyContent: 'space-around' }}
       >
         <Typography>
-          {recipe.stepStatement.short.markdown}
+          <Markdown>
+            {recipe.stepStatement.short.markdown}
+          </Markdown>
         </Typography>
       </Paper>
     </Box>
@@ -141,12 +141,11 @@ export function StepsCard({ recipe }: any) {
 export function InformationsListCard({ recipe }: any) {
   return (
     <Box sx={{
-      p: 2,
-      m: 2
+      m: 1
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', justifyContent: 'space-around' }}
+        sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}
       >
         <CardContent sx={{ display: 'flex' }}>
           <Stack sx={{ p: 2 }}>
@@ -196,12 +195,11 @@ export function InformationsListCard({ recipe }: any) {
 export function CookTimeListCard({ recipe }: any) {
   return (
     <Box sx={{
-      p: 2,
       m: 1
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}
       >
         <AccessAlarmsIcon sx={{ fontSize: 30 }} />
         <Typography sx={{ textAlign: 'center' }}>
@@ -225,7 +223,6 @@ export function CookTimeListCard({ recipe }: any) {
 export function IngredientListCard({ recipe }: any) {
   return (
     <Box sx={{
-      p: 2,
       m: 1
     }}>
       <Paper
@@ -247,7 +244,7 @@ export function IngredientListCard({ recipe }: any) {
         <List>
           {recipe.ingredientList.map((ingredient) => {
             return (
-              <ListItem key={ingredient} disablePadding>
+              <ListItem key={ingredient} disablePadding >
                 <ListItemButton role={undefined} dense>
                   <ListItemIcon>
                     <Checkbox
@@ -277,7 +274,7 @@ export function SubtitleTemplate({ text }: any) {
       }}
       variant={"h6"}
     >
-      {text} :
+      {text}
     </Typography>
   )
 }
