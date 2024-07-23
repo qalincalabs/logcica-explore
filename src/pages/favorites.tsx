@@ -26,12 +26,9 @@ import Layout from "../components/layout";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
 import LZString from 'lz-string';
-import sha256 from 'crypto-js/sha256';
-import Base64 from 'crypto-js/enc-base64';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
-// Utility functions
 const generateShareText = (favorites, data) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
@@ -51,8 +48,6 @@ const generateShareText = (favorites, data) => {
 const createFilteredList = (favorites, filterKey, dataKey) => (
   filterKey ? favorites.filter(f => f.targetType === dataKey) : []
 );
-
-
 
 const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes, moveSection, index, totalSections }) => (
   !favorites.length ? null : (
@@ -220,7 +215,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
         return {
           id: node._id,
-          
+          name: node?.name
         };
       });
       return acc;
