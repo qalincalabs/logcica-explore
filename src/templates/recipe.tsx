@@ -132,7 +132,7 @@ export function StepsCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', justifyContent: 'space-around' }}
+        sx={{ display: 'flex', justifyContent: 'space-around', height: '100%' }}
       >
         <Typography>
           <Markdown>
@@ -201,25 +201,36 @@ export function InformationsListCard({ recipe }: any) {
 export function CookTimeListCard({ recipe }: any) {
   return (
     <Box sx={{
-      m: 1
+      m: 1,
+      flexGrow: 1
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}
+        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', height: '100%' }}
       >
         <AccessAlarmsIcon sx={{ fontSize: 30 }} />
-        <Typography sx={{ textAlign: 'center' }}>
-          <SubtitleTemplate text={"Total Time"} />
-          {recipe.totalTime}
-        </Typography>
-        <Typography sx={{ textAlign: 'center' }}>
-          <SubtitleTemplate text={"Prep Time"} />
-          {recipe.prepTime}
-        </Typography>
-        <Typography sx={{ textAlign: 'center' }}>
-          <SubtitleTemplate text={"Cook Time"} />
-          {recipe.cookTime}
-        </Typography>
+
+        <CardContent>
+          <Typography sx={{ textAlign: 'center' }}>
+            <SubtitleTemplate text={"Total Time"} />
+            {recipe.totalTime}
+          </Typography>
+        </CardContent>
+
+        <CardContent>
+          <Typography sx={{ textAlign: 'center' }}>
+            <SubtitleTemplate text={"Prep Time"} />
+            {recipe.prepTime}
+          </Typography>
+        </CardContent>
+        
+        <CardContent>
+          <Typography sx={{ textAlign: 'center' }}>
+            <SubtitleTemplate text={"Cook Time"} />
+            {recipe.cookTime}
+          </Typography>
+        </CardContent>
+        
       </Paper>
     </Box>
 
@@ -229,28 +240,20 @@ export function CookTimeListCard({ recipe }: any) {
 export function IngredientListCard({ recipe }: any) {
   return (
     <Box sx={{
-      m: 1
+      m: 1,
+      flexGrow: 1
     }}>
       <Paper
         elevation={7}
         square={false}
+        
       >
-        <Typography
-          sx={{
-            textAlign: "center",
-            color: "#ffcb01",
-            fontFamily: "-apple-system, Roboto, sans-serif, serif",
-            fontStyle: "bold",
-          }}
-          variant={"h6"}
-        >
-          Ingrédients :
-        </Typography>
+        <SubtitleTemplate text={"Ingrédients"} />
 
-        <List>
+        <List sx= {{display: 'flex', flexFlow: { xs: 'row wrap', md: 'column nowrap'}, overflow: 'auto'}}>
           {recipe.ingredientList.map((ingredient) => {
             return (
-              <ListItem key={ingredient} disablePadding >
+              <ListItem key={ingredient} disablePadding sx={{width: 'auto'}} >
                 <ListItemButton role={undefined} dense>
                   <ListItemIcon>
                     <Checkbox
