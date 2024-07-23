@@ -23,7 +23,7 @@ const EventPage: React.FC<PageProps> = ({ data }: any) => {
   // Filtrer les événements passés et trier les événements futurs
   const filteredAndSortedEvents = data.events.nodes
     .filter((event: any) => event.timeRange?.from && isAfter(new Date(event.timeRange.from), now))
-    .sort((a: any, b: any) => new Date(a.timeRange.from) - new Date(b.timeRange.from));
+    .sort((a: any, b: any) => +new Date(a.timeRange.from) - +new Date(b.timeRange.from));
 
   return (
     <Layout>
@@ -32,6 +32,7 @@ const EventPage: React.FC<PageProps> = ({ data }: any) => {
         type="event"
         dataList={filteredAndSortedEvents}
         listItemContent={EventListItem}
+        disableFavorites
       />
     </Layout>
   );
