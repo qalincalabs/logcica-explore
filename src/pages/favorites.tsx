@@ -19,16 +19,11 @@ import {
   Hidden,
   CssBaseline,
   useTheme,
-  useMediaQuery,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField
+  useMediaQuery
 } from "@mui/material";
 import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit } from "@mui/icons-material";
 import Layout from "../components/layout";
+import RenameDialog from "../components/RenameDialog";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
 
@@ -319,30 +314,13 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
         </Grid>
       </Grid>
 
-      <Dialog open={renameDialogOpen} onClose={() => setRenameDialogOpen(false)}>
-        <DialogTitle>Renommer la Liste</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Veuillez entrer un nouveau nom pour la liste.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Nom de la Liste"
-            fullWidth
-            value={newListName}
-            onChange={(e) => setNewListName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setRenameDialogOpen(false)} color="primary">
-            Annuler
-          </Button>
-          <Button onClick={handleRenameFavoriteList} color="primary">
-            Renommer
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <RenameDialog
+        open={renameDialogOpen}
+        onClose={() => setRenameDialogOpen(false)}
+        onRename={handleRenameFavoriteList}
+        newListName={newListName}
+        setNewListName={setNewListName}
+      />
     </Layout>
   );
 };
