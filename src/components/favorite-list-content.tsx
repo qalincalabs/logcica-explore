@@ -13,44 +13,43 @@ import {
 import { graphql, useStaticQuery } from "gatsby";
 import React from "react";
 
-export function FavoriteListContent({ favorites }: any) {
-
+export function FavoriteListContent({ favorites }: Record<string, string[]>) {
   const data = useStaticQuery(graphql`
-  query {
-    marketplaces: allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
-      nodes {
-        _id
-        name
+    query {
+      marketplaces: allMongodbCounters(
+        filter: { type: { eq: "marketplace" } }
+      ) {
+        nodes {
+          _id
+          name
+        }
       }
-    }
-    products: allMongodbProducts { 
-      nodes {
-        _id
-        name
-        producer { 
-          activity { 
-            _id 
-            name 
-          } 
+      products: allMongodbProducts {
+        nodes {
+          _id
+          name
+          producer {
+            activity {
+              _id
+              name
+            }
+          }
+        }
+      }
+      partnerships: allMongodbPartnerships {
+        nodes {
+          _id
+          name
+        }
+      }
+      activities: allMongodbActivities {
+        nodes {
+          _id
+          name
         }
       }
     }
-    partnerships: allMongodbPartnerships {
-      nodes {
-        _id
-        name
-      }
-    }
-    activities: allMongodbActivities {
-      nodes {
-        _id
-        name
-      }
-    }
-  }
   `);
-
-  console.log(data)
 
   const filters = [
     {
@@ -78,8 +77,6 @@ export function FavoriteListContent({ favorites }: any) {
       dataNodes: data?.products?.nodes || [],
     },
   ];
-
-  console.log(filters)
 
   return (
     <Box
