@@ -52,7 +52,7 @@ const createFilteredList = (favorites, filterKey, dataKey) => (
   filterKey ? favorites.filter(f => f.targetType === dataKey) : []
 );
 
-const hashId = (id) => Base64.stringify(sha256(id));
+
 
 const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes, moveSection, index, totalSections }) => (
   !favorites.length ? null : (
@@ -200,7 +200,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
       acc[key] = filteredFavorites[index].map(item => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
         return { 
-          id: hashId(node._id),
+          id: node._id,
           name: node?.name
         };
       });
@@ -219,8 +219,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
       acc[sectionKey] = filteredFavorites[index].map(item => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
         return {
-          id: hashId(node._id),
-          name: node?.name
+          id: node._id,
+          
         };
       });
       return acc;
