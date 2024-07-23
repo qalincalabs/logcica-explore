@@ -20,16 +20,21 @@ import {
   CssBaseline,
   useTheme,
   useMediaQuery,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField
 } from "@mui/material";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit } from "@mui/icons-material";
 import Layout from "../components/layout";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
-// Utility functions
-const generateShareText = (favorites: any, data: any) => {
+const generateShareText = (favorites, data) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
     { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
@@ -114,6 +119,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("default");
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [listToRename, setListToRename] = useState(null);
+  const [newListName, setNewListName] = useState("");
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
     if(typeof window == "undefined")
@@ -126,7 +134,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     if(typeof window !== "undefined")
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
   }, [sectionsOrder]);
-
 
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
@@ -146,6 +153,16 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
+  };
+
+  const handleRenameFavoriteList = () => {
+    if (listToRename && newListName.trim()) {
+      favoriteService.renameList({ id: listToRename, name: newListName });
+      const updatedFavorites = refreshFavorites();
+      setFavorites(updatedFavorites);
+      setShareText(generateShareText(updatedFavorites, data));
+      setRenameDialogOpen(false);
+    }
   };
 
   const handleItemClick = (type: string, id: string, activityId?: string) => {
@@ -223,9 +240,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             >
               <ListItemText primary={list.name} />
               {list.id !== 'default' && (
-                <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
-                  <DeleteForever />
-                </IconButton>
+                <>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
+                    <DeleteForever />
+                  </IconButton>
+                  <IconButton onClick={(e) => { e.stopPropagation(); setListToRename(list.id); setNewListName(list.name); setRenameDialogOpen(true); }}>
+                    <Edit />
+                  </IconButton>
+                </>
               )}
             </ListItem>
           ))}
@@ -296,6 +318,31 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
           </Box>
         </Grid>
       </Grid>
+
+      <Dialog open={renameDialogOpen} onClose={() => setRenameDialogOpen(false)}>
+        <DialogTitle>Renommer la Liste</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Veuillez entrer un nouveau nom pour la liste.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Nom de la Liste"
+            fullWidth
+            value={newListName}
+            onChange={(e) => setNewListName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRenameDialogOpen(false)} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleRenameFavoriteList} color="primary">
+            Renommer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Layout>
   );
 };
@@ -314,11 +361,11 @@ export const query = graphql`
       nodes {
         _id
         name
-        producer {	
-          activity {	
-            _id	
-            name	
-          }	
+        producer { 
+          activity { 
+            _id 
+            name 
+          } 
         }
       }
     }
