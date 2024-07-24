@@ -230,12 +230,12 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     return `${window.location.origin}/share/list/${compressedData}`;
   };
 
-  const handleRenameList = (listId, newName) => {
-    favoriteService.renameList({ id: listId, name: newName });
+
+  const refresh = () => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
-  };
+  }
 
   const drawerContent = (
     <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -333,10 +333,12 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       </Grid>
 
       <RenameDialog
-        open={renameDialogOpen}
-        onClose={() => setRenameDialogOpen(false)}
         listToRename={listToRename}
-        handleRenameList={handleRenameList}
+        open={renameDialogOpen}
+        onClose={() => { 
+          setRenameDialogOpen(false); 
+          refresh()}
+        }
       />
     </Layout>
   );

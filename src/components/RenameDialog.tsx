@@ -14,10 +14,9 @@ interface RenameDialogProps {
   open: boolean;
   onClose: () => void;
   listToRename: string | null;
-  handleRenameList: (listId: string, newName: string) => void;
 }
 
-const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename, handleRenameList }) => {
+const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename }) => {
   const [newListName, setNewListName] = useState("");
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename
 
   const handleRenameFavoriteList = () => {
     if (listToRename && newListName.trim()) {
-      handleRenameList(listToRename, newListName);
+      favoriteService.renameList({ id: listToRename, name: newListName.trim() });
       onClose();
     }
   };
