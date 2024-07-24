@@ -116,7 +116,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   const [selectedList, setSelectedList] = useState("default");
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [listToRename, setListToRename] = useState(null);
-  const [newListName, setNewListName] = useState("");
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
     if(typeof window == "undefined")
@@ -148,16 +147,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
-  };
-
-  const handleRenameFavoriteList = () => {
-    if (listToRename && newListName.trim()) {
-      favoriteService.renameList({ id: listToRename, name: newListName });
-      const updatedFavorites = refreshFavorites();
-      setFavorites(updatedFavorites);
-      setShareText(generateShareText(updatedFavorites, data));
-      setRenameDialogOpen(false);
-    }
   };
 
   const handleItemClick = (type: string, id: string, activityId?: string) => {
@@ -239,7 +228,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
                   <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
                     <DeleteForever />
                   </IconButton>
-                  <IconButton onClick={(e) => { e.stopPropagation(); setListToRename(list.id); setNewListName(list.name); setRenameDialogOpen(true); }}>
+                  <IconButton onClick={(e) => { e.stopPropagation(); setListToRename(list.id); setRenameDialogOpen(true); }}>
                     <Edit />
                   </IconButton>
                 </>
@@ -317,9 +306,12 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       <RenameDialog
         open={renameDialogOpen}
         onClose={() => setRenameDialogOpen(false)}
-        onRename={handleRenameFavoriteList}
-        newListName={newListName}
-        setNewListName={setNewListName}
+        listToRename={listToRename}
+        refreshFavorites={refreshFavorites}
+        setFavorites={setFavorites}
+        setShareText={setShareText}
+        data={data}
+        generateShareText={generateShareText}
       />
     </Layout>
   );

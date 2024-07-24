@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -8,16 +8,39 @@ import {
   TextField,
   Button
 } from '@mui/material';
+import * as favoriteService from "../utils/favoritesService";
 
 interface RenameDialogProps {
   open: boolean;
   onClose: () => void;
-  onRename: () => void;
-  newListName: string;
-  setNewListName: (name: string) => void;
+  listToRename: string | null;
+  refreshFavorites: () => { [key: string]: any[] };
+  setFavorites: (favorites: { [key: string]: any[] }) => void;
+  setShareText: (text: string) => void;
+  data: any;
+  generateShareText: (favorites: { [key: string]: any[] }, data: any) => string;
 }
 
-const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, onRename, newListName, setNewListName }) => {
+const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename, refreshFavorites, setFavorites, setShareText, data, generateShareText }) => {
+  const [newListName, setNewListName] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      const list = favoriteService.allLists().find(list => list.id === listToRename);
+      setNewListName(list?.name || "");
+    }
+  }, [open, listToRename]);
+
+  const handleRenameFavoriteList = () => {
+    if (listToRename && newListName.trim()) {
+      favoriteService.renameList({ id: listToRename, name: newListName });
+      const updatedFavorites = refreshFavorites();
+      setFavorites(updatedFavorites);
+      setShareText(generateShareText(updatedFavorites, data));
+      onClose();
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Renommer la Liste</DialogTitle>
@@ -38,7 +61,7 @@ const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, onRename, ne
         <Button onClick={onClose} color="primary">
           Annuler
         </Button>
-        <Button onClick={onRename} color="primary">
+        <Button onClick={handleRenameFavoriteList} color="primary">
           Renommer
         </Button>
       </DialogActions>
