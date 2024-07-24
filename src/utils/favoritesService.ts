@@ -2,8 +2,18 @@ export type FavoriteListCreation = {
   name: string;
 };
 
+export type FavoriteListImport = {
+  name: string
+  data: Record<string, string[]>
+}
+
 export type FavoriteListRemoval = {
   id: string;
+};
+
+export type FavoriteListRename = {
+  id: string;
+  name: string;
 };
 
 export type FavoriteItemRemoval = {
@@ -55,6 +65,10 @@ export function allLists(): FavoriteList[] {
   return lists ? JSON.parse(lists) : [{ id: "default", name: "default" }];
 }
 
+export function findListById(id: string){
+  return allLists().find(list => list.id === id)
+}
+
 function saveLists(lists: FavoriteList[]) {
   if (isBrowser) {
     localStorage.setItem("favorites.lists", JSON.stringify(lists));
@@ -94,6 +108,26 @@ export function findItems(query: FavoriteQuery): FavoriteItem[] {
   }
 }
 
+export function importList(props: FavoriteListImport){
+  const list = addList({name: props.name})
+  const targetTypes = Object.keys(props.data)
+
+  const items = [] as FavoriteItemAssignement[]
+
+  console.log(targetTypes)
+  console.log(props.data)
+
+  for(const targetType of targetTypes){
+    items.push( ...props.data[targetType].map(i => ({targetType: targetType, targetId: i, listId: list.id, assign: true})))
+  }
+
+  assignItemsToList(items)
+}
+
+export function assignItemsToList(props: FavoriteItemAssignement[]): boolean[] {
+  return props.map(p => assignItemToList(p))
+}
+
 export function assignItemToList(props: FavoriteItemAssignement): boolean {
   if (!props.listId) props.listId = "default";
   let l = getLocalStorageItemList(props.listId, props.targetType);
@@ -112,11 +146,12 @@ export function removeItemFromList(props: FavoriteItemRemoval) {
   assignItemToList({ ...props, assign: false });
 }
 
-export function addList(props: FavoriteListCreation) {
+export function addList(props: FavoriteListCreation): FavoriteList {
   const lists = allLists();
   const newList = { id: `list_${Date.now()}`, name: props.name.trim() };
   lists.push(newList);
   saveLists(lists);
+  return newList;
 }
 
 export function removeList(props: FavoriteListRemoval) {
@@ -127,6 +162,15 @@ export function removeList(props: FavoriteListRemoval) {
   // Remove all items from the deleted list
   for (const type of targetTypes) {
     localStorage.removeItem(getLocalStorageKey(props.id, type));
+  }
+}
+
+export function renameList(props: FavoriteListRename) {
+  let lists = allLists();
+  const list = lists.find((list) => list.id === props.id);
+  if (list) {
+    list.name = props.name.trim();
+    saveLists(lists);
   }
 }
 

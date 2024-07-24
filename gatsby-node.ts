@@ -1,11 +1,11 @@
-import path from "path";
-import { collections } from "./collections";
+const path = require('path');
+const { collections } = require('./collections');
 
-function capitalizeFirstLetter(string: String) {
+function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-exports.createSchemaCustomization = ({ actions }: any) => {
+exports.createSchemaCustomization = ({ actions }) => {
   const { createTypes } = actions;
 
   const mongoIdTypeDefs = collections
@@ -76,13 +76,13 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         allergen: mongodbCodes @link(by: "mongodb_id")
         containmentLevel: mongodbCodes @link(by: "mongodb_id")
       }
-      type mongodbProductsNutrientList{
+      type mongodbProductsNutrientList {
         nutrient: mongodbCodes @link(by: "mongodb_id")
       }
-      type mongodbProductsNetContent{
+      type mongodbProductsNetContent {
         unit: mongodbUnits @link(by: "mongodb_id")
       }
-      type mongodbContributionsContributor{
+      type mongodbContributionsContributor {
         activity: mongodbActivities @link(by: "mongodb_id")
         partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
@@ -107,18 +107,26 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       type mongodbContributionsSubject{
         partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
-      type mongodbWorkspaces{
+      type mongodbWorkspaces {
         place: mongodbPlaces @link(by: "mongodb_id")
       }
-      type mongodbPlaces{
+      type mongodbPlaces {
         within: [mongodbPlaces] @link(by: "mongodb_id")
+      }
+      type mongodbSessions implements Node {
+        place: mongodbPlaces @link(by: "mongodb_id")
+        manager: mongodbActivitiesManager @link(by: "mongodb_id")
+        categories: [mongodbCategories] @link(by: "mongodb_id")
+        profiles: [mongodbProfiles] @link(by: "mongodb_id")
+      }
+      type mongodbProfiles implements Node {
+        name: String
       }
     `;
   createTypes(typeDefs1);
 };
 
-exports.createPages = async function ({ actions, graphql }: any) {
-
+exports.createPages = async function ({ actions, graphql }) {
   const { data: marketplacesQuery } = await graphql(`
     query {
       allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
@@ -129,7 +137,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  marketplacesQuery.allMongodbCounters.nodes.forEach((node: any) => {
+  marketplacesQuery.allMongodbCounters.nodes.forEach((node) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/marketplace.tsx`);
 
@@ -150,7 +158,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  partnershipsQuery.allMongodbPartnerships.nodes.forEach((node: any) => {
+  partnershipsQuery.allMongodbPartnerships.nodes.forEach((node) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/partnership.tsx`);
 
@@ -171,7 +179,7 @@ exports.createPages = async function ({ actions, graphql }: any) {
       }
     }
   `);
-  activitiesQuery.allMongodbActivities.nodes.forEach((node: any) => {
+  activitiesQuery.allMongodbActivities.nodes.forEach((node) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/activity.tsx`);
 
@@ -198,6 +206,26 @@ exports.createPages = async function ({ actions, graphql }: any) {
 
     actions.createPage({
       path: "/recipe/" + _id,
+      component: component,
+      context: { id: _id },
+    });
+  });
+      
+  const { data: sessionsQuery } = await graphql(`
+    query {
+      allMongodbSessions {
+        nodes {
+          _id
+        }
+      }
+    }
+  `);
+  sessionsQuery.allMongodbSessions.nodes.forEach((node) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/event.tsx`);
+
+    actions.createPage({
+      path: "/event/" + _id,
       component: component,
       context: { id: _id },
     });
