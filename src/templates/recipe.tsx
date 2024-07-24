@@ -79,6 +79,9 @@ export default function RecipeTemplate({ data }: any) {
             </Grid>
           )}
 
+        </Grid>
+        <Grid container>
+
           {recipe.ingredientList && (
             <Grid item xs={12} md={3}>
               <IngredientListCard recipe={recipe} />
@@ -90,6 +93,8 @@ export default function RecipeTemplate({ data }: any) {
               <StepsCard recipe={recipe} />
             </Grid>
           )}
+
+
         </Grid>
 
       </Box>
