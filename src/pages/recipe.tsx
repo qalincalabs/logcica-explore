@@ -26,6 +26,7 @@ const RecipePage: React.FC<PageProps> = ({ data }: any) => {
         type="recipe"
         dataList={data.recipes.nodes}
         listItemContent={RecipeListItem}
+        disableFavorites
       />
     </Layout>
   );
