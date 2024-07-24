@@ -63,7 +63,7 @@ export default function RecipeTemplate({ data }: any) {
 
           {(recipe.author?.organisation?.name || recipe.author?.partnership?.name) && (
             <Grid item xs={12} sm={4}>
-              <CreatorsListCard recipe={recipe} />
+              <AuthorListCard recipe={recipe} />
             </Grid>
           )}
 
@@ -109,7 +109,7 @@ export function DescriptionCard({ recipe }: any) {
   )
 }
 
-export function CreatorsListCard({ recipe }: any) {
+export function AuthorListCard({ recipe }: any) {
   return (
     <Box sx={{ m: 1 }}>
       <Paper
@@ -280,9 +280,9 @@ export function IngredientListCard({ recipe }: any) {
         <SubtitleTemplate text={"Ingrédients"} />
 
         <List sx={{ display: 'flex', flexFlow: { xs: 'row wrap', md: 'column nowrap' }, overflow: 'auto' }}>
-          {recipe.ingredientList.map((ingredient) => {
+          {recipe.ingredientList.map((ingredient: any) => {
             return (
-              <ListItem key={ingredient} disablePadding sx={{ width: 'auto' }} >
+              <ListItem key={ingredient} disablePadding sx={{ width: { xs: '50%', md: '100%' } }} >
                 <ListItemButton role={undefined} dense>
                   <ListItemIcon>
                     <Checkbox
