@@ -210,23 +210,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
 
   const allLists = favoriteService.allLists();
 
-  const generateShareURL = () => {
-    const list = favoriteService.findListById(selectedList)
-    const items = favoriteService.findItems({listIds: [selectedList]})
-
-    const exportedList = {
-      ...list,
-      data: items.reduce((acc, curr) => {
-        let {targetId, targetType} = curr;
-        return {...acc, [targetType]: [...(acc[targetType] || []), targetId]};
-    }, {} as Record<string,string[]>)
-    }
-
-    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
-    return `${window.location.origin}/share/list/${compressedData}`;
-  };
-
-
   const refresh = () => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
