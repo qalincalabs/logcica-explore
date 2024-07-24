@@ -36,6 +36,8 @@ import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import FiberSmartRecordIcon from '@mui/icons-material/FiberSmartRecord';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import Markdown from "markdown-to-jsx";
 
@@ -146,6 +148,7 @@ export function AuthorListCard({ recipe }: any) {
 }
 
 export function StepsCard({ recipe }: any) {
+  let stepCount = 1;
   return (
     <Box sx={{
       m: 1,
@@ -156,9 +159,33 @@ export function StepsCard({ recipe }: any) {
         sx={{ display: 'flex', justifyContent: 'space-around', height: '100%' }}
       >
         <Typography>
-          <Markdown>
+          {/* <Markdown>
             {recipe.stepStatement.short.markdown}
-          </Markdown>
+          </Markdown> */}
+          <ReactMarkdown
+              remarkPlugins={[remarkGfm]} //remark = parseur Markdown. Iic on fournit un plugin ('remarkGfm')
+              components={{
+                ol: ({ node, ...props}) => {
+                  return (
+                    <Box component="ol" sx={{ paddingLeft: '1.5rem' }} {...props} />
+                  )
+                },
+                li: ({ node, ...props}) => {
+                  const step = `Etape ${stepCount}`;
+                  stepCount += 1;
+                  return (
+                    <Box component="li" sx={{marginBottom: '1rem', '&::marker': { fontWeight: 'bold', color: '#ffcb01' }}}{...props}>
+                      <Typography>
+                        {step}
+                      </Typography>
+                      <Typography variant="body1" component="span" {...props} />
+                    </Box>
+                  )
+                }
+              }}
+          >
+              {recipe.stepStatement.short.markdown}
+          </ReactMarkdown>
         </Typography>
       </Paper>
     </Box>
