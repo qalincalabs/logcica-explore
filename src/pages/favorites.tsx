@@ -32,7 +32,7 @@ const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 const generateShareText = (favorites, data) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
-    { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
+    { key: 'marketplaces', title: 'Marchés', nodes: data.marketplaces.nodes },
     { key: 'activities', title: 'Producteurs', nodes: data.activities.nodes },
     { key: 'products', title: 'Produits', nodes: data.products.nodes },
   ];
@@ -111,7 +111,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
 
   const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
   const [shareText, setShareText] = useState(generateShareText(favorites, data));
-  const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
+  const [filter, setFilter] = useState({ partnerships: true, marketplaces: true, activities: true, products: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("default");
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
@@ -119,9 +119,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
     if(typeof window == "undefined")
-      return ["partnership", "marketplace", "activity", "product"];
+      return ["partnerships", "marketplaces", "activities", "products"];
     const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
+    return savedOrder ? JSON.parse(savedOrder) : ["partnerships", "marketplaces", "activities", "products"];
   });
 
   useEffect(() => {
@@ -179,21 +179,25 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const filters = [
-    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
-    { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
-    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
-    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
+    { key: 'partnerships', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
+    { key: 'marketplaces', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
+    { key: 'activities', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
+    { key: 'products', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
   ];
 
   const filteredFavorites = sectionsOrder.map(sectionKey => {
-    const { key, dataKey } = filters.find(f => f.key === sectionKey);
+    const filterItem = filters.find(f => f.key === sectionKey);
+    if (!filterItem) return [];
+    const { key, dataKey } = filterItem;
     return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
   });
 
   const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
     const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
     const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
-      const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+      const filterItem = filters.find(f => f.key === sectionKey);
+      if (!filterItem) return acc;
+      const { key, dataKey, dataNodes } = filterItem;
       acc[key] = filteredFavorites[index].map(item => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
         return { 
@@ -209,6 +213,29 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
   };
 
   const allLists = favoriteService.allLists();
+
+  const generateShareURL = () => {
+    const list = favoriteService.findListById(selectedList)
+    const items = favoriteService.findItems({listIds: [selectedList]})
+
+    const exportedList = {
+      ...list,
+      data: items.reduce((acc, curr) => {
+        let {targetId, targetType} = curr;
+        return {...acc, [targetType]: [...(acc[targetType] || []), targetId]};
+    }, {} as Record<string,string[]>)
+    }
+
+    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
+    return `${window.location.origin}/share/list/${compressedData}`;
+  };
+
+  const handleRenameList = (listId, newName) => {
+    favoriteService.renameList({ id: listId, name: newName });
+    const updatedFavorites = refreshFavorites();
+    setFavorites(updatedFavorites);
+    setShareText(generateShareText(updatedFavorites, data));
+  };
 
   const drawerContent = (
     <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -289,7 +316,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
                 {sectionsOrder.map((sectionKey, index) => {
-                  const { title, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+                  const filterItem = filters.find(f => f.key === sectionKey);
+                  if (!filterItem) return null;
+                  const { title, dataKey, dataNodes } = filterItem;
                   return (
                     <FavoritesList key={title} title={title} favorites={filteredFavorites[index]} handleItemClick={handleItemClick}
                       handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
@@ -307,11 +336,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
         open={renameDialogOpen}
         onClose={() => setRenameDialogOpen(false)}
         listToRename={listToRename}
-        refreshFavorites={refreshFavorites}
-        setFavorites={setFavorites}
-        setShareText={setShareText}
-        data={data}
-        generateShareText={generateShareText}
+        handleRenameList={handleRenameList}
       />
     </Layout>
   );

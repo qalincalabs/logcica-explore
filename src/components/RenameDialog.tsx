@@ -14,14 +14,10 @@ interface RenameDialogProps {
   open: boolean;
   onClose: () => void;
   listToRename: string | null;
-  refreshFavorites: () => { [key: string]: any[] };
-  setFavorites: (favorites: { [key: string]: any[] }) => void;
-  setShareText: (text: string) => void;
-  data: any;
-  generateShareText: (favorites: { [key: string]: any[] }, data: any) => string;
+  handleRenameList: (listId: string, newName: string) => void;
 }
 
-const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename, refreshFavorites, setFavorites, setShareText, data, generateShareText }) => {
+const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename, handleRenameList }) => {
   const [newListName, setNewListName] = useState("");
 
   useEffect(() => {
@@ -33,10 +29,7 @@ const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename
 
   const handleRenameFavoriteList = () => {
     if (listToRename && newListName.trim()) {
-      favoriteService.renameList({ id: listToRename, name: newListName });
-      const updatedFavorites = refreshFavorites();
-      setFavorites(updatedFavorites);
-      setShareText(generateShareText(updatedFavorites, data));
+      handleRenameList(listToRename, newListName);
       onClose();
     }
   };
