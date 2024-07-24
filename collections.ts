@@ -1,5 +1,6 @@
 export const collections: string[] = [
   "products",
+  "recipes",
   "organisations",
   "workspaces",
   "activities",
