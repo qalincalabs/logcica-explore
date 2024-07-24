@@ -1,18 +1,12 @@
 import React from "react";
-import { graphql, navigate } from "gatsby";
+import { graphql } from "gatsby";
 import {
   Box,
-  Card,
-  CardActionArea,
   CardContent,
   Grid,
-  IconButton,
   Paper,
   Stack,
   Typography,
-  Link as MuiLink,
-  Table,
-  TableContainer,
   List,
   ListItem,
   ListItemButton,
@@ -20,26 +14,14 @@ import {
   Checkbox,
   ListItemIcon
 } from "@mui/material";
-import {
-  Email,
-  Facebook,
-  Language,
-  Phone,
-  Place,
-  OpenInNew
-} from "@mui/icons-material";
 import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
-import EuroIcon from '@mui/icons-material/Euro';
 import Layout from "../components/layout";
 import ContrastIcon from '@mui/icons-material/Contrast';
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
-import FiberSmartRecordIcon from '@mui/icons-material/FiberSmartRecord';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-import Markdown from "markdown-to-jsx";
 
 export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
@@ -107,10 +89,12 @@ export default function RecipeTemplate({ data }: any) {
 export function DescriptionCard({ recipe }: any) {
   return (
     <Box sx={{ m: 1, flexGrow: 1 }}>
-      <Paper elevation={7} sx={{ height: '100%' }}>
-        <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
-          {recipe.description.short.markdown}
-        </Typography>
+      <Paper elevation={7}  sx={{ height: '100%' }}>
+        <CardContent >
+          <Typography sx={{ fontSize: 'h6.fontSize', textAlign: 'center' }}>
+            {recipe.description.short.markdown}
+          </Typography>
+        </CardContent>
       </Paper>
     </Box>
   )
@@ -126,7 +110,7 @@ export function AuthorListCard({ recipe }: any) {
       >
         {recipe.author?.partnership?.name && (
           <CardContent >
-            <SubtitleTemplate text={"Partnership"} />
+            <SubtitleTemplate text={"Partenariat"} />
             <Typography sx={{ textAlign: 'center' }}>
               {recipe.author.partnership.name}
             </Typography>
@@ -135,7 +119,7 @@ export function AuthorListCard({ recipe }: any) {
 
         {recipe.author?.organisation?.name && (
           <CardContent>
-            <SubtitleTemplate text={"Organisation"} />
+            <SubtitleTemplate text={"Entreprise"} />
             <Typography sx={{ textAlign: 'center' }}>
               {recipe.author.organisation.name}
             </Typography>
@@ -158,35 +142,30 @@ export function StepsCard({ recipe }: any) {
         elevation={7}
         sx={{ display: 'flex', justifyContent: 'space-around', height: '100%' }}
       >
-        <Typography>
-          {/* <Markdown>
-            {recipe.stepStatement.short.markdown}
-          </Markdown> */}
-          <ReactMarkdown
-              remarkPlugins={[remarkGfm]} //remark = parseur Markdown. Iic on fournit un plugin ('remarkGfm')
-              components={{
-                ol: ({ node, ...props}) => {
-                  return (
-                    <Box component="ol" sx={{ paddingLeft: '1.5rem' }} {...props} />
-                  )
-                },
-                li: ({ node, ...props}) => {
-                  const step = `Etape ${stepCount}`;
-                  stepCount += 1;
-                  return (
-                    <Box component="li" sx={{marginBottom: '1rem', '&::marker': { fontWeight: 'bold', color: '#ffcb01' }}}{...props}>
-                      <Typography>
-                        {step}
-                      </Typography>
-                      <Typography variant="body1" component="span" {...props} />
-                    </Box>
-                  )
-                }
-              }}
-          >
-              {recipe.stepStatement.short.markdown}
-          </ReactMarkdown>
-        </Typography>
+        <Stack>
+          <SubtitleTemplate text={"Étapes"} />
+          <Typography>
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]} //remark = parseur Markdown. Iic on fournit un plugin ('remarkGfm')
+                components={{
+                  ol: ({ node, ...props}) => {
+                    return (
+                      <Box component="ol" sx={{ paddingLeft: '1.5rem' }} {...props} />
+                    )
+                  },
+                  li: ({ node, ...props}) => {
+                    return (
+                      <Box component="li" sx={{marginBottom: '1rem', '&::marker': { fontWeight: 'bold', color: '#ffcb01' }}}{...props}>
+                        <Typography variant="body1" component="span" {...props} />
+                      </Box>
+                    )
+                  }
+                }}
+            >
+                {recipe.stepStatement.short.markdown}
+            </ReactMarkdown>
+          </Typography>
+        </Stack>
       </Paper>
     </Box>
 
@@ -200,7 +179,7 @@ export function InformationsListCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: { sm: 'space-evenly' }, alignItems: 'center' }}
+        sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly', alignItems: 'center' }}
       >
 
         {recipe.difficulty?.name && (
@@ -210,7 +189,7 @@ export function InformationsListCard({ recipe }: any) {
               <FitnessCenterIcon sx={{ fontSize: 30 }} />
             </Stack>
             <Stack>
-              <SubtitleTemplate text={"Difficulty"} />
+              <SubtitleTemplate text={"Difficulté"} />
               <Typography sx={{ textAlign: 'center' }}>
                 {recipe.difficulty.name}
               </Typography>
@@ -226,7 +205,7 @@ export function InformationsListCard({ recipe }: any) {
               {/* <FiberSmartRecordIcon sx={{fontSize: 30}}/> */}
             </Stack>
             <Stack>
-              <SubtitleTemplate text={"Seasonality"} />
+              <SubtitleTemplate text={"Saison"} />
               <Typography sx={{ textAlign: 'center' }}>
                 {recipe.seasonality.name}
               </Typography>
@@ -241,7 +220,7 @@ export function InformationsListCard({ recipe }: any) {
               <MonetizationOnIcon sx={{ fontSize: 30 }} />
             </Stack>
             <Stack>
-              <SubtitleTemplate text={"costCategory"} />
+              <SubtitleTemplate text={"Coût"} />
               <Typography sx={{ textAlign: 'center' }}>
                 {recipe.costCategory.name}
               </Typography>
@@ -261,15 +240,15 @@ export function CookTimeListCard({ recipe }: any) {
     }}>
       <Paper
         elevation={7}
-        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: { sm: 'space-evenly' }, height: '100%' }}
+        sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-evenly', height: '100%' }}
       >
         <AccessAlarmsIcon sx={{ fontSize: 30 }} />
 
         {recipe.totalTime && (
           <CardContent sx={{ display: 'flex' }}>
             <Typography sx={{ textAlign: 'center' }}>
-              <SubtitleTemplate text={"Total Time"} />
-              {recipe.totalTime}
+              <SubtitleTemplate text={"Total"} />
+              {recipe.totalTime + "'"}
             </Typography>
           </CardContent>
         )}
@@ -277,8 +256,8 @@ export function CookTimeListCard({ recipe }: any) {
         {recipe.prepTime && (
           <CardContent sx={{ display: 'flex' }}>
             <Typography sx={{ textAlign: 'center' }}>
-              <SubtitleTemplate text={"Prep Time"} />
-              {recipe.prepTime}
+              <SubtitleTemplate text={"Prep."} />
+              {recipe.prepTime + "'"}
             </Typography>
           </CardContent>
         )}
@@ -286,8 +265,8 @@ export function CookTimeListCard({ recipe }: any) {
         {recipe.cookTime && (
           <CardContent sx={{ display: 'flex' }}>
             <Typography sx={{ textAlign: 'center' }}>
-              <SubtitleTemplate text={"Cook Time"} />
-              {recipe.cookTime}
+              <SubtitleTemplate text={"Cuisson"} />
+              {recipe.cookTime + "'"}
             </Typography>
           </CardContent>
         )}
