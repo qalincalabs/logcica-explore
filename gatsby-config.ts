@@ -74,4 +74,5 @@ const config: GatsbyConfig = {
   plugins: ["gatsby-plugin-styled-components"],
 };
 
+
 export default config;

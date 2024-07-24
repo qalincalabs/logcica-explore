@@ -21,11 +21,12 @@ import {
   useTheme,
   useMediaQuery
 } from "@mui/material";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit } from "@mui/icons-material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit, Share } from "@mui/icons-material";
 import Layout from "../components/layout";
 import RenameDialog from "../components/RenameDialog";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
+import LZString from 'lz-string';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
@@ -100,7 +101,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
   )
 );
 
-const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
+const FavoritesPage: React.FC<PageProps> = ({ data }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -162,7 +163,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       default:
         return `/${type}/${id}`;
     }
-  }
+  };
 
   const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
 
@@ -192,6 +193,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
 
   const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
     const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
+
     const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
       const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
       acc[key] = filteredFavorites[index].map(item => {
@@ -215,6 +217,23 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
   }
+  
+  const generateShareURL = () => {
+
+    const list = favoriteService.findListById(selectedList)
+    const items = favoriteService.findItems({listIds: [selectedList]})
+
+    const exportedList = {
+      ...list,
+      data: items.reduce((acc, curr) => {
+        let {targetId, targetType} = curr;
+        return {...acc, [targetType]: [...(acc[targetType] || []), targetId]};
+    }, {} as Record<string,string[]>)
+    }
+
+    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
+    return `${window.location.origin}/share/list/${compressedData}`;
+  };
 
   const drawerContent = (
     <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -283,14 +302,21 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               </ButtonGroup>
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
-              {['json', 'xlsx', 'pdf'].map(format => (
-                <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
-                  <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-                    {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
-                    <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+              <ButtonGroup variant="outlined">
+                {['json', 'xlsx', 'pdf'].map(format => (
+                  <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
+                    <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
+                      {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
+                      <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+                    </IconButton>
+                  </Tooltip>
+                ))}
+                <Tooltip title="Partager">
+                  <IconButton onClick={() => { const url = generateShareURL(); navigator.clipboard.writeText(url); alert(`URL de partage copiée: ${url}`); }}>
+                    <Share />
                   </IconButton>
                 </Tooltip>
-              ))}
+              </ButtonGroup>
             </Box>
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
@@ -357,3 +383,4 @@ export const query = graphql`
     }
   }
 `;
+
