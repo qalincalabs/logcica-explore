@@ -1,18 +1,12 @@
 import React from "react";
-import { graphql, navigate } from "gatsby";
+import { graphql } from "gatsby";
 import {
   Box,
-  Card,
-  CardActionArea,
   CardContent,
   Grid,
-  IconButton,
   Paper,
   Stack,
   Typography,
-  Link as MuiLink,
-  Table,
-  TableContainer,
   List,
   ListItem,
   ListItemButton,
@@ -20,14 +14,6 @@ import {
   Checkbox,
   ListItemIcon
 } from "@mui/material";
-import {
-  Email,
-  Facebook,
-  Language,
-  Phone,
-  Place,
-  OpenInNew
-} from "@mui/icons-material";
 import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
 import EuroIcon from '@mui/icons-material/Euro';
 import Layout from "../components/layout";
@@ -40,8 +26,6 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-import Markdown from "markdown-to-jsx";
-
 export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
 
@@ -52,54 +36,43 @@ export default function RecipeTemplate({ data }: any) {
           p: 2
         }}
       >
-
         <Typography align="center" variant="h3" component="h3" sx={{ mb: 3 }}>
           {recipe.name}
         </Typography>
-
         <Grid container>
           {recipe.description?.short?.markdown && (
             <Grid item xs={12} sm={8} sx={{ display: 'flex' }} >
               <DescriptionCard recipe={recipe} />
             </Grid>
           )}
-
           {(recipe.author?.organisation?.name || recipe.author?.partnership?.name) && (
             <Grid item xs={12} sm={4}>
               <AuthorListCard recipe={recipe} />
             </Grid>
           )}
-
           {(recipe.difficulty?.name || recipe.seasonality?.name || recipe.costCategory?.name) && (
             <Grid item xs={12} sm={6}>
               <InformationsListCard recipe={recipe} />
             </Grid>
           )}
-
           {(recipe.cookTime || recipe.prepTime || recipe.totalTime) && (
             <Grid item xs={12} sm={6}>
               <CookTimeListCard recipe={recipe} />
             </Grid>
           )}
-
         </Grid>
         <Grid container>
-
           {recipe.ingredientList && (
             <Grid item xs={12} md={3}>
               <IngredientListCard recipe={recipe} />
             </Grid>
           )}
-
           {recipe.stepStatement?.short?.markdown && (
             <Grid item xs={12} md={9}>
               <StepsCard recipe={recipe} />
             </Grid>
           )}
-
-
         </Grid>
-
       </Box>
     </Layout>
   );
@@ -133,7 +106,6 @@ export function AuthorListCard({ recipe }: any) {
             </Typography>
           </CardContent>
         )}
-
         {recipe.author?.organisation?.name && (
           <CardContent>
             <SubtitleTemplate text={"Organisation"} />
@@ -142,7 +114,6 @@ export function AuthorListCard({ recipe }: any) {
             </Typography>
           </CardContent>
         )}
-
       </Paper>
     </Box>
   )
@@ -188,7 +159,6 @@ export function StepsCard({ recipe }: any) {
         </Box>
       </Paper>
     </Box>
-
   )
 }
 
@@ -201,7 +171,6 @@ export function InformationsListCard({ recipe }: any) {
         elevation={7}
         sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: { sm: 'space-evenly' }, alignItems: 'center' }}
       >
-
         {recipe.difficulty?.name && (
           <CardContent sx={{ display: 'flex' }}>
             <Stack sx={{ p: 2 }}>
@@ -216,7 +185,6 @@ export function InformationsListCard({ recipe }: any) {
             </Stack>
           </CardContent>
         )}
-
         {recipe.seasonnality?.name && (
           <CardContent sx={{ display: 'flex' }}>
             <Stack sx={{ p: 2 }}>
@@ -232,7 +200,6 @@ export function InformationsListCard({ recipe }: any) {
             </Stack>
           </CardContent>
         )}
-
         {recipe.costCategory?.name && (
           <CardContent sx={{ display: 'flex' }}>
             <Stack sx={{ p: 2 }}>
@@ -263,7 +230,6 @@ export function CookTimeListCard({ recipe }: any) {
         sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: { sm: 'space-evenly' }, height: '100%' }}
       >
         <AccessAlarmsIcon sx={{ fontSize: 30 }} />
-
         {recipe.totalTime && (
           <CardContent sx={{ display: 'flex' }}>
             <Typography sx={{ textAlign: 'center' }}>
@@ -272,7 +238,6 @@ export function CookTimeListCard({ recipe }: any) {
             </Typography>
           </CardContent>
         )}
-
         {recipe.prepTime && (
           <CardContent sx={{ display: 'flex' }}>
             <Typography sx={{ textAlign: 'center' }}>
@@ -281,7 +246,6 @@ export function CookTimeListCard({ recipe }: any) {
             </Typography>
           </CardContent>
         )}
-
         {recipe.cookTime && (
           <CardContent sx={{ display: 'flex' }}>
             <Typography sx={{ textAlign: 'center' }}>
@@ -290,7 +254,6 @@ export function CookTimeListCard({ recipe }: any) {
             </Typography>
           </CardContent>
         )}
-
       </Paper>
     </Box>
 
@@ -306,10 +269,8 @@ export function IngredientListCard({ recipe }: any) {
       <Paper
         elevation={7}
         square={false}
-
       >
         <SubtitleTemplate text={"Ingrédients"} />
-
         <List sx={{ display: 'flex', flexFlow: { xs: 'row wrap', md: 'column nowrap' }, overflow: 'auto' }}>
           {recipe.ingredientList.map((ingredient: any) => {
             return (
