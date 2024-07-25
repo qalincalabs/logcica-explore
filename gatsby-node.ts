@@ -95,7 +95,16 @@ exports.createSchemaCustomization = ({ actions }) => {
         contacts: [mongodbContacts] @link(by: "mongodb_id")
         counters: [mongodbCounters] @link(by:"manager.partnership", from: "mongodb_id")
       }
-      type mongodbContributionsSubject {
+      type mongodbRecipesAuthor implements Node {
+        organisation: mongodbOrganisations @link(by: "mongodb_id")
+        partnership: mongodbPartnerships @link(by: "mongodb_id")
+      }
+      type mongodbRecipes implements Node {
+        difficulty: mongodbCategories @link(by: "mongodb_id")
+        seasonality: mongodbCategories @link(by: "mongodb_id")
+        costCategory: mongodbCategories @link(by: "mongodb_id")
+      }
+      type mongodbContributionsSubject{
         partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
       type mongodbWorkspaces {
@@ -181,6 +190,27 @@ exports.createPages = async function ({ actions, graphql }) {
     });
   });
 
+  const { data: recipesQuery } = await graphql(`
+    query {
+      allMongodbRecipes {
+        nodes {
+          _id
+          name
+        }
+      }
+    }
+  `);
+  recipesQuery.allMongodbRecipes.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/recipe.tsx`);
+
+    actions.createPage({
+      path: "/recipe/" + _id,
+      component: component,
+      context: { id: _id },
+    });
+  });
+      
   const { data: sessionsQuery } = await graphql(`
     query {
       allMongodbSessions {

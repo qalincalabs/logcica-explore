@@ -17,7 +17,7 @@ interface MainContentProps {
   type: string;
   listItemContent: (arg0: any) => any;
   dataList: any;
-  disableFavorites: boolean
+  disableFavorites?: boolean 
 }
 
 export default function MainContent(props: MainContentProps) {

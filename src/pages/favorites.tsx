@@ -19,15 +19,18 @@ import {
   Hidden,
   CssBaseline,
   useTheme,
+
   useMediaQuery,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle
+
 } from "@mui/material";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Share } from "@mui/icons-material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit, Share } from "@mui/icons-material";
 import Layout from "../components/layout";
+import RenameDialog from "../components/RenameDialog";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
 import LZString from 'lz-string';
@@ -119,6 +122,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("default");
+
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [listToRemove, setListToRemove] = useState<string | null>(null);
   const [itemToRemove, setItemToRemove] = useState({ id: '', type: '' });
@@ -241,6 +245,12 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
 
   const allLists = favoriteService.allLists();
 
+  const refresh = () => {
+    const updatedFavorites = refreshFavorites();
+    setFavorites(updatedFavorites);
+    setShareText(generateShareText(updatedFavorites, data));
+  }
+  
   const generateShareURL = () => {
 
     const list = favoriteService.findListById(selectedList)
@@ -272,9 +282,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
             >
               <ListItemText primary={list.name} />
               {list.id !== 'default' && (
-                <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
-                  <DeleteForever />
-                </IconButton>
+                <>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
+                    <DeleteForever />
+                  </IconButton>
+                  <IconButton onClick={(e) => { e.stopPropagation(); setListToRename(list.id); setRenameDialogOpen(true); }}>
+                    <Edit />
+                  </IconButton>
+                </>
               )}
             </ListItem>
           ))}
@@ -356,6 +371,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
           </Box>
         </Grid>
       </Grid>
+
       <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)}>
         <DialogTitle>Confirmation de suppression</DialogTitle>
         <DialogContent>
@@ -372,6 +388,17 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+
+      <RenameDialog
+        listToRename={listToRename}
+        open={renameDialogOpen}
+        onClose={() => { 
+          setRenameDialogOpen(false); 
+          refresh()}
+        }
+      />
+
     </Layout>
   );
 };

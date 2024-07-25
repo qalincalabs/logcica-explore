@@ -64,6 +64,7 @@ const config: GatsbyConfig = {
       { name: "GROUPEMENTS", url: "/partnership" },
       { name: "MARCHÉS", url: "/marketplace" },
       { name: "PRODUITS", url: "/product" },
+      { name: "RECIPE", url: "/recipe" },
       {name:"ÉVÉNEMENTS", url: "/event"}
     ],
   },
