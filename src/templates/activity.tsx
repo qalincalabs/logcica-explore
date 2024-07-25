@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { graphql, PageProps } from "gatsby";
 import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
 import { OpenInNew, Email, Phone } from "@mui/icons-material";
@@ -6,7 +6,6 @@ import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 import { ProductCard } from "../components/product-card";
 import FavoriteIcons from "../components/FavoriteIcons";
-import * as favoriteService from "../utils/favoritesService";
 
 export default function ActivityTemplate({ data }: PageProps<any>) {
   const activity = data.activity;
@@ -16,6 +15,7 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
   const place = activity.place;
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
+  const sessions = data.sessions.nodes;
 
   return (
     <Layout>
@@ -24,10 +24,7 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
           <Typography align="center" variant="h3" component="h3" mr={2}>
             {activity.name}
           </Typography>
-          <FavoriteIcons
-            type="activity"
-            targetId={activity._id}
-          />
+          <FavoriteIcons type="activity" targetId={activity._id} />
         </Box>
 
         {activity.description?.short?.markdown && (
@@ -261,12 +258,43 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
               </Box>
             </Grid>
           )}
+
+          {sessions && sessions.length > 0 && (
+            <Grid item xs={12}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Sessions
+                </Typography>
+                <Grid container spacing={2}>
+                  {sessions.map((session: any) => (
+                    <Grid item xs={12} md={6} xl={4} key={session._id}>
+                      <Paper sx={{ p: 2 }}>
+                        <Typography variant="h6" component="h6">
+                          {session.name}
+                        </Typography>
+                        <Typography variant="body1" component="p">
+                          {`Début: ${new Date(session.timeRange.from).toLocaleString()}`}
+                        </Typography>
+                        <Typography variant="body1" component="p">
+                          {`Fin: ${new Date(session.timeRange.to).toLocaleString()}`}
+                        </Typography>
+                        {session.place && (
+                          <Typography variant="body1" component="p">
+                            {`Lieu: ${session.place.title}`}
+                          </Typography>
+                        )}
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Layout>
   );
 }
-
 export const query = graphql`
   query GetActivityAndRelatedData($id: String!) {
     activity: mongodbActivities(_id: { eq: $id }) {
@@ -424,6 +452,21 @@ export const query = graphql`
             _id
             key
           }
+        }
+      }
+    }
+    sessions: allMongodbSessions(
+      filter: { manager: { activity: { mongodb_id: { eq: $id } } } }
+    ) {
+      nodes {
+        _id
+        name
+        timeRange {
+          from
+          to
+        }
+        place {
+          title
         }
       }
     }
