@@ -73,6 +73,18 @@ export default function RecipeTemplate({ data }: any) {
             </Grid>
           )}
         </Grid>
+        <Grid container>
+          {recipe.allergenList && recipe.allergenList.length > 0 && (
+            <Grid item xs={12} md={6}>
+              <AllergenListCard recipe={recipe}/>
+            </Grid>
+          )}
+          {recipe.nutrientList && recipe.nutrientList.length > 0 && (
+            <Grid item xs={12} md={6}>
+              <NutrientListCard recipe={recipe}/>
+            </Grid>
+          )}
+        </Grid>
       </Box>
     </Layout>
   );
@@ -292,6 +304,57 @@ export function IngredientListCard({ recipe }: any) {
     </Box>
   )
 }
+
+export function AllergenListCard({ recipe }: any) {
+  return (
+    <Box sx={{
+      m: 1,
+      flexGrow: 1
+    }}>
+      <Paper
+        elevation={7}
+        square={false}
+      >
+        <SubtitleTemplate text={"Allergènes"} />
+        <List sx={{p: 1}}>
+          {recipe.allergenList.map((allergen: any) => {
+            return (
+              <ListItem key={allergen.id} disablePadding sx={{ width: { xs: '50%', md: '100%' } }} >
+                <ListItemText primary={allergen.id}></ListItemText>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Paper>
+    </Box>
+  )
+}
+
+export function NutrientListCard({ recipe }: any) {
+  return (
+    <Box sx={{
+      m: 1,
+      flexGrow: 1
+    }}>
+      <Paper
+        elevation={7}
+        square={false}
+      >
+        <SubtitleTemplate text={"Nutriments"} />
+        <List sx={{p: 1}}>
+          {recipe.nutrientList.map((nutrient: any) => {
+            return (
+              <ListItem key={nutrient.id} disablePadding sx={{ width: { xs: '50%', md: '100%' } }} >
+                <ListItemText primary={nutrient.id}></ListItemText>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Paper>
+    </Box>
+  )
+}
+
 
 export function SubtitleTemplate({ text }: any) {
   return (
