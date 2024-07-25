@@ -62,7 +62,7 @@ export default function RecipeTemplate({ data }: any) {
           )}
         </Grid>
         <Grid container>
-          {recipe.ingredientList && (
+          {recipe.ingredientList && recipe.ingredientList.length > 0 && (
             <Grid item xs={12} md={3}>
               <IngredientListCard recipe={recipe} />
             </Grid>
