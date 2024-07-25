@@ -36,6 +36,7 @@ import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import FiberSmartRecordIcon from '@mui/icons-material/FiberSmartRecord';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -158,35 +159,33 @@ export function StepsCard({ recipe }: any) {
         elevation={7}
         sx={{ display: 'flex', justifyContent: 'space-around', height: '100%' }}
       >
-        <Typography>
-          {/* <Markdown>
-            {recipe.stepStatement.short.markdown}
-          </Markdown> */}
-          <ReactMarkdown
-              remarkPlugins={[remarkGfm]} //remark = parseur Markdown. Iic on fournit un plugin ('remarkGfm')
-              components={{
-                ol: ({ node, ...props}) => {
-                  return (
-                    <Box component="ol" sx={{ paddingLeft: '1.5rem' }} {...props} />
-                  )
-                },
-                li: ({ node, ...props}) => {
-                  const step = `Etape ${stepCount}`;
-                  stepCount += 1;
-                  return (
-                    <Box component="li" sx={{marginBottom: '1rem', '&::marker': { fontWeight: 'bold', color: '#ffcb01' }}}{...props}>
-                      <Typography>
-                        {step}
-                      </Typography>
-                      <Typography variant="body1" component="span" {...props} />
-                    </Box>
-                  )
-                }
-              }}
-          >
-              {recipe.stepStatement.short.markdown}
-          </ReactMarkdown>
-        </Typography>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]} //remark = parseur Markdown. Iic on fournit un plugin ('remarkGfm')
+          components={{
+            ol: ({ node, ...props }) => {
+              return (
+                <Box component="ul" sx={{ paddingLeft: '1.5rem' }} {...props} />
+              )
+            },
+            li: ({ node, ...props }) => {
+              const step = `Etape ${stepCount}`;
+              stepCount += 1;
+              return (
+                <Box component="li" sx={{ marginBottom: '1rem', '&::marker': { fontWeight: 'bold', color: '#ffcb01' } }}{...props}>
+                  <Typography sx={{ fontWeight: 'bold', color: '#ffcb01' }}>
+                    {step}
+                  </Typography>
+                  <Typography variant="body1" component="span" {...props} />
+                </Box>
+              )
+            }
+          }}
+        >
+          {recipe.stepStatement.short.markdown}
+        </ReactMarkdown>
+        <Box sx={{ display: 'flex', justifyContent: 'right' }}>
+          <ReceiptLongIcon sx={{ fontSize: 40 }} />
+        </Box>
       </Paper>
     </Box>
 
