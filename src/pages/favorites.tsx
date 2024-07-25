@@ -122,6 +122,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedList, setSelectedList] = useState("default");
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [listToRename, setListToRename] = useState(null);
 
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [listToRemove, setListToRemove] = useState<string | null>(null);
