@@ -6,6 +6,7 @@ import Layout from '../components/layout';
 import Markdown from 'markdown-to-jsx';
 import { ProductCard } from '../components/product-card';
 import FavoriteIcons from '../components/FavoriteIcons';
+import { startOfDay, subDays, compareAsc, parseISO } from "date-fns";
 
 const ActivityTemplate = ({ data }: PageProps<any>) => {
   const activity = data.activity;
@@ -15,7 +16,9 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
   const place = activity.place;
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
-  const sessions = data.sessions.nodes;
+
+  const date = startOfDay(subDays(new Date(), 7)) // 7 days in the past
+  const sessions = data.sessions.nodes.filter(s => compareAsc(parseISO(s.timeRange.to),date) > 0);
 
   return (
     <Layout>
@@ -249,7 +252,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
             <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
-                  Sessions
+                  Événements
                 </Typography>
                 <Grid container spacing={2}>
                   {sessions.map((session: any) => (
@@ -462,11 +465,7 @@ export const query = graphql`
           }
         }
         place {
-          address {
-            street
-            postalCode
-            locality
-          }
+          title
         }
       }
     }
