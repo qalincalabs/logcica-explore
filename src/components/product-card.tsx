@@ -9,12 +9,6 @@ import {
   CardHeader,
   Typography,
   Stack,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
   Breadcrumbs,
   Link,
   Box,
@@ -22,7 +16,7 @@ import {
   IconButton,
   Tab,
   CardActions,
-  Popover,
+  TableContainer,
 } from "@mui/material";
 import {
   CalendarMonth,
@@ -38,9 +32,9 @@ import {
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import * as favoriteService from "../utils/favoritesService";
-import { useState } from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
+import NutrientListTable from "./nutrient-list-table";
+import AllergenList from "./allergen-list";
 
 const collectionType = 'product'
 
@@ -54,51 +48,6 @@ function addressText(address: any) {
   if (address.country) list.push(address.country);
 
   return list.join(", ");
-}
-
-const nutrientOrder = [
-  "energy",
-  "fat",
-  "saturatedFat",
-  "carbohydrates",
-  "sugars",
-  "fibres",
-  "protein",
-  "salt",
-];
-
-export function NutrientListTable({ nutrientList }: any) {
-  return (
-    <TableContainer>
-      <Table size="small" sx={{ maxWidth: 400 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell></TableCell>
-            <TableCell align="right">/100gr</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {nutrientOrder
-            .map((n) => nutrientList.find((i: any) => i.nutrient?.code == n))
-            .filter((n) => n != null)
-            .map((productNutrient: any) => (
-              <TableRow key={productNutrient.nutrient.code}>
-                <TableCell>
-                  {["saturatedFat", "sugars"].includes(
-                    productNutrient.nutrient.code
-                  ) && <span>&nbsp;&nbsp;</span>}
-                  {productNutrient.nutrient.name}
-                </TableCell>
-                <TableCell align="right">
-                  {productNutrient.quantity.value +
-                    productNutrient.quantity.unit}
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
 }
 
 export function ProductDimensionsText(dimension: any) {
@@ -377,17 +326,7 @@ export function ProductCard({ item }: any) {
                   </Markdown>
                 </Stack>
               )}
-              {item.allergenList &&
-                item.allergenList.map((productAllergen: any) => (
-                  <Stack direction="row" gap={1} flexGrow={1} key={productAllergen.allergen._id}>
-                    <CrisisAlert />
-                    <Typography>
-                      {productAllergen.containmentLevel.name +
-                        " " +
-                        productAllergen.allergen.name?.toLowerCase()}
-                    </Typography>
-                  </Stack>
-                ))}
+              {item.allergenList && <AllergenList allergenList={item.allergenList} />}
               {item.alcoholPercentage != null && (
                 <Stack direction="row" gap={1} flexGrow={1}>
                   <WineBar />
@@ -473,7 +412,9 @@ export function ProductCard({ item }: any) {
               )}
               {item.nutrientList && (
                 <TabPanel value="3">
-                  <NutrientListTable nutrientList={item.nutrientList} />
+                  <TableContainer>
+                    <NutrientListTable nutrientList={item.nutrientList} />
+                  </TableContainer>
                 </TabPanel>
               )}
             </TabContext>
