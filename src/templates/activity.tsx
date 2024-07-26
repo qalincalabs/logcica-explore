@@ -442,12 +442,32 @@ export const query = graphql`
         }
       }
     }
-    sessions: allMongodbSessions(
-      
-    ) {
+    sessions: allMongodbSessions(filter: {
+      manager: {
+        activity: {
+          _id: {eq: $id}
+        }
+      }
+    }) {
       nodes {
         _id
-        
+        name
+        timeRange {
+          from
+          to
+        }
+        description {
+          short {
+            markdown
+          }
+        }
+        place {
+          address {
+            street
+            postalCode
+            locality
+          }
+        }
       }
     }
   }
