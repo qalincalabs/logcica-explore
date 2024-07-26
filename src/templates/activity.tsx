@@ -1,13 +1,13 @@
-import React from "react";
-import { graphql, PageProps } from "gatsby";
-import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Email, Phone } from "@mui/icons-material";
-import Layout from "../components/layout";
-import Markdown from "markdown-to-jsx";
-import { ProductCard } from "../components/product-card";
-import FavoriteIcons from "../components/FavoriteIcons";
+import React from 'react';
+import { graphql, PageProps } from 'gatsby';
+import { Box, Grid, Paper, Stack, Typography, Link } from '@mui/material';
+import { OpenInNew, Email, Phone } from '@mui/icons-material';
+import Layout from '../components/layout';
+import Markdown from 'markdown-to-jsx';
+import { ProductCard } from '../components/product-card';
+import FavoriteIcons from '../components/FavoriteIcons';
 
-export default function ActivityTemplate({ data }: PageProps<any>) {
+const ActivityTemplate = ({ data }: PageProps<any>) => {
   const activity = data.activity;
   const contacts = activity.contacts;
   const profiles = activity.profiles;
@@ -38,10 +38,10 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
                         href={props.href}
                         target="_blank"
                         sx={{
-                          color: "primary.main",
-                          textDecoration: "underline",
-                          display: "inline-flex",
-                          alignItems: "center",
+                          color: 'primary.main',
+                          textDecoration: 'underline',
+                          display: 'inline-flex',
+                          alignItems: 'center',
                         }}
                       >
                         {props.children} <OpenInNew sx={{ ml: 0.5 }} />
@@ -57,7 +57,7 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
         )}
 
         {activity.profiles?.find(
-          (p: any) => p.description?.long && p.type === "web_element"
+          (p: any) => p.description?.long && p.type === 'web_element'
         ) && (
           <Paper sx={{ p: 1, m: 2 }}>
             <Markdown
@@ -69,10 +69,10 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
                         href={props.href}
                         target="_blank"
                         sx={{
-                          color: "primary.main",
-                          textDecoration: "underline",
-                          display: "inline-flex",
-                          alignItems: "center",
+                          color: 'primary.main',
+                          textDecoration: 'underline',
+                          display: 'inline-flex',
+                          alignItems: 'center',
                         }}
                       >
                         {props.children} <OpenInNew sx={{ ml: 0.5 }} />
@@ -82,11 +82,9 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
                 },
               }}
             >
-              {
-                activity.profiles.find(
-                  (p: any) => p.description?.long && p.type === "web_element"
-                ).description?.long?.markdown
-              }
+              {activity.profiles.find(
+                (p: any) => p.description?.long && p.type === 'web_element'
+              ).description?.long?.markdown}
             </Markdown>
           </Paper>
         )}
@@ -107,14 +105,13 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
                         href={`https://www.google.com/maps/search/?api=1&query=${place.center.coordinates[1]}%2C${place.center.coordinates[0]}&query_place_id=${place.gmaps?.id}`}
                         target="_blank"
                         sx={{
-                          color: "primary.main",
-                          textDecoration: "underline",
-                          display: "inline-flex",
-                          alignItems: "center",
+                          color: 'primary.main',
+                          textDecoration: 'underline',
+                          display: 'inline-flex',
+                          alignItems: 'center',
                         }}
                       >
-                        {place.localKey ?? place.key}{" "}
-                        <OpenInNew sx={{ ml: 0.5 }} />
+                        {place.localKey ?? place.key} <OpenInNew sx={{ ml: 0.5 }} />
                       </Link>
                     )}
                   </Stack>
@@ -133,26 +130,21 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
                   {contacts.map((contact: any) => (
                     <Paper key={contact.mainEmail} sx={{ p: 2 }}>
                       {contact.name && (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                        >
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                           <Typography>{contact.name}</Typography>
                         </Box>
                       )}
                       {contact.mainEmail && (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                        >
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                           <Email sx={{ mr: 1 }} />
                           <Typography>{contact.mainEmail}</Typography>
                         </Box>
                       )}
                       {contact.mainPhoneNumber && (
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <Phone sx={{ mr: 1 }} />
                           <Typography>
-                            {contact.mainPhoneNumberFormatted ??
-                              contact.mainPhoneNumber}
+                            {contact.mainPhoneNumberFormatted ?? contact.mainPhoneNumber}
                           </Typography>
                         </Box>
                       )}
@@ -173,29 +165,24 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
                   <Stack direction="column" spacing={1}>
                     {profiles.map((profile: any) => (
                       <Stack direction="row" gap={1} key={profile.key}>
-                        <Typography sx={{ fontWeight: "bold" }}>
-                          {profile.type}
-                        </Typography>
+                        <Typography sx={{ fontWeight: 'bold' }}>{profile.type}</Typography>
                         {profile.link ? (
                           <Link
                             href={profile.link}
                             target="_blank"
                             sx={{
-                              color: "primary.main",
-                              textDecoration: "underline",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
+                              color: 'primary.main',
+                              textDecoration: 'underline',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
                             }}
                           >
-                            {profile.localKey ?? profile.key}{" "}
-                            <OpenInNew sx={{ ml: 0.5 }} />
+                            {profile.localKey ?? profile.key} <OpenInNew sx={{ ml: 0.5 }} />
                           </Link>
                         ) : (
-                          <Typography>
-                            {profile.localKey ?? profile.key}
-                          </Typography>
+                          <Typography>{profile.localKey ?? profile.key}</Typography>
                         )}
                       </Stack>
                     ))}
@@ -220,17 +207,16 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
                     <Link
                       href={`https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=${organisation.number
                         .match(/\d+/g)
-                        .join("")}`}
+                        .join('')}`}
                       target="_blank"
                       sx={{
-                        color: "primary.main",
-                        textDecoration: "underline",
-                        display: "inline-flex",
-                        alignItems: "center",
+                        color: 'primary.main',
+                        textDecoration: 'underline',
+                        display: 'inline-flex',
+                        alignItems: 'center',
                       }}
                     >
-                      {place?.localKey ?? place?.key}{" "}
-                      <OpenInNew sx={{ ml: 0.5 }} />
+                      {place?.localKey ?? place?.key} <OpenInNew sx={{ ml: 0.5 }} />
                     </Link>
                   </Stack>
                   <Typography variant="subtitle1" component="p">
@@ -294,7 +280,8 @@ export default function ActivityTemplate({ data }: PageProps<any>) {
       </Box>
     </Layout>
   );
-}
+};
+
 export const query = graphql`
   query GetActivityAndRelatedData($id: String!) {
     activity: mongodbActivities(_id: { eq: $id }) {
@@ -456,19 +443,14 @@ export const query = graphql`
       }
     }
     sessions: allMongodbSessions(
-      filter: { manager: { activity: { mongodb_id: { eq: $id } } } }
+      
     ) {
       nodes {
         _id
-        name
-        timeRange {
-          from
-          to
-        }
-        place {
-          title
-        }
+        
       }
     }
   }
 `;
+
+export default ActivityTemplate;
