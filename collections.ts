@@ -1,5 +1,6 @@
 export const collections: string[] = [
   "products",
+  "recipes",
   "organisations",
   "workspaces",
   "activities",
@@ -18,5 +19,6 @@ export const collections: string[] = [
   "partnerships",
   "contributions",
   "actions",
-  "contacts"
+  "contacts",
+  "sessions"
 ];

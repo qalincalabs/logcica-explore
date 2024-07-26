@@ -64,6 +64,8 @@ const config: GatsbyConfig = {
       { name: "GROUPEMENTS", url: "/partnership" },
       { name: "MARCHÉS", url: "/marketplace" },
       { name: "PRODUITS", url: "/product" },
+      { name: "RECIPE", url: "/recipe" },
+      {name:"ÉVÉNEMENTS", url: "/event"}
     ],
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
@@ -72,5 +74,6 @@ const config: GatsbyConfig = {
   graphqlTypegen: true,
   plugins: ["gatsby-plugin-styled-components"],
 };
+
 
 export default config;

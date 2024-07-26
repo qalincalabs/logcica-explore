@@ -23,7 +23,7 @@ const searchIndices = [{ name: 'Activities', title: 'Activité' }];
 
 export default function AppTopBar() {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"));
   const [menuDrawerOpen, setMenuDrawerOpen] = React.useState(false);
 
   const menuItems = [
@@ -31,7 +31,9 @@ export default function AppTopBar() {
     { label: "GROUPEMENTS", path: "/partnership" },
     { label: "MARCHÉS", path: "/marketplace" },
     { label: "PRODUITS", path: "/product" },
-    { label: "FAVORIS", path: "/favorites" }, // Ajout du bouton Favoris
+    { label: "ÉVÉNEMENTS", path: "/event"},
+    { label: "RECETTES", path: "/recipe" },
+    { label: "FAVORIS", path: "/favorites" }
   ];
 
   const handleMenuDrawerOpen = () => {
@@ -112,7 +114,7 @@ export default function AppTopBar() {
           </Box>
           <Box
             sx={{
-              display: { xs: 'none', sm: 'none', md: 'flex' },
+              display: { xs: 'none', sm: 'none', md: 'none', lg: 'flex' },
               flexGrow: 1,
             }}
           >

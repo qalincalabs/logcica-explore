@@ -19,27 +19,37 @@ import {
   Hidden,
   CssBaseline,
   useTheme,
-  useMediaQuery,
+  useMediaQuery
 } from "@mui/material";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit, Share } from "@mui/icons-material";
 import Layout from "../components/layout";
+import RenameDialog from "../components/RenameDialog";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
+import LZString from 'lz-string';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
-// Utility functions
-const generateShareText = (favorites: any, data: any) => {
-  const sections = [
-    { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
-    { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
-    { key: 'activities', title: 'Producteurs', nodes: data.activities.nodes },
-    { key: 'products', title: 'Produits', nodes: data.products.nodes },
-  ];
+const typeNames = ["partnership", "marketplace", "activity", "product", "event", "recipe"]
 
-  return sections.reduce((text, { key, title, nodes }) => {
-    if (favorites[key]?.length) {
-      text += `${title}:\n${favorites[key].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
+const getFilter = (data) => {
+  return [
+    { key: 'partnership', otherKey: 'partnerships', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
+    { key: 'marketplace', otherKey: 'counters', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
+    { key: 'activity', otherKey: 'activities', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
+    { key: 'product', otherKey: 'products', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
+    { key: 'event', otherKey: 'sessions', title: 'Événements', dataKey: 'session', dataNodes: data.events.nodes },
+    { key: 'recipe', otherKey: 'recipes', title: 'Recettes', dataKey: 'recipe', dataNodes: data.recipes.nodes },
+  ];
+}
+
+const generateShareText = (favorites, data) => {
+  const sections = getFilter(data)
+
+  return sections.reduce((text, { otherKey, title, nodes }) => {
+    if (favorites[otherKey]?.length) {
+      text += `${title}:\n${favorites[otherKey].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
     }
     return text;
   }, "Mes Favoris:\n\n");
@@ -87,7 +97,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
                 </ListItemAvatar>
                 <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
                 <ListItemIcon>
-                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey, item.listId); }}>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey); }}>
                     <Delete />
                   </IconButton>
                 </ListItemIcon>
@@ -100,7 +110,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
   )
 );
 
-const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
+const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -111,15 +121,22 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
 
   const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
   const [shareText, setShareText] = useState(generateShareText(favorites, data));
-  const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
+  const [filter, setFilter] = useState(typeNames.map(n => ({collectionName: n, visible: true})));
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedList, setSelectedList] = useState("default");
+
+  const allLists = favoriteService.allLists();
+  const [selectedList, setSelectedList] = useState("");
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [listToRename, setListToRename] = useState(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [listToRemove, setListToRemove] = useState<string | null>(null);
+  const [itemToRemove, setItemToRemove] = useState({ id: '', type: '' });
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
     if(typeof window == "undefined")
-      return ["partnership", "marketplace", "activity", "product"];
+      return typeNames;
     const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
+    return savedOrder ? JSON.parse(savedOrder) : typeNames;
   });
 
   useEffect(() => {
@@ -127,29 +144,49 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
   }, [sectionsOrder]);
 
-
   useEffect(() => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
   }, [data]);
 
-  const handleRemoveFavorite = (id: string, type: string, listId: string) => {
-    favoriteService.removeItemFromList({ targetType: type, targetId: id, listId });
-    const updatedFavorites = refreshFavorites();
-    setFavorites(updatedFavorites);
-    setShareText(generateShareText(updatedFavorites, data));
+  useEffect(() => {
+    const hash = location.hash.replace("#", "");
+    if (hash) {
+      setSelectedList(hash);
+    }else{
+      setSelectedList("default")
+    }
+  }, [location]);
+
+  const handleRemoveFavorite = (id: string, type: string) => {
+    setItemToRemove({ id, type });
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmRemoveFavorite = () => {
+    const { id, type } = itemToRemove;
+    favoriteService.removeItemFromList({ targetType: type, targetId: id, listId: selectedList });
+    refresh();
+    setConfirmDialogOpen(false);
   };
 
   const handleRemoveFavoriteList = (listId: string) => {
-    favoriteService.removeList({ id: listId });
-    const updatedFavorites = refreshFavorites();
-    setFavorites(updatedFavorites);
-    setShareText(generateShareText(updatedFavorites, data));
+    setListToRemove(listId);
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmRemoveFavoriteList = () => {
+    if (listToRemove) {
+      favoriteService.removeList({ id: listToRemove });
+      refresh();
+      setListToRemove(null);
+      setConfirmDialogOpen(false);
+    }
   };
 
   const handleItemClick = (type: string, id: string, activityId?: string) => {
-    navigate(getLink(type, id, activityId))
+    navigate(getLink(type, id, activityId));
   };
 
   const getLink = (type: string, id: string, activityId?: string) => {
@@ -158,12 +195,18 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
         return `/activity/${activityId}#${id}`;
       case 'counter':
         return `/marketplace/${id}`;
+      case 'session':
+        return `/event/${id}`;
       default:
         return `/${type}/${id}`;
     }
-  }
+  };
 
-  const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
+  const handleFilterChange = (name: string) => {
+    setFilter(filter.map(i =>
+      i.collectionName === name ? { ...i, visible: !i.visible } : i
+    ))
+  };
 
   const handleListSelect = (listId: string) => {
     setSelectedList(listId);
@@ -177,20 +220,20 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     setSectionsOrder(newOrder);
   };
 
-  const filters = [
-    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
-    { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
-    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
-    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
-  ];
+  const filters = getFilter(data)
 
   const filteredFavorites = sectionsOrder.map(sectionKey => {
-    const { key, dataKey } = filters.find(f => f.key === sectionKey);
-    return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
+    const filterItem = filters.find(f => f.key === sectionKey);
+    if (!filterItem || !selectedList) {
+      return [];
+    }
+    const { key, dataKey } = filterItem;
+    return createFilteredList(favorites[selectedList] || [], filter.find(i => i.collectionName == key)?.visible, dataKey);
   });
 
   const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
     const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
+
     const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
       const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
       acc[key] = filteredFavorites[index].map(item => {
@@ -207,7 +250,27 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
     exportFunctions[format](favoritesData, selectedListName);
   };
 
-  const allLists = favoriteService.allLists();
+  const refresh = () => {
+    const updatedFavorites = refreshFavorites();
+    setFavorites(updatedFavorites);
+    setShareText(generateShareText(updatedFavorites, data));
+  }
+
+  const generateShareURL = () => {
+    const list = favoriteService.findListById(selectedList);
+    const items = favoriteService.findItems({ listIds: [selectedList] });
+
+    const exportedList = {
+      ...list,
+      data: items.reduce((acc, curr) => {
+        let { targetId, targetType } = curr;
+        return { ...acc, [targetType]: [...(acc[targetType] || []), targetId] };
+      }, {} as Record<string, string[]>)
+    };
+
+    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
+    return `${window.location.origin}/share/list/${compressedData}`;
+  };
 
   const drawerContent = (
     <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -223,9 +286,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
             >
               <ListItemText primary={list.name} />
               {list.id !== 'default' && (
-                <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
-                  <DeleteForever />
-                </IconButton>
+                <>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
+                    <DeleteForever />
+                  </IconButton>
+                  <IconButton onClick={(e) => { e.stopPropagation(); setListToRename(list.id); setRenameDialogOpen(true); }}>
+                    <Edit />
+                  </IconButton>
+                </>
               )}
             </ListItem>
           ))}
@@ -261,29 +329,42 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
               <Typography align="center" variant="h3" my={4} sx={{ flexGrow: 1, fontWeight: 'bold', color: '#FFD700' }}>Mes Favoris</Typography>
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
-              <ButtonGroup variant="outlined">
+              <ButtonGroup variant="outlined" sx={{flexWrap: "wrap", justifyContent: "center"}}>
                 {filters.map(({ title, key }) => (
                   <Button key={title} onClick={() => handleFilterChange(key)}
-                    sx={{ color: 'black', backgroundColor: filter[key] ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
+                    sx={{ color: 'black', backgroundColor: filter.find(i => i.collectionName == key)?.visible ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
                     {title}
                   </Button>
                 ))}
               </ButtonGroup>
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
-              {['json', 'xlsx', 'pdf'].map(format => (
-                <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
-                  <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-                    {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
-                    <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+              <ButtonGroup variant="outlined">
+                {['json', 'xlsx', 'pdf'].map(format => (
+                  <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
+                    <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
+                      {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
+                      <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+                    </IconButton>
+                  </Tooltip>
+                ))}
+                <Tooltip title="Partager">
+                  <IconButton onClick={() => { const url = generateShareURL(); navigator.clipboard.writeText(url); alert(`URL de partage copiée: ${url}`); }}>
+                    <Share />
                   </IconButton>
                 </Tooltip>
-              ))}
+              </ButtonGroup>
             </Box>
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-                {sectionsOrder.map((sectionKey, index) => {
-                  const { title, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+                
+                {selectedList && sectionsOrder.map((sectionKey, index) => {
+                  const filterItem = filters.find(f => f.key === sectionKey);
+                  if (!filterItem) {
+                    return null;
+                  }
+                  const { title, dataKey, dataNodes } = filterItem;
+                    
                   return (
                     <FavoritesList key={title} title={title} favorites={filteredFavorites[index]} handleItemClick={handleItemClick}
                       handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
@@ -296,9 +377,26 @@ const FavoritesPage: React.FC<PageProps> = ({ data }: any) => {
           </Box>
         </Grid>
       </Grid>
+
+      <ConfirmationDialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+        onConfirm={listToRemove ? confirmRemoveFavoriteList : confirmRemoveFavorite}
+        title="Confirmation de suppression"
+        content={`Êtes-vous sûr de vouloir supprimer ${listToRemove ? 'cette liste de favoris' : 'cet élément de vos favoris'} ?`}
+      />
+        
+      <RenameDialog
+        listToRename={listToRename}
+        open={renameDialogOpen}
+        onClose={() => { 
+          setRenameDialogOpen(false); 
+          refresh()}
+        }
+      />
     </Layout>
   );
-};
+}
 
 export default FavoritesPage;
 
@@ -314,11 +412,11 @@ export const query = graphql`
       nodes {
         _id
         name
-        producer {	
-          activity {	
-            _id	
-            name	
-          }	
+        producer { 
+          activity { 
+            _id 
+            name 
+          } 
         }
       }
     }
@@ -334,5 +432,18 @@ export const query = graphql`
         name
       }
     }
+    events: allMongodbSessions {
+      nodes {
+        _id
+        name
+      }
+    }
+    recipes: allMongodbRecipes {
+      nodes {
+        _id
+        name
+      }
+    }
   }
 `;
+

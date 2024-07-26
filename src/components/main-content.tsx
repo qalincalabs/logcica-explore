@@ -17,6 +17,7 @@ interface MainContentProps {
   type: string;
   listItemContent: (arg0: any) => any;
   dataList: any;
+  disableFavorites?: boolean 
 }
 
 export default function MainContent(props: MainContentProps) {
@@ -45,19 +46,21 @@ export default function MainContent(props: MainContentProps) {
           {props.title}
         </Typography>
       </Box>
-      <FilterBar
-        favoriteFilterToggle={showFavoritesOnly}
-        favoriteFilterToggleCallback={() => {
-          setShowFavoritesOnly(!showFavoritesOnly);
-          setFavorites(getAllFavorites());
-        }}
-      />
+      { !props.disableFavorites && 
+        <FilterBar
+          favoriteFilterToggle={showFavoritesOnly}
+          favoriteFilterToggleCallback={() => {
+            setShowFavoritesOnly(!showFavoritesOnly);
+            setFavorites(getAllFavorites());
+          }}
+        />
+      }
       <Box display="flex" justifyContent="center" alignItems="center">
         <List sx={{ maxWidth: "1000px" }}>
           {filteredDataList.map((m: any) => (
             <ListItem key={m._id}>
               {props.listItemContent(m)}
-              <FavoriteIcons type={type} targetId={m._id} />
+              { !props.disableFavorites && <FavoriteIcons type={type} targetId={m._id} /> }
             </ListItem>
           ))}
         </List>
