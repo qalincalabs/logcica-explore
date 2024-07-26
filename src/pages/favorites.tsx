@@ -31,6 +31,8 @@ import LZString from 'lz-string';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
+const typeNames = ["partnership", "marketplace", "activity", "product"]
+
 const generateShareText = (favorites, data) => {
   const sections = [
     { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
@@ -113,7 +115,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
   const [shareText, setShareText] = useState(generateShareText(favorites, data));
-  const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
+  const [filter, setFilter] = useState(typeNames.map(n => ({collectionName: n, visible: true})));
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const allLists = favoriteService.allLists();
@@ -126,9 +128,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
     if(typeof window == "undefined")
-      return ["partnership", "marketplace", "activity", "product"];
+      return typeNames;
     const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
+    return savedOrder ? JSON.parse(savedOrder) : typeNames;
   });
 
   useEffect(() => {
@@ -190,7 +192,11 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     }
   };
 
-  const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
+  const handleFilterChange = (name: string) => {
+    setFilter(filter.map(i =>
+      i.collectionName === name ? { ...i, visible: !i.visible } : i
+    ))
+  };
 
   const handleListSelect = (listId: string) => {
     setSelectedList(listId);
@@ -217,7 +223,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
       return [];
     }
     const { key, dataKey } = filterItem;
-    return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
+    return createFilteredList(favorites[selectedList] || [], filter.find(i => i.collectionName == key)?.visible, dataKey);
   });
 
   const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
@@ -321,7 +327,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
               <ButtonGroup variant="outlined">
                 {filters.map(({ title, key }) => (
                   <Button key={title} onClick={() => handleFilterChange(key)}
-                    sx={{ color: 'black', backgroundColor: filter[key] ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
+                    sx={{ color: 'black', backgroundColor: filter.find(i => i.collectionName == key)?.visible ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
                     {title}
                   </Button>
                 ))}
