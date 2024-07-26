@@ -29,10 +29,9 @@ const EventPage: React.FC<PageProps> = ({ data }: any) => {
     <Layout>
       <MainContent
         title="Événements"
-        type="event"
+        type="session"
         dataList={filteredAndSortedEvents}
         listItemContent={EventListItem}
-        disableFavorites
       />
     </Layout>
   );

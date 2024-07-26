@@ -31,19 +31,25 @@ import LZString from 'lz-string';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
-const typeNames = ["partnership", "marketplace", "activity", "product"]
+const typeNames = ["partnership", "marketplace", "activity", "product", "event", "recipe"]
+
+const getFilter = (data) => {
+  return [
+    { key: 'partnership', otherKey: 'partnerships', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
+    { key: 'marketplace', otherKey: 'counters', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
+    { key: 'activity', otherKey: 'activities', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
+    { key: 'product', otherKey: 'products', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
+    { key: 'event', otherKey: 'sessions', title: 'Événements', dataKey: 'session', dataNodes: data.events.nodes },
+    { key: 'recipe', otherKey: 'recipes', title: 'Recettes', dataKey: 'recipe', dataNodes: data.recipes.nodes },
+  ];
+}
 
 const generateShareText = (favorites, data) => {
-  const sections = [
-    { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
-    { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
-    { key: 'activities', title: 'Producteurs', nodes: data.activities.nodes },
-    { key: 'products', title: 'Produits', nodes: data.products.nodes },
-  ];
+  const sections = getFilter(data)
 
-  return sections.reduce((text, { key, title, nodes }) => {
-    if (favorites[key]?.length) {
-      text += `${title}:\n${favorites[key].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
+  return sections.reduce((text, { otherKey, title, nodes }) => {
+    if (favorites[otherKey]?.length) {
+      text += `${title}:\n${favorites[otherKey].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
     }
     return text;
   }, "Mes Favoris:\n\n");
@@ -210,12 +216,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     setSectionsOrder(newOrder);
   };
 
-  const filters = [
-    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
-    { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
-    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
-    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
-  ];
+  const filters = getFilter(data)
 
   const filteredFavorites = sectionsOrder.map(sectionKey => {
     const filterItem = filters.find(f => f.key === sectionKey);
@@ -324,7 +325,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
               <Typography align="center" variant="h3" my={4} sx={{ flexGrow: 1, fontWeight: 'bold', color: '#FFD700' }}>Mes Favoris</Typography>
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
-              <ButtonGroup variant="outlined">
+              <ButtonGroup variant="outlined" sx={{flexWrap: "wrap", justifyContent: "center"}}>
                 {filters.map(({ title, key }) => (
                   <Button key={title} onClick={() => handleFilterChange(key)}
                     sx={{ color: 'black', backgroundColor: filter.find(i => i.collectionName == key)?.visible ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
@@ -422,6 +423,18 @@ export const query = graphql`
       }
     }
     activities: allMongodbActivities {
+      nodes {
+        _id
+        name
+      }
+    }
+    events: allMongodbSessions {
+      nodes {
+        _id
+        name
+      }
+    }
+    recipes: allMongodbRecipes {
       nodes {
         _id
         name

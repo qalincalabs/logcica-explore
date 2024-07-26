@@ -52,6 +52,18 @@ export function FavoriteListContent({ favorites }: FavoriteListContent) {
           name
         }
       }
+      events: allMongodbSessions {
+        nodes {
+          _id
+          name
+        }
+      }
+      recipes: allMongodbRecipes {
+        nodes {
+          _id
+          name
+        }
+      }
     }
   `);
 
@@ -79,6 +91,19 @@ export function FavoriteListContent({ favorites }: FavoriteListContent) {
       title: "Produits",
       dataKey: "product",
       dataNodes: data?.products?.nodes || [],
+    },
+
+    {
+      key: "session",
+      title: "Évènements",
+      dataKey: "session",
+      dataNodes: data?.events?.nodes || [],
+    },
+    {
+      key: "recipe",
+      title: "Recettes",
+      dataKey: "recipe",
+      dataNodes: data?.recipes?.nodes || [],
     },
   ];
 
