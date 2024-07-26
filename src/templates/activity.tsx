@@ -1,5 +1,5 @@
 import React from 'react';
-import { graphql, PageProps } from 'gatsby';
+import { graphql, navigate, PageProps } from 'gatsby';
 import { Box, Grid, Paper, Stack, Typography, Link } from '@mui/material';
 import { OpenInNew, Email, Phone } from '@mui/icons-material';
 import Layout from '../components/layout';
@@ -257,7 +257,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                 <Grid container spacing={2}>
                   {sessions.map((session: any) => (
                     <Grid item xs={12} md={6} xl={4} key={session._id}>
-                      <Paper sx={{ p: 2 }}>
+                      <Paper sx={{ p: 2 }} onClick={() => navigate("/event/" + session._id)}>
                         <Typography variant="h6" component="h6">
                           {session.name}
                         </Typography>

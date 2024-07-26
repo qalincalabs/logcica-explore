@@ -41,6 +41,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       type mongodbSessionsManager implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
         activity: mongodbActivities @link(by: "mongodb_id")
+        partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
       type mongodbCatalogs implements Node {
         productCategories: [mongodbCategories] @link(by: "mongodb_id")

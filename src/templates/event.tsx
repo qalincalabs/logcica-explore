@@ -11,7 +11,7 @@ import { fr } from 'date-fns/locale';
 export default function EventTemplate({ data }: PageProps<any>) {
   const event = data.event || {};
   const place = event.place || {};
-  const manager = event.manager?.organisation || {};
+  const manager = event.manager?.organisation || event.manager?.activity || event.manager?.partnership || {};
   const categories = event.categories || [];
   const profiles = event.profiles || [];
   const formattedFrom = event.timeRange?.from ? format(new Date(event.timeRange.from), 'PPP p', { locale: fr }) : null;
@@ -27,38 +27,47 @@ export default function EventTemplate({ data }: PageProps<any>) {
           <FavoriteIcons type="event" targetId={event._id} />
         </Box>
 
-        {event.description?.short?.markdown && (
-          <Paper sx={{ p: 1, m: 2 }}>
-            <Markdown
-              options={{
-                overrides: {
-                  a: {
-                    component: (props: any) => (
-                      <Link
-                        href={props.href}
-                        target="_blank"
-                        sx={{
-                          color: "primary.main",
-                          textDecoration: "underline",
-                          display: "inline-flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
-                      </Link>
-                    ),
-                  },
-                },
-              }}
-            >
-              {event.description.short.markdown}
-            </Markdown>
-          </Paper>
-        )}
-
         <Grid container>
+
+          {formattedFrom && formattedTo && (
+            <Grid item xs={12} sm={6} md={4} xl={3}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Durée
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <EventIcon sx={{ mr: 1 }} />
+                    <Typography>
+                      {formattedFrom}
+                      <br/>
+                      {formattedTo}
+                    </Typography>
+                  </Stack>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
+
+          {categories.length > 0 && (
+            <Grid item xs={12} sm={6} md={3} xl={2}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Catégories
+                </Typography>
+                <Paper sx={{ p: 2 }}>
+                  <Stack>
+                    {categories.map((category: any) => (
+                      <Typography key={category._id}>{category.name}</Typography>
+                    ))}
+                  </Stack>
+                </Paper>
+              </Box>
+            </Grid>
+          )}
+
           {place.address && (
-            <Grid item xs={12} sm={12} md={6} xl={4}>
+            <Grid item xs={12} sm={6} md={5} xl={4}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
                   Adresse
@@ -87,7 +96,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
           )}
 
           {manager.name && (
-            <Grid item xs={12} sm={12} md={6} xl={4}>
+            <Grid item xs={12} sm={6} md={4} xl={3}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
                   Organisateur
@@ -99,25 +108,8 @@ export default function EventTemplate({ data }: PageProps<any>) {
             </Grid>
           )}
 
-          {categories.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={4}>
-              <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4">
-                  Catégories
-                </Typography>
-                <Paper sx={{ p: 2 }}>
-                  <Stack>
-                    {categories.map((category: any) => (
-                      <Typography key={category._id}>{category.name}</Typography>
-                    ))}
-                  </Stack>
-                </Paper>
-              </Box>
-            </Grid>
-          )}
-
           {profiles.length > 0 && (
-            <Grid item xs={12} sm={12} md={6} xl={4}>
+            <Grid item xs={12} sm={6} md={6} xl={3}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
                   Profils
@@ -147,21 +139,36 @@ export default function EventTemplate({ data }: PageProps<any>) {
           )}
         </Grid>
 
-        {formattedFrom && formattedTo && (
-          <Box sx={{ m: 2 }}>
-            <Typography variant="h4" component="h4">
-              Durée
-            </Typography>
-            <Paper sx={{ p: 2 }}>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <EventIcon sx={{ mr: 1 }} />
-                <Typography>
-                  {formattedFrom} - {formattedTo}
-                </Typography>
-              </Stack>
-            </Paper>
-          </Box>
-        )}
+
+
+        {(event.description?.long?.markdown || event.description?.short?.markdown) && (
+          <Paper sx={{ p: 1, m: 2 }}>
+            <Markdown
+              options={{
+                overrides: {
+                  a: {
+                    component: (props: any) => (
+                      <Link
+                        href={props.href}
+                        target="_blank"
+                        sx={{
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        {props.children} <OpenInNew sx={{ ml: 0.5 }} />
+                      </Link>
+                    ),
+                  },
+                },
+              }}
+            >
+              {event.description?.long?.markdown ?? event.description?.short?.markdown}
+            </Markdown>
+          </Paper>
+        )}  
       </Box>
     </Layout>
   );
@@ -172,8 +179,22 @@ export const query = graphql`
     event: mongodbSessions(_id: { eq: $id }) {
       _id
       name
+      manager {
+        activity {
+          name
+        }
+        organisation {
+          name
+        }
+        partnership {
+          name
+        }
+      }
       description {
         short {
+          markdown
+        }
+        long {
           markdown
         }
       }
