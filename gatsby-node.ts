@@ -33,6 +33,16 @@ exports.createSchemaCustomization = ({ actions }) => {
         workspace: mongodbWorkspaces @link(by: "mongodb_id")
         activity: mongodbActivities @link(by: "mongodb_id")
       }
+      type mongodbSessions implements Node {
+        place: mongodbPlaces @link(by: "mongodb_id")
+        categories: [mongodbCategories] @link(by: "mongodb_id")
+        profiles: [mongodbProfiles] @link(by: "mongodb_id")
+      }
+      type mongodbSessionsManager implements Node {
+        organisation: mongodbOrganisations @link(by: "mongodb_id")
+        activity: mongodbActivities @link(by: "mongodb_id")
+        partnership: mongodbPartnerships @link(by: "mongodb_id")
+      }
       type mongodbCatalogs implements Node {
         productCategories: [mongodbCategories] @link(by: "mongodb_id")
       }
@@ -99,6 +109,13 @@ exports.createSchemaCustomization = ({ actions }) => {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
         partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
+      type mongodbRecipesNutrientList{
+        nutrient: mongodbCodes @link(by: "mongodb_id")
+      }
+      type mongodbRecipesAllergenList implements Node {
+        allergen: mongodbCodes @link(by: "mongodb_id")
+        containmentLevel: mongodbCodes @link(by: "mongodb_id")
+      }
       type mongodbRecipes implements Node {
         difficulty: mongodbCategories @link(by: "mongodb_id")
         seasonality: mongodbCategories @link(by: "mongodb_id")
@@ -112,12 +129,6 @@ exports.createSchemaCustomization = ({ actions }) => {
       }
       type mongodbPlaces {
         within: [mongodbPlaces] @link(by: "mongodb_id")
-      }
-      type mongodbSessions implements Node {
-        place: mongodbPlaces @link(by: "mongodb_id")
-        manager: mongodbActivitiesManager @link(by: "mongodb_id")
-        categories: [mongodbCategories] @link(by: "mongodb_id")
-        profiles: [mongodbProfiles] @link(by: "mongodb_id")
       }
       type mongodbProfiles implements Node {
         name: String
@@ -210,7 +221,7 @@ exports.createPages = async function ({ actions, graphql }) {
       context: { id: _id },
     });
   });
-      
+
   const { data: sessionsQuery } = await graphql(`
     query {
       allMongodbSessions {

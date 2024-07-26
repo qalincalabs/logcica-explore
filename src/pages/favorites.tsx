@@ -19,7 +19,7 @@ import {
   Hidden,
   CssBaseline,
   useTheme,
-  useMediaQuery,
+  useMediaQuery
 } from "@mui/material";
 import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit, Share } from "@mui/icons-material";
 import Layout from "../components/layout";
@@ -115,6 +115,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   const [shareText, setShareText] = useState(generateShareText(favorites, data));
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   const allLists = favoriteService.allLists();
   const [selectedList, setSelectedList] = useState("");
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
@@ -124,14 +125,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   const [itemToRemove, setItemToRemove] = useState({ id: '', type: '' });
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
-    if (typeof window == "undefined")
+    if(typeof window == "undefined")
       return ["partnership", "marketplace", "activity", "product"];
     const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
     return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined")
+    if(typeof window !== "undefined")
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
   }, [sectionsOrder]);
 
@@ -223,11 +224,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
 
     const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
-      const filterItem = filters.find(f => f.key === sectionKey);
-      if (!filterItem) {
-        return acc;
-      }
-      const { key, dataKey, dataNodes } = filterItem;
+      const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
       acc[key] = filteredFavorites[index].map(item => {
         const node = dataNodes.find((p: any) => p._id === item.targetId);
         return { 
@@ -259,6 +256,10 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
         return { ...acc, [targetType]: [...(acc[targetType] || []), targetId] };
       }, {} as Record<string, string[]>)
     };
+
+    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
+    return `${window.location.origin}/share/list/${compressedData}`;
+  };
 
     const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
     return `${window.location.origin}/share/list/${compressedData}`;
@@ -349,15 +350,17 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
             </Box>
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
+                
                 {selectedList && sectionsOrder.map((sectionKey, index) => {
                   const filterItem = filters.find(f => f.key === sectionKey);
                   if (!filterItem) {
                     return null;
                   }
                   const { title, dataKey, dataNodes } = filterItem;
+                    
                   return (
                     <FavoritesList key={title} title={title} favorites={filteredFavorites[index]} handleItemClick={handleItemClick}
-                      handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey)}
+                      handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
                       dataKey={dataKey} dataNodes={dataNodes}
                       moveSection={moveSection} index={index} totalSections={sectionsOrder.length} />
                   );
@@ -375,7 +378,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
         title="Confirmation de suppression"
         content={`Êtes-vous sûr de vouloir supprimer ${listToRemove ? 'cette liste de favoris' : 'cet élément de vos favoris'} ?`}
       />
-
+        
       <RenameDialog
         listToRename={listToRename}
         open={renameDialogOpen}
@@ -384,7 +387,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
           refresh()}
         }
       />
-
     </Layout>
   );
 };
@@ -425,3 +427,4 @@ export const query = graphql`
     }
   }
 `;
+
