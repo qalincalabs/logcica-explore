@@ -21,14 +21,7 @@ const SharePage = ({ params }: PageProps) => {
 
   const handleAddToFavorites = () => {
     const listId = favoriteService.importList(exportedList); // Assurez-vous que cette fonction retourne l'ID de la liste ajoutée
-    if (listId) {
-      navigate(`/favorites#${listId}`);
-      setTimeout(() => {
-        window.location.reload();
-      }, 100); 
-    } else {
-      console.error("List ID is undefined");
-    }
+    navigate(`/favorites#${listId}`)
   };
 
   return (
