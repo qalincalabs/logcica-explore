@@ -108,7 +108,7 @@ export function AuthorListCard({ recipe }: any) {
       <Paper
         elevation={7}
         square={false}
-        sx={{ display: 'flex', justifyContent: 'space-around' }}
+        sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: { sm: 'space-evenly' }, alignItems: 'center' }}
       >
         {recipe.author?.partnership?.name && (
           <CardContent >
