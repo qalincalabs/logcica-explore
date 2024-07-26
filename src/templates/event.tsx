@@ -24,7 +24,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
           <Typography align="center" variant="h3" component="h3" mr={2}>
             {event.name}
           </Typography>
-          <FavoriteIcons type="event" targetId={event._id} />
+          <FavoriteIcons type="session" targetId={event._id} />
         </Box>
 
         <Grid container>
