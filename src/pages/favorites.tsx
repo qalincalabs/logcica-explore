@@ -154,6 +154,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     const hash = location.hash.replace("#", "");
     if (hash) {
       setSelectedList(hash);
+    }else{
+      setSelectedList("default")
     }
   }, [location]);
 
@@ -193,6 +195,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
         return `/activity/${activityId}#${id}`;
       case 'counter':
         return `/marketplace/${id}`;
+      case 'session':
+        return `/event/${id}`;
       default:
         return `/${type}/${id}`;
     }
