@@ -31,17 +31,25 @@ import LZString from 'lz-string';
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
-const generateShareText = (favorites, data) => {
-  const sections = [
-    { key: 'partnerships', title: 'Groupements', nodes: data.partnerships.nodes },
-    { key: 'counters', title: 'Marchés', nodes: data.marketplaces.nodes },
-    { key: 'activities', title: 'Producteurs', nodes: data.activities.nodes },
-    { key: 'products', title: 'Produits', nodes: data.products.nodes },
-  ];
+const typeNames = ["partnership", "marketplace", "activity", "product", "event", "recipe"]
 
-  return sections.reduce((text, { key, title, nodes }) => {
-    if (favorites[key]?.length) {
-      text += `${title}:\n${favorites[key].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
+const getFilter = (data) => {
+  return [
+    { key: 'partnership', otherKey: 'partnerships', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
+    { key: 'marketplace', otherKey: 'counters', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
+    { key: 'activity', otherKey: 'activities', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
+    { key: 'product', otherKey: 'products', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
+    { key: 'event', otherKey: 'sessions', title: 'Événements', dataKey: 'session', dataNodes: data.events.nodes },
+    { key: 'recipe', otherKey: 'recipes', title: 'Recettes', dataKey: 'recipe', dataNodes: data.recipes.nodes },
+  ];
+}
+
+const generateShareText = (favorites, data) => {
+  const sections = getFilter(data)
+
+  return sections.reduce((text, { otherKey, title, nodes }) => {
+    if (favorites[otherKey]?.length) {
+      text += `${title}:\n${favorites[otherKey].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
     }
     return text;
   }, "Mes Favoris:\n\n");
@@ -113,7 +121,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
   const [shareText, setShareText] = useState(generateShareText(favorites, data));
-  const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
+  const [filter, setFilter] = useState(typeNames.map(n => ({collectionName: n, visible: true})));
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const allLists = favoriteService.allLists();
@@ -126,9 +134,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
     if(typeof window == "undefined")
-      return ["partnership", "marketplace", "activity", "product"];
+      return typeNames;
     const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return savedOrder ? JSON.parse(savedOrder) : ["partnership", "marketplace", "activity", "product"];
+    return savedOrder ? JSON.parse(savedOrder) : typeNames;
   });
 
   useEffect(() => {
@@ -146,6 +154,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     const hash = location.hash.replace("#", "");
     if (hash) {
       setSelectedList(hash);
+    }else{
+      setSelectedList("default")
     }
   }, [location]);
 
@@ -185,12 +195,18 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
         return `/activity/${activityId}#${id}`;
       case 'counter':
         return `/marketplace/${id}`;
+      case 'session':
+        return `/event/${id}`;
       default:
         return `/${type}/${id}`;
     }
   };
 
-  const handleFilterChange = (name: string) => setFilter(prev => ({ ...prev, [name]: !prev[name] }));
+  const handleFilterChange = (name: string) => {
+    setFilter(filter.map(i =>
+      i.collectionName === name ? { ...i, visible: !i.visible } : i
+    ))
+  };
 
   const handleListSelect = (listId: string) => {
     setSelectedList(listId);
@@ -204,12 +220,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     setSectionsOrder(newOrder);
   };
 
-  const filters = [
-    { key: 'partnership', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
-    { key: 'marketplace', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
-    { key: 'activity', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
-    { key: 'product', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
-  ];
+  const filters = getFilter(data)
 
   const filteredFavorites = sectionsOrder.map(sectionKey => {
     const filterItem = filters.find(f => f.key === sectionKey);
@@ -217,7 +228,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
       return [];
     }
     const { key, dataKey } = filterItem;
-    return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
+    return createFilteredList(favorites[selectedList] || [], filter.find(i => i.collectionName == key)?.visible, dataKey);
   });
 
   const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
@@ -318,10 +329,10 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
               <Typography align="center" variant="h3" my={4} sx={{ flexGrow: 1, fontWeight: 'bold', color: '#FFD700' }}>Mes Favoris</Typography>
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
-              <ButtonGroup variant="outlined">
+              <ButtonGroup variant="outlined" sx={{flexWrap: "wrap", justifyContent: "center"}}>
                 {filters.map(({ title, key }) => (
                   <Button key={title} onClick={() => handleFilterChange(key)}
-                    sx={{ color: 'black', backgroundColor: filter[key] ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
+                    sx={{ color: 'black', backgroundColor: filter.find(i => i.collectionName == key)?.visible ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
                     {title}
                   </Button>
                 ))}
@@ -416,6 +427,18 @@ export const query = graphql`
       }
     }
     activities: allMongodbActivities {
+      nodes {
+        _id
+        name
+      }
+    }
+    events: allMongodbSessions {
+      nodes {
+        _id
+        name
+      }
+    }
+    recipes: allMongodbRecipes {
       nodes {
         _id
         name

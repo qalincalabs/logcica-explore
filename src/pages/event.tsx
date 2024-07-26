@@ -20,7 +20,6 @@ import { fr } from 'date-fns/locale';
 const EventPage: React.FC<PageProps> = ({ data }: any) => {
   const now = new Date();
 
-  // Filtrer les événements passés et trier les événements futurs
   const filteredAndSortedEvents = data.events.nodes
     .filter((event: any) => event.timeRange?.from && isAfter(new Date(event.timeRange.from), now))
     .sort((a: any, b: any) => +new Date(a.timeRange.from) - +new Date(b.timeRange.from));
@@ -29,18 +28,15 @@ const EventPage: React.FC<PageProps> = ({ data }: any) => {
     <Layout>
       <MainContent
         title="Événements"
-        type="event"
+        type="session"
         dataList={filteredAndSortedEvents}
         listItemContent={EventListItem}
-        disableFavorites
       />
     </Layout>
   );
 };
 
 function EventListItem(event: any) {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const formattedFrom = event.timeRange?.from ? format(new Date(event.timeRange.from), 'PPP p', { locale: fr }) : null;
   const formattedTo = event.timeRange?.to ? format(new Date(event.timeRange.to), 'PPP p', { locale: fr }) : null;
@@ -62,7 +58,7 @@ function EventListItem(event: any) {
                 {event.place.address.street}, {event.place.address.locality}
               </Typography>
             )}
-            {!isSmallScreen && event.description?.short?.markdown && (
+            {event.description?.short?.markdown && (
               <Markdown>{event.description.short.markdown}</Markdown>
             )}
           </Stack>

@@ -55,7 +55,7 @@ function isEmpty(array: any[] | undefined) {
   return !Array.isArray(array) || array.length === 0;
 }
 
-const targetTypes = ["activity", "partnership", "product", "counter"];
+const targetTypes = ["activity", "partnership", "product", "counter", "session", "recipe"];
 
 const isBrowser = typeof window !== "undefined";
 
