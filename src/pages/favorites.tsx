@@ -261,10 +261,6 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     return `${window.location.origin}/share/list/${compressedData}`;
   };
 
-    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
-    return `${window.location.origin}/share/list/${compressedData}`;
-  };
-
   const drawerContent = (
     <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box p={2} width="100%">
@@ -389,7 +385,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
       />
     </Layout>
   );
-};
+}
 
 export default FavoritesPage;
 
