@@ -99,6 +99,13 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
         partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
+      type mongodbRecipesNutrientList{
+        nutrient: mongodbCodes @link(by: "mongodb_id")
+      }
+      type mongodbRecipesAllergenList implements Node {
+        allergen: mongodbCodes @link(by: "mongodb_id")
+        containmentLevel: mongodbCodes @link(by: "mongodb_id")
+      }
       type mongodbRecipes implements Node {
         difficulty: mongodbCategories @link(by: "mongodb_id")
         seasonality: mongodbCategories @link(by: "mongodb_id")

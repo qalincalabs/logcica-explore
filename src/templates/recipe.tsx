@@ -22,6 +22,8 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import NutrientListTable from "../components/nutrient-list-table";
+import AllergenList from "../components/allergen-list";
 
 export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
@@ -72,12 +74,12 @@ export default function RecipeTemplate({ data }: any) {
         </Grid>
         <Grid container>
           {recipe.allergenList && recipe.allergenList.length > 0 && (
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={5} md={4} lg={3}>
               <AllergenListCard recipe={recipe}/>
             </Grid>
           )}
           {recipe.nutrientList && recipe.nutrientList.length > 0 && (
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={7} md={5}>
               <NutrientListCard recipe={recipe}/>
             </Grid>
           )}
@@ -150,7 +152,7 @@ export function StepsCard({ recipe }: any) {
               )
             },
             li: ({ node, ...props }) => {
-              const step = `Etape ${stepCount}`;
+              const step = `Étape ${stepCount}`;
               stepCount += 1;
               return (
                 <Box component="li" sx={{ marginBottom: '1rem', '&::marker': { fontWeight: 'bold', color: '#ffcb01' } }}{...props}>
@@ -311,15 +313,11 @@ export function AllergenListCard({ recipe }: any) {
         square={false}
       >
         <SubtitleTemplate text={"Allergènes"} />
-        <List sx={{p: 1}}>
-          {recipe.allergenList.map((allergen: any) => {
-            return (
-              <ListItem key={allergen.id} disablePadding sx={{ width: { xs: '50%', md: '100%' } }} >
-                <ListItemText primary={allergen.id}></ListItemText>
-              </ListItem>
-            );
-          })}
-        </List>
+        <Box sx={{display: "flex", alignItens: "center", justifyContent: "center"}}>
+          <Box>
+            <AllergenList allergenList={recipe.allergenList} />
+          </Box>
+        </Box>
       </Paper>
     </Box>
   )
@@ -336,15 +334,9 @@ export function NutrientListCard({ recipe }: any) {
         square={false}
       >
         <SubtitleTemplate text={"Nutriments"} />
-        <List sx={{p: 1}}>
-          {recipe.nutrientList.map((nutrient: any) => {
-            return (
-              <ListItem key={nutrient.id} disablePadding sx={{ width: { xs: '50%', md: '100%' } }} >
-                <ListItemText primary={nutrient.id}></ListItemText>
-              </ListItem>
-            );
-          })}
-        </List>
+        <Box sx={{display: "flex", alignItens: "center", justifyContent: "center"}}>
+          <NutrientListTable nutrientList={recipe.nutrientList} />
+        </Box>
       </Paper>
     </Box>
   )
@@ -410,10 +402,23 @@ export const query = graphql`
       }
       mainImage
       allergenList {
-        id
+        allergen {
+          name
+        }
+        containmentLevel {
+          name
+        }
       }
       nutrientList {
-        id
+        nutrient {
+          _id
+          code
+          name
+        }
+        quantity {
+          value
+          unit
+        }
       }
     }
   }
