@@ -3,9 +3,9 @@ export type FavoriteListCreation = {
 };
 
 export type FavoriteListImport = {
-  name: string
-  data: Record<string, string[]>
-}
+  name: string;
+  data: Record<string, string[]>;
+};
 
 export type FavoriteListRemoval = {
   id: string;
@@ -65,8 +65,8 @@ export function allLists(): FavoriteList[] {
   return lists ? JSON.parse(lists) : [{ id: "default", name: "default" }];
 }
 
-export function findListById(id: string){
-  return allLists().find(list => list.id === id)
+export function findListById(id: string) {
+  return allLists().find((list) => list.id === id);
 }
 
 function saveLists(lists: FavoriteList[]) {
@@ -108,24 +108,29 @@ export function findItems(query: FavoriteQuery): FavoriteItem[] {
   }
 }
 
-export function importList(props: FavoriteListImport){
-  const list = addList({name: props.name})
-  const targetTypes = Object.keys(props.data)
+export function importList(props: FavoriteListImport) {
+  const list = addList({ name: props.name });
+  const targetTypes = Object.keys(props.data);
 
-  const items = [] as FavoriteItemAssignement[]
+  const items = [] as FavoriteItemAssignement[];
 
-  console.log(targetTypes)
-  console.log(props.data)
-
-  for(const targetType of targetTypes){
-    items.push( ...props.data[targetType].map(i => ({targetType: targetType, targetId: i, listId: list.id, assign: true})))
+  for (const targetType of targetTypes) {
+    items.push(
+      ...props.data[targetType].map((i) => ({
+        targetType: targetType,
+        targetId: i,
+        listId: list.id,
+        assign: true,
+      }))
+    );
   }
 
-  assignItemsToList(items)
+  assignItemsToList(items);
+  return list.id; // Retournez l'ID de la liste ajoutée
 }
 
 export function assignItemsToList(props: FavoriteItemAssignement[]): boolean[] {
-  return props.map(p => assignItemToList(p))
+  return props.map((p) => assignItemToList(p));
 }
 
 export function assignItemToList(props: FavoriteItemAssignement): boolean {
@@ -202,7 +207,10 @@ function saveLocalStorageItemList(
 export function getAllFavorites(type: string): { [key: string]: string[] } {
   const allFavoriteLists = allLists();
   const allFavorites = allFavoriteLists.reduce((acc, list) => {
-    const favorites = findItems({ listIds: [list.id], targetTypes: [type] }).map(e => e.targetId);
+    const favorites = findItems({
+      listIds: [list.id],
+      targetTypes: [type],
+    }).map((e) => e.targetId);
     acc[list.id] = favorites;
     return acc;
   }, {} as { [key: string]: string[] });

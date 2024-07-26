@@ -7,16 +7,22 @@ import * as favoriteService from "../../../utils/favoritesService";
 import { FavoriteListContent } from "../../../components/favorite-list-content";
 
 const SharePage = ({ params }: PageProps) => {
-  const [exportedList, setExportedList] = useState({name: "Loading", data: {}});
+  const [exportedList, setExportedList] = useState({ name: "Loading", data: {}, id: null });
 
   useEffect(() => {
-    if (typeof window == "undefined") return;
+    if (typeof window === "undefined") return;
 
-    const hash = params[`hash`];
+    const hash = params['hash'];
     const decompressedData = LZString.decompressFromEncodedURIComponent(hash);
 
-    setExportedList(JSON.parse(decompressedData));
-  }, []);
+    const parsedData = JSON.parse(decompressedData);
+    setExportedList(parsedData);
+  }, [params.hash]);
+
+  const handleAddToFavorites = () => {
+    const listId = favoriteService.importList(exportedList); // Assurez-vous que cette fonction retourne l'ID de la liste ajoutée
+    navigate(`/favorites#${listId}`)
+  };
 
   return (
     <Layout>
@@ -48,10 +54,7 @@ const SharePage = ({ params }: PageProps) => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => {
-                  favoriteService.importList(exportedList);
-                  navigate("/favorites");
-                }}
+                onClick={handleAddToFavorites}
               >
                 Ajouter à mes favoris
               </Button>

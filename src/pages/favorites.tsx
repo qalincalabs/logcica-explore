@@ -24,6 +24,7 @@ import {
 import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit, Share } from "@mui/icons-material";
 import Layout from "../components/layout";
 import RenameDialog from "../components/RenameDialog";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
 import LZString from 'lz-string';
@@ -88,7 +89,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
                 </ListItemAvatar>
                 <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
                 <ListItemIcon>
-                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey, item.listId); }}>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey); }}>
                     <Delete />
                   </IconButton>
                 </ListItemIcon>
@@ -101,7 +102,7 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
   )
 );
 
-const FavoritesPage: React.FC<PageProps> = ({ data }) => {
+const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -114,9 +115,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
   const [shareText, setShareText] = useState(generateShareText(favorites, data));
   const [filter, setFilter] = useState({ partnership: true, marketplace: true, activity: true, product: true });
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedList, setSelectedList] = useState("default");
+
+  const allLists = favoriteService.allLists();
+  const [selectedList, setSelectedList] = useState("");
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [listToRename, setListToRename] = useState(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [listToRemove, setListToRemove] = useState<string | null>(null);
+  const [itemToRemove, setItemToRemove] = useState({ id: '', type: '' });
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
     if(typeof window == "undefined")
@@ -136,22 +142,41 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
     setShareText(generateShareText(updatedFavorites, data));
   }, [data]);
 
-  const handleRemoveFavorite = (id: string, type: string, listId: string) => {
-    favoriteService.removeItemFromList({ targetType: type, targetId: id, listId });
-    const updatedFavorites = refreshFavorites();
-    setFavorites(updatedFavorites);
-    setShareText(generateShareText(updatedFavorites, data));
+  useEffect(() => {
+    const hash = location.hash.replace("#", "");
+    if (hash) {
+      setSelectedList(hash);
+    }
+  }, [location]);
+
+  const handleRemoveFavorite = (id: string, type: string) => {
+    setItemToRemove({ id, type });
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmRemoveFavorite = () => {
+    const { id, type } = itemToRemove;
+    favoriteService.removeItemFromList({ targetType: type, targetId: id, listId: selectedList });
+    refresh();
+    setConfirmDialogOpen(false);
   };
 
   const handleRemoveFavoriteList = (listId: string) => {
-    favoriteService.removeList({ id: listId });
-    const updatedFavorites = refreshFavorites();
-    setFavorites(updatedFavorites);
-    setShareText(generateShareText(updatedFavorites, data));
+    setListToRemove(listId);
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmRemoveFavoriteList = () => {
+    if (listToRemove) {
+      favoriteService.removeList({ id: listToRemove });
+      refresh();
+      setListToRemove(null);
+      setConfirmDialogOpen(false);
+    }
   };
 
   const handleItemClick = (type: string, id: string, activityId?: string) => {
-    navigate(getLink(type, id, activityId))
+    navigate(getLink(type, id, activityId));
   };
 
   const getLink = (type: string, id: string, activityId?: string) => {
@@ -187,7 +212,11 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
   ];
 
   const filteredFavorites = sectionsOrder.map(sectionKey => {
-    const { key, dataKey } = filters.find(f => f.key === sectionKey);
+    const filterItem = filters.find(f => f.key === sectionKey);
+    if (!filterItem || !selectedList) {
+      return [];
+    }
+    const { key, dataKey } = filterItem;
     return createFilteredList(favorites[selectedList] || [], filter[key], dataKey);
   });
 
@@ -210,26 +239,27 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
     exportFunctions[format](favoritesData, selectedListName);
   };
 
-  const allLists = favoriteService.allLists();
-
   const refresh = () => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
   }
-  
-  const generateShareURL = () => {
 
-    const list = favoriteService.findListById(selectedList)
-    const items = favoriteService.findItems({listIds: [selectedList]})
+  const generateShareURL = () => {
+    const list = favoriteService.findListById(selectedList);
+    const items = favoriteService.findItems({ listIds: [selectedList] });
 
     const exportedList = {
       ...list,
       data: items.reduce((acc, curr) => {
-        let {targetId, targetType} = curr;
-        return {...acc, [targetType]: [...(acc[targetType] || []), targetId]};
-    }, {} as Record<string,string[]>)
-    }
+        let { targetId, targetType } = curr;
+        return { ...acc, [targetType]: [...(acc[targetType] || []), targetId] };
+      }, {} as Record<string, string[]>)
+    };
+
+    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
+    return `${window.location.origin}/share/list/${compressedData}`;
+  };
 
     const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
     return `${window.location.origin}/share/list/${compressedData}`;
@@ -320,8 +350,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
             </Box>
             <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
               <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-                {sectionsOrder.map((sectionKey, index) => {
-                  const { title, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
+                
+                {selectedList && sectionsOrder.map((sectionKey, index) => {
+                  const filterItem = filters.find(f => f.key === sectionKey);
+                  if (!filterItem) {
+                    return null;
+                  }
+                  const { title, dataKey, dataNodes } = filterItem;
+                    
                   return (
                     <FavoritesList key={title} title={title} favorites={filteredFavorites[index]} handleItemClick={handleItemClick}
                       handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
@@ -335,6 +371,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data }) => {
         </Grid>
       </Grid>
 
+      <ConfirmationDialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+        onConfirm={listToRemove ? confirmRemoveFavoriteList : confirmRemoveFavorite}
+        title="Confirmation de suppression"
+        content={`Êtes-vous sûr de vouloir supprimer ${listToRemove ? 'cette liste de favoris' : 'cet élément de vos favoris'} ?`}
+      />
+        
       <RenameDialog
         listToRename={listToRename}
         open={renameDialogOpen}
