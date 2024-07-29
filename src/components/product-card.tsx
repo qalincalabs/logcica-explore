@@ -36,7 +36,7 @@ import FavoriteIcons from "../components/FavoriteIcons";
 import NutrientListTable from "./nutrient-list-table";
 import AllergenList from "./allergen-list";
 
-const collectionType = 'product'
+const collectionType = "product";
 
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
@@ -94,7 +94,10 @@ export function ProductCard({ item }: any) {
   };
 
   return (
-    <Card style={{ scrollPaddingTop: "100px", scrollMarginTop: "100px" }} id={item._id}>
+    <Card
+      style={{ scrollPaddingTop: "100px", scrollMarginTop: "100px" }}
+      id={item._id}
+    >
       <Grid container>
         {item.mainImage && (
           <Grid item xs={3} sm={2} md={3}>
@@ -138,10 +141,7 @@ export function ProductCard({ item }: any) {
                 >
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
-                  <FavoriteIcons
-                    type={collectionType}
-                    targetId={item._id}
-                  />
+                  <FavoriteIcons type={collectionType} targetId={item._id} />
                 </Box>
               }
               subheader={
@@ -177,7 +177,7 @@ export function ProductCard({ item }: any) {
                               margin: "1px",
                               backgroundColor:
                                 item.availabilities?.[0]?.season?.year?.months.includes(
-                                  moment(monthNumber, "M").format("MMM")
+                                  moment(monthNumber, "M").format("MMM"),
                                 )
                                   ? "#AFE1AF"
                                   : "default",
@@ -185,7 +185,7 @@ export function ProductCard({ item }: any) {
                           >
                             {moment(monthNumber, "M").format("MMM").charAt(0)}
                           </Typography>
-                        )
+                        ),
                       )}
                     </Stack>
                   )}
@@ -259,7 +259,9 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </Grid>
-        {(item.references?.find((r: any) => r.system?.key === "openbatra.org") ||
+        {(item.references?.find(
+          (r: any) => r.system?.key === "openbatra.org",
+        ) ||
           item.description?.short) && (
           <Box display="flex" width="100%">
             {item.description?.short && (
@@ -275,7 +277,7 @@ export function ProductCard({ item }: any) {
               </CardContent>
             )}
             {item.references?.find(
-              (r: any) => r.system?.key === "openbatra.org"
+              (r: any) => r.system?.key === "openbatra.org",
             ) && (
               <CardActions>
                 <a
@@ -283,8 +285,8 @@ export function ProductCard({ item }: any) {
                     "https://www.batra.link/batra2.0/productFull.html?gtin=" +
                     encodeURIComponent(
                       item.references.find(
-                        (r: any) => r.system?.key === "openbatra.org"
-                      ).number
+                        (r: any) => r.system?.key === "openbatra.org",
+                      ).number,
                     )
                   }
                 >
@@ -326,7 +328,9 @@ export function ProductCard({ item }: any) {
                   </Markdown>
                 </Stack>
               )}
-              {item.allergenList && <AllergenList allergenList={item.allergenList} />}
+              {item.allergenList && (
+                <AllergenList allergenList={item.allergenList} />
+              )}
               {item.alcoholPercentage != null && (
                 <Stack direction="row" gap={1} flexGrow={1}>
                   <WineBar />

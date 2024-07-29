@@ -8,7 +8,6 @@ const SearchBox = ({ className, onFocus, onChange }) => {
 
   return (
     <div className="container">
-      
       <form className={`search-form ${className}`}>
         <div className="search-input-container">
           <SearchIcon className="search-icon" />

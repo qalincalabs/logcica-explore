@@ -6,8 +6,8 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import * as favoriteService from "../utils/favoritesService";
 import FilterBar from "./filter-bar";
 
-const backgroundColor = '#FFD700'; // Couleur de fond pour le bouton et la barre de filtres
-const textColor = '#000000'; // Couleur de texte pour le bouton et la barre de filtres
+const backgroundColor = "#FFD700"; // Couleur de fond pour le bouton et la barre de filtres
+const textColor = "#000000"; // Couleur de texte pour le bouton et la barre de filtres
 
 export function ProductCardList() {
   const data = useStaticQuery(graphql`
@@ -138,7 +138,7 @@ export function ProductCardList() {
   `);
 
   const products = data.allMongodbProducts.nodes.sort((a: any, b: any) =>
-    a.name?.length < b.name?.length ? 1 : -1
+    a.name?.length < b.name?.length ? 1 : -1,
   );
 
   // State for the list
@@ -179,7 +179,9 @@ export function ProductCardList() {
     setShowFavoritesOnly(!showFavoritesOnly);
   };
 
-  const favoriteProducts = favoriteService.findItems({targetTypes: ['product']}).map(e => e.targetId)
+  const favoriteProducts = favoriteService
+    .findItems({ targetTypes: ["product"] })
+    .map((e) => e.targetId);
 
   const filteredList = showFavoritesOnly
     ? list.filter((item: any) => favoriteProducts.includes(item._id))
@@ -187,7 +189,12 @@ export function ProductCardList() {
 
   return (
     <>
-      <FilterBar favoriteFilterToggle={showFavoritesOnly} favoriteFilterToggleCallback={() => setShowFavoritesOnly(!showFavoritesOnly)} />
+      <FilterBar
+        favoriteFilterToggle={showFavoritesOnly}
+        favoriteFilterToggleCallback={() =>
+          setShowFavoritesOnly(!showFavoritesOnly)
+        }
+      />
       <Grid container spacing={2}>
         {filteredList.map((item: any): any => (
           <Grid item xs={12} md={6} xl={4} key={item._id}>

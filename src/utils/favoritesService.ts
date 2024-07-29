@@ -55,7 +55,14 @@ function isEmpty(array: any[] | undefined) {
   return !Array.isArray(array) || array.length === 0;
 }
 
-const targetTypes = ["activity", "partnership", "product", "counter", "session", "recipe"];
+const targetTypes = [
+  "activity",
+  "partnership",
+  "product",
+  "counter",
+  "session",
+  "recipe",
+];
 
 const isBrowser = typeof window !== "undefined";
 
@@ -95,8 +102,8 @@ export function findItems(query: FavoriteQuery): FavoriteItem[] {
       const l = getLocalStorageItemList(li, c);
       items.push(
         ...l.map(
-          (e) => ({ targetId: e, listId: li, targetType: c } as FavoriteItem)
-        )
+          (e) => ({ targetId: e, listId: li, targetType: c }) as FavoriteItem,
+        ),
       );
     }
   }
@@ -121,7 +128,7 @@ export function importList(props: FavoriteListImport) {
         targetId: i,
         listId: list.id,
         assign: true,
-      }))
+      })),
     );
   }
 
@@ -183,7 +190,7 @@ function getLocalStorageItemList(listId: string, targetType: string): string[] {
   if (!isBrowser) return [];
 
   return JSON.parse(
-    localStorage.getItem(getLocalStorageKey(listId, targetType)) ?? "[]"
+    localStorage.getItem(getLocalStorageKey(listId, targetType)) ?? "[]",
   );
 }
 
@@ -194,25 +201,28 @@ function getLocalStorageKey(listId: string, targetType: string): string {
 function saveLocalStorageItemList(
   listId: string,
   targetType: string,
-  targetIds: string[]
+  targetIds: string[],
 ) {
   if (!isBrowser) return;
 
   localStorage.setItem(
     getLocalStorageKey(listId, targetType),
-    JSON.stringify(targetIds)
+    JSON.stringify(targetIds),
   );
 }
 
 export function getAllFavorites(type: string): { [key: string]: string[] } {
   const allFavoriteLists = allLists();
-  const allFavorites = allFavoriteLists.reduce((acc, list) => {
-    const favorites = findItems({
-      listIds: [list.id],
-      targetTypes: [type],
-    }).map((e) => e.targetId);
-    acc[list.id] = favorites;
-    return acc;
-  }, {} as { [key: string]: string[] });
+  const allFavorites = allFavoriteLists.reduce(
+    (acc, list) => {
+      const favorites = findItems({
+        listIds: [list.id],
+        targetTypes: [type],
+      }).map((e) => e.targetId);
+      acc[list.id] = favorites;
+      return acc;
+    },
+    {} as { [key: string]: string[] },
+  );
   return allFavorites;
 }

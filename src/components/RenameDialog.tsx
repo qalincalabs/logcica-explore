@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -6,8 +6,8 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
-  Button
-} from '@mui/material';
+  Button,
+} from "@mui/material";
 import * as favoriteService from "../utils/favoritesService";
 
 interface RenameDialogProps {
@@ -16,19 +16,28 @@ interface RenameDialogProps {
   listToRename: string | null;
 }
 
-const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename }) => {
+const RenameDialog: React.FC<RenameDialogProps> = ({
+  open,
+  onClose,
+  listToRename,
+}) => {
   const [newListName, setNewListName] = useState("");
 
   useEffect(() => {
     if (open) {
-      const list = favoriteService.allLists().find(list => list.id === listToRename);
+      const list = favoriteService
+        .allLists()
+        .find((list) => list.id === listToRename);
       setNewListName(list?.name || "");
     }
   }, [open, listToRename]);
 
   const handleRenameFavoriteList = () => {
     if (listToRename && newListName.trim()) {
-      favoriteService.renameList({ id: listToRename, name: newListName.trim() });
+      favoriteService.renameList({
+        id: listToRename,
+        name: newListName.trim(),
+      });
       onClose();
     }
   };

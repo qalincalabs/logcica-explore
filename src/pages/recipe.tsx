@@ -10,12 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import Layout from "../components/layout";
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
-import ContrastIcon from '@mui/icons-material/Contrast';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DescriptionIcon from '@mui/icons-material/Description';
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import ContrastIcon from "@mui/icons-material/Contrast";
+import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DescriptionIcon from "@mui/icons-material/Description";
 import MainContent from "../components/main-content";
 
 const RecipePage: React.FC<PageProps> = ({ data }: any) => {
@@ -40,15 +40,11 @@ function RecipeListItem(p: any) {
         </Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={
-          <Box sx={{ display: 'flex', p: 1 }}>
-            {p.name}
-          </Box>
-        }
+        primary={<Box sx={{ display: "flex", p: 1 }}>{p.name}</Box>}
         secondary={
           <Stack>
             {p.author?.organisation?.name && (
-              <Box sx={{ display: 'flex' }}>
+              <Box sx={{ display: "flex" }}>
                 <AccountCircleIcon />
                 <Typography sx={{ fontWeight: "bold" }}>
                   {p.author.organisation.name}
@@ -57,47 +53,35 @@ function RecipeListItem(p: any) {
             )}
 
             {p.description?.short?.markdown && (
-              <Box sx={{ display: 'flex' }}>
+              <Box sx={{ display: "flex" }}>
                 <DescriptionIcon />
-                <Typography>
-                  {p.description.short.markdown}
-                </Typography>
+                <Typography>{p.description.short.markdown}</Typography>
               </Box>
             )}
 
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: "flex" }}>
               {p.totalTime && (
-                <Box sx={{ display: 'flex', p: 1 }}>
+                <Box sx={{ display: "flex", p: 1 }}>
                   <AccessAlarmIcon />
-                  <Typography>
-                    {p.totalTime}
-                  </Typography>
+                  <Typography>{p.totalTime}</Typography>
                 </Box>
               )}
 
               {p.seasonality?.name && (
-                <Box sx={{ display: 'flex', p: 1 }}>
+                <Box sx={{ display: "flex", p: 1 }}>
                   <ContrastIcon />
-                  <Typography>
-                    {p.seasonality.name}
-                  </Typography>
+                  <Typography>{p.seasonality.name}</Typography>
                 </Box>
               )}
 
               {p.difficulty?.name && (
-                <Box sx={{ display: 'flex', p: 1 }}>
+                <Box sx={{ display: "flex", p: 1 }}>
                   <FitnessCenterIcon />
-                  <Typography>
-                    {p.difficulty.name}
-                  </Typography>
+                  <Typography>{p.difficulty.name}</Typography>
                 </Box>
               )}
             </Box>
-
-
-
           </Stack>
-
         }
       />
     </ListItemButton>
