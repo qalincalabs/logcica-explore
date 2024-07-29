@@ -38,9 +38,9 @@ function PartnershipListItem(p: any) {
           <>
             {p.area && (
               <Typography
+                variant="subtitle1"
                 component={"span"}
                 display="inline-block"
-                sx={{ fontWeight: "bold" }}
               >
                 {p.area.name}
               </Typography>
@@ -48,7 +48,11 @@ function PartnershipListItem(p: any) {
             {p.profiles.find(
               (p: any) => p.description?.short && p.type == "website",
             )?.description?.short && (
-              <Typography component={"span"} display="inline-block">
+              <Typography
+                variant="subtitle2"
+                component={"span"}
+                display="inline-block"
+              >
                 {
                   p.profiles.find(
                     (p: any) => p.description?.short && p.type == "website",

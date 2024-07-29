@@ -4,7 +4,6 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
 import { graphql, HeadFC, navigate, PageProps } from "gatsby";
@@ -37,12 +36,24 @@ function MarketplaceListItem(m: any) {
       <ListItemText
         primary={m.name}
         secondary={
-          <Stack>
-            <Typography>{m.availabilityStatement.short.markdown}</Typography>
+          <>
+            <Typography
+              variant="subtitle1"
+              component="span"
+              display="inline-block"
+            >
+              {m.availabilityStatement.short.markdown}
+            </Typography>
             {m.description && (
-              <Markdown>{m.description.short.markdown}</Markdown>
+              <Typography
+                variant="subtitle2"
+                component="span"
+                display="inline-block"
+              >
+                <Markdown>{m.description.short.markdown}</Markdown>
+              </Typography>
             )}
-          </Stack>
+          </>
         }
       />
     </ListItemButton>
