@@ -19,6 +19,8 @@ export default function Search() {
     { name: "partnership" },
     { name: "marketplace" },
     { name: "product" },
+    { name: "recipe" },
+    { name: "event" },
   ];
 
   const rootRef = createRef<HTMLDivElement>();

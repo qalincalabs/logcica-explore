@@ -160,6 +160,99 @@ ${placeFieldsFragment}
 ${catalogFieldsFragment}
 `;
 
+const recipesQuery = `
+{
+  recipes: allMongodbRecipes {
+    nodes {
+      _id
+      name
+      area
+      categories {
+        name
+      }
+      author {
+        organisation {
+          name
+        }
+        partnership {
+          name
+        }
+      }
+      costCategory {
+        name
+      }
+      difficulty {
+        name
+      }
+      seasonality {
+        name
+      }
+      description {
+        short {
+          markdown
+        }
+      }
+      cookTime
+      prepTime
+      totalTime
+      ingredientList {
+        name
+      }
+    }
+  }
+}
+`;
+
+const sessionsQuery = `
+{
+  sessions: allMongodbSessions {
+    nodes {
+      _id
+      name
+      manager {
+        activity {
+          name
+        }
+        organisation {
+          name
+        }
+        partnership {
+          name
+        }
+      }
+      description {
+        short {
+          markdown
+        }
+        long {
+          markdown
+        }
+      }
+      timeRange {
+        from
+        to
+      }
+      place {
+        title
+        address {
+          street
+          locality
+        }
+      }
+      profiles {
+        type
+        localKey
+        key
+        link
+      }
+      categories {
+        name
+      }
+    }
+  }
+}
+`;
+
 const addContentDigest = (obj) => {
   const content = JSON.stringify(obj);
   const digest = crypto.createHash("md5").update(content).digest("hex");
@@ -231,6 +324,32 @@ const queries = [
         "searchable(producer.organisation.name)",
         "searchable(owner.organisation.name)",
       ],
+    },
+  },
+  {
+    query: recipesQuery,
+    transformer: ({ data }) =>
+      data.recipes.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
+    indexName: "recipe",
+    settings: {
+      ...indexBaseSettings,
+    },
+  },
+  {
+    query: sessionsQuery,
+    transformer: ({ data }) =>
+      data.sessions.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
+    indexName: "event",
+    settings: {
+      ...indexBaseSettings,
     },
   },
   {
