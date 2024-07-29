@@ -61,7 +61,7 @@ const targetTypes = [
   "product",
   "counter",
   "session",
-  "recipe",
+  "recipe"
 ];
 
 const isBrowser = typeof window !== "undefined";

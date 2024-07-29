@@ -23,6 +23,8 @@ import {
 import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
 
+import FavoriteIcons from "../components/FavoriteIcons";
+
 export default function PartnershipTemplate({ data }: any) {
   const partnership = data.partnership;
 
@@ -44,9 +46,12 @@ export default function PartnershipTemplate({ data }: any) {
   return (
     <Layout>
       <Box sx={{ p: 2 }}>
-        <Typography align="center" variant="h3" component="h3" sx={{ mb: 3 }}>
-          {partnership.name}
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
+          <Typography align="center" variant="h3" component="h3" mr={2}>
+            {partnership.name}
+          </Typography>
+          <FavoriteIcons type="partnership" targetId={partnership._id} />
+        </Box>
         {partnership.profiles.find(
           (p: any) => p.description?.short && p.type == "web_element",
         ) && (
