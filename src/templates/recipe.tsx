@@ -22,6 +22,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AllergenList from "../components/allergen-list";
+import FavoriteIcons from "../components/FavoriteIcons";
 import Layout from "../components/layout";
 import NutrientListTable from "../components/nutrient-list-table";
 
@@ -35,9 +36,12 @@ export default function RecipeTemplate({ data }: any) {
           p: 2,
         }}
       >
-        <Typography align="center" variant="h3" component="h3" sx={{ mb: 3 }}>
-          {recipe.name}
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
+          <Typography align="center" variant="h3" component="h3" mr={2}>
+            {recipe.name}
+          </Typography>
+          <FavoriteIcons type="recipe" targetId={recipe._id} />
+        </Box>
         <Grid container>
           {recipe.description?.short?.markdown && (
             <Grid item xs={12} sm={8} sx={{ display: "flex" }}>
