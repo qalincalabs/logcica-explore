@@ -13,7 +13,7 @@ import * as favoriteService from "../utils/favoritesService";
 interface RenameDialogProps {
   open: boolean;
   onClose: () => void;
-  listToRename: string | null;
+  listToRename: string | undefined;
 }
 
 const RenameDialog: React.FC<RenameDialogProps> = ({

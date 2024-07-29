@@ -17,9 +17,7 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { navigate } from "gatsby";
 import * as React from "react";
-import Search from "../components/search";
-
-const searchIndices = [{ name: "Activities", title: "Activité" }];
+import Search from "./search";
 
 export default function AppTopBar() {
   const theme = useTheme();
@@ -148,7 +146,7 @@ export default function AppTopBar() {
             </Stack>
           </Box>
           <Box>
-            <Search indices={searchIndices} />
+            <Search />
           </Box>
         </Toolbar>
       </AppBar>

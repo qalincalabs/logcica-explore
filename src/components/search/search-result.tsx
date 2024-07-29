@@ -19,7 +19,7 @@ const HitCount = () => {
   ) : null;
 };
 
-const PageHit = ({ hit, indexName }) => {
+const PageHit = ({ hit, indexName }: any) => {
   return (
     <div>
       <Link
@@ -38,9 +38,9 @@ const PageHit = ({ hit, indexName }) => {
   );
 };
 
-const HitsInIndex = ({ index }) => (
+const HitsInIndex = ({ index }: any) => (
   <Index indexName={index.name}>
-    <div class="HitHeader">
+    <div className="HitHeader">
       <h2>
         {index.name === "activity"
           ? "Producteurs"
@@ -61,9 +61,9 @@ const HitsInIndex = ({ index }) => (
   </Index>
 );
 
-const SearchResult = ({ indices, className }) => (
+const SearchResult = ({ indices, className }: any) => (
   <div className={className}>
-    {indices.map((index) => (
+    {indices.map((index: any) => (
       <HitsInIndex index={index} key={index.name} />
     ))}
     <PoweredBy />

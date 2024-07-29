@@ -3,7 +3,7 @@ import React from "react";
 import { useSearchBox } from "react-instantsearch";
 import "./search-box.css"; // Import the CSS file
 
-const SearchBox = ({ className, onFocus, onChange }) => {
+const SearchBox = ({ className, onFocus, onChange }: any) => {
   const { query, refine } = useSearchBox();
 
   return (

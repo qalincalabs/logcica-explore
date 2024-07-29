@@ -19,7 +19,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
 
   const date = startOfDay(subDays(new Date(), 7)); // 7 days in the past
   const sessions = data.sessions.nodes.filter(
-    (s) => compareAsc(parseISO(s.timeRange.to), date) > 0,
+    (s: any) => compareAsc(parseISO(s.timeRange.to), date) > 0,
   );
 
   return (
