@@ -69,7 +69,7 @@ export default function RecipeTemplate({ data }: any) {
               <IngredientListCard recipe={recipe} />
             </Grid>
           )}
-          {recipe.stepStatement?.long?.markdown  && (
+          {recipe.stepStatement?.long?.markdown && (
             <Grid item xs={12} md={9}>
               <StepsCard recipe={recipe} />
             </Grid>
@@ -329,7 +329,15 @@ export function IngredientListCard({ recipe }: any) {
                   <ListItemIcon>
                     <Checkbox edge="start" disableRipple />
                   </ListItemIcon>
-                  <ListItemText primary={ingredient.name}></ListItemText>
+                  <ListItemText
+                    primary={
+                      (ingredient.quantity
+                        ? ingredient.quantity.value +
+                          ingredient.quantity.unit +
+                          " "
+                        : "") + ingredient.name
+                    }
+                  ></ListItemText>
                 </ListItemButton>
               </ListItem>
             );
@@ -441,6 +449,10 @@ export const query = graphql`
       totalTime
       ingredientList {
         name
+        quantity {
+          value
+          unit
+        }
       }
       stepStatement {
         long {
