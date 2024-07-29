@@ -9,6 +9,7 @@ import {
   Box,
   Card,
   CardActionArea,
+  CardActions,
   CardContent,
   Grid,
   IconButton,
@@ -262,39 +263,7 @@ export default function PartnershipTemplate({ data }: any) {
                       onClick={() => navigate("/activity/" + activity._id)}
                     >
                       <CardContent>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Typography variant="h6">{activity.name}</Typography>
-                          {activity.profiles?.find(
-                            (p: any) => p.type === "facebook",
-                          ) && (
-                            <a
-                              href={`https://www.facebook.com/${activity.profiles.find((p: any) => p.type === "facebook").key}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <IconButton size="small">
-                                <Facebook />
-                              </IconButton>
-                            </a>
-                          )}
-                          {activity.profiles?.find(
-                            (p: any) => p.type === "website",
-                          ) && (
-                            <a
-                              href={
-                                activity.profiles.find(
-                                  (p: any) => p.type === "website",
-                                ).link
-                              }
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <IconButton size="small">
-                                <Language />
-                              </IconButton>
-                            </a>
-                          )}
-                        </Stack>
+                        <Typography variant="h6">{activity.name}</Typography>
                         {activity.place && (
                           <Typography variant="subtitle1">
                             {activity.place.name}
@@ -302,6 +271,38 @@ export default function PartnershipTemplate({ data }: any) {
                         )}
                       </CardContent>
                     </CardActionArea>
+                    <CardActions>
+                      {activity.profiles?.find(
+                        (p: any) => p.type === "facebook",
+                      ) && (
+                        <a
+                          href={`https://www.facebook.com/${activity.profiles.find((p: any) => p.type === "facebook").key}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <IconButton size="small">
+                            <Facebook />
+                          </IconButton>
+                        </a>
+                      )}
+                      {activity.profiles?.find(
+                        (p: any) => p.type === "website",
+                      ) && (
+                        <a
+                          href={
+                            activity.profiles.find(
+                              (p: any) => p.type === "website",
+                            ).link
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <IconButton size="small">
+                            <Language />
+                          </IconButton>
+                        </a>
+                      )}
+                    </CardActions>
                   </Card>
                 </Grid>
               ))}

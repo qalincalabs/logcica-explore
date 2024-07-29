@@ -9,7 +9,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { navigate, type PageProps } from "gatsby";
+import { graphql, HeadFC, navigate, type PageProps } from "gatsby";
 import React from "react";
 import Layout from "../components/layout";
 import MainContent from "../components/main-content";
