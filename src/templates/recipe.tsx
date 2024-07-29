@@ -424,7 +424,9 @@ export const query = graphql`
       _id
       name
       area
-      categories
+      categories {
+        name
+      }
       author {
         organisation {
           name

@@ -50,7 +50,9 @@ const HitsInIndex = ({ index }) => (
               ? "Produits"
               : index.name === "marketplace"
                 ? "Marchés"
-                : "aucune valeur"}
+                : index.name === "recipe"
+                  ? "Recettes"
+                  : "aucune valeur"}
       </h2>
       <HitCount />
     </div>
