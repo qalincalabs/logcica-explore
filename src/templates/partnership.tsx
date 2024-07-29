@@ -1,5 +1,10 @@
-import React from "react";
-import { graphql, navigate } from "gatsby";
+import {
+  Email,
+  Facebook,
+  Language,
+  OpenInNew,
+  Phone,
+} from "@mui/icons-material";
 import {
   Box,
   Card,
@@ -7,21 +12,15 @@ import {
   CardContent,
   Grid,
   IconButton,
+  Link as MuiLink,
   Paper,
   Stack,
   Typography,
-  Link as MuiLink,
 } from "@mui/material";
-import {
-  Email,
-  Facebook,
-  Language,
-  Phone,
-  Place,
-  OpenInNew,
-} from "@mui/icons-material";
-import Layout from "../components/layout";
+import { graphql, navigate } from "gatsby";
 import Markdown from "markdown-to-jsx";
+import React from "react";
+import Layout from "../components/layout";
 
 export default function PartnershipTemplate({ data }: any) {
   const partnership = data.partnership;

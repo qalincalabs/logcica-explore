@@ -1,4 +1,4 @@
-import { Box, FormControlLabel, Checkbox } from "@mui/material";
+import { Box, Checkbox, FormControlLabel } from "@mui/material";
 import React from "react";
 
 const backgroundColor = "#FFD700"; // Couleur de fond pour le bouton et la barre de filtres

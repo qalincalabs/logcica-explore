@@ -1,23 +1,23 @@
-import * as React from "react";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
-  Stack,
-  IconButton,
+  Badge,
   Box,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemText,
-  Badge,
+  Stack,
 } from "@mui/material";
-import { navigate } from "gatsby";
-import MenuIcon from "@mui/icons-material/Menu";
-import Search from "../components/search";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { navigate } from "gatsby";
+import * as React from "react";
+import Search from "../components/search";
 
 const searchIndices = [{ name: "Activities", title: "Activité" }];
 

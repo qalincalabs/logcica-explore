@@ -1,6 +1,6 @@
+import { Search as SearchIcon } from "@styled-icons/fa-solid";
 import React from "react";
 import { useSearchBox } from "react-instantsearch";
-import { Search as SearchIcon } from "@styled-icons/fa-solid";
 import "./search-box.css"; // Import the CSS file
 
 const SearchBox = ({ className, onFocus, onChange }) => {

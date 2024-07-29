@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   TextField,
-  Button,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import * as favoriteService from "../utils/favoritesService";
 
 interface RenameDialogProps {

@@ -1,19 +1,3 @@
-import React from "react";
-import { graphql, navigate } from "gatsby";
-import AppTopBar from "../components/app-top-bar";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Icon,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
 import {
   CalendarMonth,
   Facebook,
@@ -21,7 +5,17 @@ import {
   Place,
   ShoppingBasket,
 } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { graphql, navigate } from "gatsby";
+import React from "react";
 import Layout from "../components/layout";
 
 export function ProfileExternalLink({ profile }: any) {

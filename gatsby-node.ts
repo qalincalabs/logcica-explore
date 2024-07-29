@@ -13,7 +13,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       (c) =>
         `type mongodb${capitalizeFirstLetter(c)} implements Node {
             _id: String @proxy(from: "mongodb_id")
-        }`,
+        }`
     )
     .join("\n");
 

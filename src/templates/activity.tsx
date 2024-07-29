@@ -1,12 +1,12 @@
-import React from "react";
+import { Email, OpenInNew, Phone } from "@mui/icons-material";
+import { Box, Grid, Link, Paper, Stack, Typography } from "@mui/material";
+import { compareAsc, parseISO, startOfDay, subDays } from "date-fns";
 import { graphql, navigate, PageProps } from "gatsby";
-import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Email, Phone } from "@mui/icons-material";
-import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
-import { ProductCard } from "../components/product-card";
+import React from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
-import { startOfDay, subDays, compareAsc, parseISO } from "date-fns";
+import Layout from "../components/layout";
+import { ProductCard } from "../components/product-card";
 
 const ActivityTemplate = ({ data }: PageProps<any>) => {
   const activity = data.activity;

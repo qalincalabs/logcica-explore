@@ -1,11 +1,11 @@
-import React from "react";
 import { Link } from "gatsby";
+import React from "react";
 import {
   Highlight,
   Hits,
   Index,
-  Snippet,
   PoweredBy,
+  Snippet,
   useStats,
 } from "react-instantsearch";
 

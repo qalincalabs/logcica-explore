@@ -1,14 +1,14 @@
 import { Store } from "@mui/icons-material";
 import {
+  Avatar,
   Box,
   Grid,
-  Typography,
   List,
   ListItem,
-  ListItemButton,
   ListItemAvatar,
-  Avatar,
+  ListItemButton,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import { graphql, useStaticQuery } from "gatsby";
 import React from "react";

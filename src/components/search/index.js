@@ -1,5 +1,5 @@
-import React, { createRef, useState, useMemo } from "react";
 import algoliasearch from "algoliasearch/lite";
+import React, { createRef, useMemo, useState } from "react";
 import { InstantSearch } from "react-instantsearch";
 import { ThemeProvider } from "styled-components";
 import StyledSearchBox from "./styled-search-box";

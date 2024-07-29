@@ -1,5 +1,4 @@
-import React from "react";
-import { graphql, HeadFC, navigate, PageProps } from "gatsby";
+import { Store } from "@mui/icons-material";
 import {
   Avatar,
   ListItemAvatar,
@@ -8,9 +7,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import Layout from "../components/layout";
-import { Store } from "@mui/icons-material";
+import { graphql, HeadFC, navigate, PageProps } from "gatsby";
 import Markdown from "markdown-to-jsx";
+import React from "react";
+import Layout from "../components/layout";
 import MainContent from "../components/main-content";
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {

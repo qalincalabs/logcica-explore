@@ -1,22 +1,22 @@
-import * as React from "react";
+import {
+  Facebook as FacebookIcon,
+  Link as LinkIcon,
+} from "@mui/icons-material";
 import { graphql, Link, type HeadFC } from "gatsby";
-import Layout from "../components/layout";
 import L, { LatLng } from "leaflet";
 import "leaflet.markercluster";
-import "leaflet/dist/leaflet.css";
-import "leaflet/dist/images/layers.png";
-import "leaflet/dist/images/layers-2x.png";
-import "leaflet/dist/images/marker-icon-2x.png";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet/dist/images/layers-2x.png";
+import "leaflet/dist/images/layers.png";
+import "leaflet/dist/images/marker-icon-2x.png";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import ReactDOMServer from "react-dom/server";
+import "leaflet/dist/leaflet.css";
+import * as React from "react";
 import { useEffect } from "react";
-import {
-  Link as LinkIcon,
-  Facebook as FacebookIcon,
-} from "@mui/icons-material";
+import ReactDOMServer from "react-dom/server";
+import Layout from "../components/layout";
 
 const ActivityPage = ({ data }: any) => {
   const mapStyles = {

@@ -1,10 +1,10 @@
-import * as React from "react";
-import { Grid, FormControlLabel, Checkbox, Box } from "@mui/material";
-import { ProductCard } from "./product-card";
-import { graphql, useStaticQuery } from "gatsby";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { Grid } from "@mui/material";
+import { graphql, useStaticQuery } from "gatsby";
+import * as React from "react";
 import * as favoriteService from "../utils/favoritesService";
 import FilterBar from "./filter-bar";
+import { ProductCard } from "./product-card";
 
 const backgroundColor = "#FFD700"; // Couleur de fond pour le bouton et la barre de filtres
 const textColor = "#000000"; // Couleur de texte pour le bouton et la barre de filtres

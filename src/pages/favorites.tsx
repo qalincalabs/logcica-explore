@@ -1,44 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { graphql, PageProps, navigate } from "gatsby";
+import {
+  ArrowDownward,
+  ArrowUpward,
+  Delete,
+  DeleteForever,
+  Edit,
+  GetApp,
+  Menu,
+  PictureAsPdf,
+  Share,
+  Store,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
+  Button,
+  ButtonGroup,
+  CssBaseline,
+  Drawer,
+  Grid,
+  Hidden,
+  IconButton,
   List,
   ListItem,
   ListItemAvatar,
   ListItemButton,
-  ListItemText,
-  Typography,
-  IconButton,
   ListItemIcon,
-  Grid,
-  ButtonGroup,
-  Button,
+  ListItemText,
   Tooltip,
-  Drawer,
-  Hidden,
-  CssBaseline,
-  useTheme,
+  Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import {
-  Store,
-  Delete,
-  GetApp,
-  PictureAsPdf,
-  DeleteForever,
-  Menu,
-  ArrowUpward,
-  ArrowDownward,
-  Edit,
-  Share,
-} from "@mui/icons-material";
+import { graphql, navigate, PageProps } from "gatsby";
+import LZString from "lz-string";
+import React, { useEffect, useState } from "react";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import Layout from "../components/layout";
 import RenameDialog from "../components/RenameDialog";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import { exportToJSON, exportToPDF, exportToXLSX } from "../utils/exportUtils";
 import * as favoriteService from "../utils/favoritesService";
-import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
-import LZString from "lz-string";
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 

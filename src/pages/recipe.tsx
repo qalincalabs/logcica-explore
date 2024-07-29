@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import { graphql, navigate, type PageProps, type HeadFC } from "gatsby";
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ContrastIcon from "@mui/icons-material/Contrast";
+import DescriptionIcon from "@mui/icons-material/Description";
+import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 import {
-  Box,
   Avatar,
+  Box,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
+import { graphql, navigate, type HeadFC, type PageProps } from "gatsby";
+import React from "react";
 import Layout from "../components/layout";
-import RestaurantIcon from "@mui/icons-material/Restaurant";
-import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
-import ContrastIcon from "@mui/icons-material/Contrast";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import DescriptionIcon from "@mui/icons-material/Description";
 import MainContent from "../components/main-content";
 
 const RecipePage: React.FC<PageProps> = ({ data }: any) => {

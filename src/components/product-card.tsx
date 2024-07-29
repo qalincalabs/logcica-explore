@@ -1,40 +1,39 @@
-import * as React from "react";
-import moment from "moment";
-import Markdown from "markdown-to-jsx";
 import {
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CardHeader,
-  Typography,
-  Stack,
-  Breadcrumbs,
-  Link,
-  Box,
-  Avatar,
-  IconButton,
-  Tab,
-  CardActions,
-  TableContainer,
-} from "@mui/material";
-import {
-  CalendarMonth,
-  LocalDining,
-  CrisisAlert,
-  WineBar,
   Agriculture,
   Blender,
+  CalendarMonth,
   Inventory,
+  LocalDining,
   SquareFoot,
   VisibilityOff,
+  WineBar,
 } from "@mui/icons-material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import {
+  Avatar,
+  Box,
+  Breadcrumbs,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Grid,
+  IconButton,
+  Link,
+  Stack,
+  Tab,
+  TableContainer,
+  Typography,
+} from "@mui/material";
+import Markdown from "markdown-to-jsx";
+import moment from "moment";
+import * as React from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
-import NutrientListTable from "./nutrient-list-table";
 import AllergenList from "./allergen-list";
+import NutrientListTable from "./nutrient-list-table";
 
 const collectionType = "product";
 

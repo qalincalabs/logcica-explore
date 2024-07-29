@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { graphql, navigate, type PageProps, type HeadFC } from "gatsby";
+import { Store } from "@mui/icons-material";
 import {
   Avatar,
   ListItemAvatar,
@@ -8,8 +7,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { graphql, navigate, type HeadFC, type PageProps } from "gatsby";
+import React from "react";
 import Layout from "../components/layout";
-import { Store } from "@mui/icons-material";
 import MainContent from "../components/main-content";
 
 const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {

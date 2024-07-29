@@ -1,5 +1,4 @@
-import React from "react";
-import { graphql, HeadFC, navigate, PageProps } from "gatsby";
+import { Event } from "@mui/icons-material";
 import {
   Avatar,
   ListItemAvatar,
@@ -7,15 +6,14 @@ import {
   ListItemText,
   Stack,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import Layout from "../components/layout";
-import { Event } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
-import MainContent from "../components/main-content";
 import { format, isAfter } from "date-fns";
 import { fr } from "date-fns/locale";
+import { graphql, HeadFC, navigate, PageProps } from "gatsby";
+import Markdown from "markdown-to-jsx";
+import React from "react";
+import Layout from "../components/layout";
+import MainContent from "../components/main-content";
 
 const EventPage: React.FC<PageProps> = ({ data }: any) => {
   const now = new Date();
