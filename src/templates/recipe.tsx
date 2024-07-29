@@ -1,30 +1,30 @@
-import React from "react";
-import { graphql } from "gatsby";
+import AccessAlarmsIcon from "@mui/icons-material/AccessAlarms";
+import ContrastIcon from "@mui/icons-material/Contrast";
+import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import {
   Box,
   CardContent,
+  Checkbox,
   Grid,
-  Paper,
-  Stack,
-  Typography,
   List,
   ListItem,
   ListItemButton,
-  ListItemText,
-  Checkbox,
   ListItemIcon,
+  ListItemText,
+  Paper,
+  Stack,
+  Typography,
 } from "@mui/material";
-import AccessAlarmsIcon from "@mui/icons-material/AccessAlarms";
-import Layout from "../components/layout";
-import ContrastIcon from "@mui/icons-material/Contrast";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import { graphql } from "gatsby";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import NutrientListTable from "../components/nutrient-list-table";
 import AllergenList from "../components/allergen-list";
 import FavoriteIcons from "../components/FavoriteIcons";
+import Layout from "../components/layout";
+import NutrientListTable from "../components/nutrient-list-table";
 
 export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
@@ -466,6 +466,7 @@ export const query = graphql`
       mainImage
       allergenList {
         allergen {
+          _id
           name
         }
         containmentLevel {
