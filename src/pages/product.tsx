@@ -8,7 +8,12 @@ const ProductPage: React.FC<PageProps> = () => {
   return (
     <Layout>
       <Box p={2}>
-        <Typography align="center" variant="h3" my={4} sx={{ fontWeight: 'bold', color: '#FFD700' }}>
+        <Typography
+          align="center"
+          variant="h3"
+          my={4}
+          sx={{ fontWeight: "bold", color: "#FFD700" }}
+        >
           Produits
         </Typography>
         <ProductCardList />

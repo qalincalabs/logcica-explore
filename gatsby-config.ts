@@ -6,7 +6,7 @@ const noOpAdapter: AdapterInit = () => ({
   adapt() {
     // noop
   },
-})
+});
 
 require("dotenv").config({
   path: `.env`, // ${process.env.NODE_ENV}
@@ -38,20 +38,20 @@ module.exports = {
         collection: collections,
         connectionString: process.env.MONGO_CONNECTION_STRING,
         extraParams: {
-          appName:"Cluster0",
+          appName: "Cluster0",
         },
         query: {},
         preserveObjectIds: false,
       },
-      
+
       //query: { documents: { as_of: { $gte: 1604397088013 } } },
     },
     {
-      resolve: 'gatsby-plugin-react-leaflet',
+      resolve: "gatsby-plugin-react-leaflet",
       options: {
-        linkStyles: false // (default: true) Enable/disable loading stylesheets via CDN
-      }
-    }
+        linkStyles: false, // (default: true) Enable/disable loading stylesheets via CDN
+      },
+    },
   ],
 };
 
@@ -65,7 +65,7 @@ const config: GatsbyConfig = {
       { name: "MARCHÉS", url: "/marketplace" },
       { name: "PRODUITS", url: "/product" },
       { name: "RECIPE", url: "/recipe" },
-      {name:"ÉVÉNEMENTS", url: "/event"}
+      { name: "ÉVÉNEMENTS", url: "/event" },
     ],
   },
   // More easily incorporate content into your pages through automatic TypeScript type generation and better GraphQL IntelliSense.
@@ -74,6 +74,5 @@ const config: GatsbyConfig = {
   graphqlTypegen: true,
   plugins: ["gatsby-plugin-styled-components"],
 };
-
 
 export default config;

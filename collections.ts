@@ -20,5 +20,5 @@ export const collections: string[] = [
   "contributions",
   "actions",
   "contacts",
-  "sessions"
+  "sessions",
 ];

@@ -41,12 +41,12 @@ function PartnershipListItem(p: any) {
               <Typography sx={{ fontWeight: "bold" }}>{p.area.name}</Typography>
             )}
             {p.profiles.find(
-              (p: any) => p.description?.short && p.type == "website"
+              (p: any) => p.description?.short && p.type == "website",
             )?.description?.short && (
               <Typography>
                 {
                   p.profiles.find(
-                    (p: any) => p.description?.short && p.type == "website"
+                    (p: any) => p.description?.short && p.type == "website",
                   )?.description?.short?.markdown
                 }
               </Typography>

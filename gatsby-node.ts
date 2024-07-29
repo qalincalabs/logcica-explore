@@ -1,5 +1,5 @@
-const path = require('path');
-const { collections } = require('./collections');
+const path = require("path");
+const { collections } = require("./collections");
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -13,7 +13,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       (c) =>
         `type mongodb${capitalizeFirstLetter(c)} implements Node {
             _id: String @proxy(from: "mongodb_id")
-        }`
+        }`,
     )
     .join("\n");
 

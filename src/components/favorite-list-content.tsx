@@ -14,8 +14,8 @@ import { graphql, useStaticQuery } from "gatsby";
 import React from "react";
 
 interface FavoriteListContent {
-    favorites: Record<string, string[]>;
-  }
+  favorites: Record<string, string[]>;
+}
 
 export function FavoriteListContent({ favorites }: FavoriteListContent) {
   const data = useStaticQuery(graphql`
@@ -172,7 +172,7 @@ export function FavoriteListContent({ favorites }: FavoriteListContent) {
                   })}
                 </List>
               </Grid>
-            )
+            ),
         )}
       </Grid>
     </Box>

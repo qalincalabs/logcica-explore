@@ -17,7 +17,7 @@ interface MainContentProps {
   type: string;
   listItemContent: (arg0: any) => any;
   dataList: any;
-  disableFavorites?: boolean 
+  disableFavorites?: boolean;
 }
 
 export default function MainContent(props: MainContentProps) {
@@ -27,15 +27,14 @@ export default function MainContent(props: MainContentProps) {
   const getAllFavorites = () =>
     favoriteService.findItems({ listIds: ["default"], targetTypes: [type] });
 
-  const [favorites, setFavorites] = useState<favoriteService.FavoriteItem[]>(
-    getAllFavorites()
-  );
+  const [favorites, setFavorites] =
+    useState<favoriteService.FavoriteItem[]>(getAllFavorites());
 
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   const filteredDataList = showFavoritesOnly
     ? dataList.filter((m: any) =>
-        favorites.map((f) => f.targetId).includes(m._id)
+        favorites.map((f) => f.targetId).includes(m._id),
       )
     : dataList;
 
@@ -46,7 +45,7 @@ export default function MainContent(props: MainContentProps) {
           {props.title}
         </Typography>
       </Box>
-      { !props.disableFavorites && 
+      {!props.disableFavorites && (
         <FilterBar
           favoriteFilterToggle={showFavoritesOnly}
           favoriteFilterToggleCallback={() => {
@@ -54,13 +53,15 @@ export default function MainContent(props: MainContentProps) {
             setFavorites(getAllFavorites());
           }}
         />
-      }
+      )}
       <Box display="flex" justifyContent="center" alignItems="center">
         <List sx={{ maxWidth: "1000px" }}>
           {filteredDataList.map((m: any) => (
             <ListItem key={m._id}>
               {props.listItemContent(m)}
-              { !props.disableFavorites && <FavoriteIcons type={type} targetId={m._id} /> }
+              {!props.disableFavorites && (
+                <FavoriteIcons type={type} targetId={m._id} />
+              )}
             </ListItem>
           ))}
         </List>

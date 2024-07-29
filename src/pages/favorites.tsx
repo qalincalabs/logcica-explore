@@ -19,85 +19,180 @@ import {
   Hidden,
   CssBaseline,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
-import { Store, Delete, GetApp, PictureAsPdf, DeleteForever, Menu, ArrowUpward, ArrowDownward, Edit, Share } from "@mui/icons-material";
+import {
+  Store,
+  Delete,
+  GetApp,
+  PictureAsPdf,
+  DeleteForever,
+  Menu,
+  ArrowUpward,
+  ArrowDownward,
+  Edit,
+  Share,
+} from "@mui/icons-material";
 import Layout from "../components/layout";
 import RenameDialog from "../components/RenameDialog";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import * as favoriteService from "../utils/favoritesService";
 import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
-import LZString from 'lz-string';
+import LZString from "lz-string";
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
-const typeNames = ["partnership", "marketplace", "activity", "product", "event", "recipe"]
+const typeNames = [
+  "partnership",
+  "marketplace",
+  "activity",
+  "product",
+  "event",
+  "recipe",
+];
 
 const getFilter = (data) => {
   return [
-    { key: 'partnership', otherKey: 'partnerships', title: 'Groupements', dataKey: 'partnership', dataNodes: data.partnerships.nodes },
-    { key: 'marketplace', otherKey: 'counters', title: 'Marchés', dataKey: 'counter', dataNodes: data.marketplaces.nodes },
-    { key: 'activity', otherKey: 'activities', title: 'Producteurs', dataKey: 'activity', dataNodes: data.activities.nodes },
-    { key: 'product', otherKey: 'products', title: 'Produits', dataKey: 'product', dataNodes: data.products.nodes },
-    { key: 'event', otherKey: 'sessions', title: 'Événements', dataKey: 'session', dataNodes: data.events.nodes },
-    { key: 'recipe', otherKey: 'recipes', title: 'Recettes', dataKey: 'recipe', dataNodes: data.recipes.nodes },
+    {
+      key: "partnership",
+      otherKey: "partnerships",
+      title: "Groupements",
+      dataKey: "partnership",
+      dataNodes: data.partnerships.nodes,
+    },
+    {
+      key: "marketplace",
+      otherKey: "counters",
+      title: "Marchés",
+      dataKey: "counter",
+      dataNodes: data.marketplaces.nodes,
+    },
+    {
+      key: "activity",
+      otherKey: "activities",
+      title: "Producteurs",
+      dataKey: "activity",
+      dataNodes: data.activities.nodes,
+    },
+    {
+      key: "product",
+      otherKey: "products",
+      title: "Produits",
+      dataKey: "product",
+      dataNodes: data.products.nodes,
+    },
+    {
+      key: "event",
+      otherKey: "sessions",
+      title: "Événements",
+      dataKey: "session",
+      dataNodes: data.events.nodes,
+    },
+    {
+      key: "recipe",
+      otherKey: "recipes",
+      title: "Recettes",
+      dataKey: "recipe",
+      dataNodes: data.recipes.nodes,
+    },
   ];
-}
+};
 
 const generateShareText = (favorites, data) => {
-  const sections = getFilter(data)
+  const sections = getFilter(data);
 
   return sections.reduce((text, { otherKey, title, nodes }) => {
     if (favorites[otherKey]?.length) {
-      text += `${title}:\n${favorites[otherKey].map(id => `•⁠  ⁠${nodes.find(p => p._id === id)?.name}\n`).join('')}\n`;
+      text += `${title}:\n${favorites[otherKey].map((id) => `•⁠  ⁠${nodes.find((p) => p._id === id)?.name}\n`).join("")}\n`;
     }
     return text;
   }, "Mes Favoris:\n\n");
 };
 
-const createFilteredList = (favorites, filterKey, dataKey) => (
-  filterKey ? favorites.filter(f => f.targetType === dataKey) : []
-);
+const createFilteredList = (favorites, filterKey, dataKey) =>
+  filterKey ? favorites.filter((f) => f.targetType === dataKey) : [];
 
-const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite, dataKey, dataNodes, moveSection, index, totalSections }) => (
+const FavoritesList = ({
+  title,
+  favorites,
+  handleItemClick,
+  handleRemoveFavorite,
+  dataKey,
+  dataNodes,
+  moveSection,
+  index,
+  totalSections,
+}) =>
   !favorites.length ? null : (
     <Grid item xs={12}>
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h6" sx={{ color: '#333', mb: 2 }}>{title}</Typography>
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="h6" sx={{ color: "#333", mb: 2 }}>
+          {title}
+        </Typography>
         <Box>
-          <IconButton onClick={() => moveSection(index, -1)} disabled={index === 0}>
+          <IconButton
+            onClick={() => moveSection(index, -1)}
+            disabled={index === 0}
+          >
             <ArrowUpward />
           </IconButton>
-          <IconButton onClick={() => moveSection(index, 1)} disabled={index === totalSections - 1}>
+          <IconButton
+            onClick={() => moveSection(index, 1)}
+            disabled={index === totalSections - 1}
+          >
             <ArrowDownward />
           </IconButton>
         </Box>
       </Box>
       <List>
         {favorites.map((item) => {
-          const dataNode = dataNodes.find(p => p._id === item.targetId);
+          const dataNode = dataNodes.find((p) => p._id === item.targetId);
           return (
-            <ListItem 
-              key={item.targetId} 
-              onClick={() => handleItemClick(dataKey, item.targetId, dataNode?.producer?.activity?._id)} 
-              sx={{ 
-                transition: 'transform 0.3s, box-shadow 0.3s', 
-                '&:hover': { transform: 'scale(1.02)', boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)' },
-                borderRadius: '8px',
+            <ListItem
+              key={item.targetId}
+              onClick={() =>
+                handleItemClick(
+                  dataKey,
+                  item.targetId,
+                  dataNode?.producer?.activity?._id,
+                )
+              }
+              sx={{
+                transition: "transform 0.3s, box-shadow 0.3s",
+                "&:hover": {
+                  transform: "scale(1.02)",
+                  boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)",
+                },
+                borderRadius: "8px",
                 mb: 2,
-                bgcolor: '#fff',
-                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
+                bgcolor: "#fff",
+                boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
               }}
             >
               <ListItemButton>
                 <ListItemAvatar>
-                  <Avatar sx={{ bgcolor: '#FFD700', color: '#fff' }}>
+                  <Avatar sx={{ bgcolor: "#FFD700", color: "#fff" }}>
                     <Store />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={dataNode?.name || `${title} inconnu`} sx={{ color: '#555' }} />
+                <ListItemText
+                  primary={dataNode?.name || `${title} inconnu`}
+                  sx={{ color: "#555" }}
+                />
                 <ListItemIcon>
-                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavorite(item.targetId, dataKey); }}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFavorite(item.targetId, dataKey);
+                    }}
+                  >
                     <Delete />
                   </IconButton>
                 </ListItemIcon>
@@ -107,21 +202,30 @@ const FavoritesList = ({ title, favorites, handleItemClick, handleRemoveFavorite
         })}
       </List>
     </Grid>
-  )
-);
+  );
 
 const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const refreshFavorites = () => favoriteService.allLists().reduce((acc, list) => {
-    acc[list.id] = favoriteService.findItems({ listIds: [list.id] });
-    return acc;
-  }, {} as { [key: string]: any[] });
+  const refreshFavorites = () =>
+    favoriteService.allLists().reduce(
+      (acc, list) => {
+        acc[list.id] = favoriteService.findItems({ listIds: [list.id] });
+        return acc;
+      },
+      {} as { [key: string]: any[] },
+    );
 
-  const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(refreshFavorites());
-  const [shareText, setShareText] = useState(generateShareText(favorites, data));
-  const [filter, setFilter] = useState(typeNames.map(n => ({collectionName: n, visible: true})));
+  const [favorites, setFavorites] = useState<{ [key: string]: any[] }>(
+    refreshFavorites(),
+  );
+  const [shareText, setShareText] = useState(
+    generateShareText(favorites, data),
+  );
+  const [filter, setFilter] = useState(
+    typeNames.map((n) => ({ collectionName: n, visible: true })),
+  );
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const allLists = favoriteService.allLists();
@@ -130,17 +234,16 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   const [listToRename, setListToRename] = useState(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [listToRemove, setListToRemove] = useState<string | null>(null);
-  const [itemToRemove, setItemToRemove] = useState({ id: '', type: '' });
+  const [itemToRemove, setItemToRemove] = useState({ id: "", type: "" });
 
   const [sectionsOrder, setSectionsOrder] = useState(() => {
-    if(typeof window == "undefined")
-      return typeNames;
+    if (typeof window == "undefined") return typeNames;
     const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
     return savedOrder ? JSON.parse(savedOrder) : typeNames;
   });
 
   useEffect(() => {
-    if(typeof window !== "undefined")
+    if (typeof window !== "undefined")
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sectionsOrder));
   }, [sectionsOrder]);
 
@@ -154,8 +257,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     const hash = location.hash.replace("#", "");
     if (hash) {
       setSelectedList(hash);
-    }else{
-      setSelectedList("default")
+    } else {
+      setSelectedList("default");
     }
   }, [location]);
 
@@ -166,7 +269,11 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   const confirmRemoveFavorite = () => {
     const { id, type } = itemToRemove;
-    favoriteService.removeItemFromList({ targetType: type, targetId: id, listId: selectedList });
+    favoriteService.removeItemFromList({
+      targetType: type,
+      targetId: id,
+      listId: selectedList,
+    });
     refresh();
     setConfirmDialogOpen(false);
   };
@@ -191,11 +298,11 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   const getLink = (type: string, id: string, activityId?: string) => {
     switch (type) {
-      case 'product':
+      case "product":
         return `/activity/${activityId}#${id}`;
-      case 'counter':
+      case "counter":
         return `/marketplace/${id}`;
-      case 'session':
+      case "session":
         return `/event/${id}`;
       default:
         return `/${type}/${id}`;
@@ -203,9 +310,11 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   };
 
   const handleFilterChange = (name: string) => {
-    setFilter(filter.map(i =>
-      i.collectionName === name ? { ...i, visible: !i.visible } : i
-    ))
+    setFilter(
+      filter.map((i) =>
+        i.collectionName === name ? { ...i, visible: !i.visible } : i,
+      ),
+    );
   };
 
   const handleListSelect = (listId: string) => {
@@ -220,33 +329,47 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     setSectionsOrder(newOrder);
   };
 
-  const filters = getFilter(data)
+  const filters = getFilter(data);
 
-  const filteredFavorites = sectionsOrder.map(sectionKey => {
-    const filterItem = filters.find(f => f.key === sectionKey);
+  const filteredFavorites = sectionsOrder.map((sectionKey) => {
+    const filterItem = filters.find((f) => f.key === sectionKey);
     if (!filterItem || !selectedList) {
       return [];
     }
     const { key, dataKey } = filterItem;
-    return createFilteredList(favorites[selectedList] || [], filter.find(i => i.collectionName == key)?.visible, dataKey);
+    return createFilteredList(
+      favorites[selectedList] || [],
+      filter.find((i) => i.collectionName == key)?.visible,
+      dataKey,
+    );
   });
 
-  const exportFavorites = (format: 'json' | 'xlsx' | 'pdf') => {
-    const selectedListName = allLists.find(list => list.id === selectedList)?.name || 'favorites';
+  const exportFavorites = (format: "json" | "xlsx" | "pdf") => {
+    const selectedListName =
+      allLists.find((list) => list.id === selectedList)?.name || "favorites";
 
-    const favoritesData = sectionsOrder.reduce((acc, sectionKey, index) => {
-      const { key, dataKey, dataNodes } = filters.find(f => f.key === sectionKey);
-      acc[key] = filteredFavorites[index].map(item => {
-        const node = dataNodes.find((p: any) => p._id === item.targetId);
-        return { 
-          id: node._id,
-          name: node?.name
-        };
-      });
-      return acc;
-    }, {} as Record<string, any[]>);
-    
-    const exportFunctions = { json: exportToJSON, xlsx: exportToXLSX, pdf: exportToPDF };
+    const favoritesData = sectionsOrder.reduce(
+      (acc, sectionKey, index) => {
+        const { key, dataKey, dataNodes } = filters.find(
+          (f) => f.key === sectionKey,
+        );
+        acc[key] = filteredFavorites[index].map((item) => {
+          const node = dataNodes.find((p: any) => p._id === item.targetId);
+          return {
+            id: node._id,
+            name: node?.name,
+          };
+        });
+        return acc;
+      },
+      {} as Record<string, any[]>,
+    );
+
+    const exportFunctions = {
+      json: exportToJSON,
+      xlsx: exportToXLSX,
+      pdf: exportToPDF,
+    };
     exportFunctions[format](favoritesData, selectedListName);
   };
 
@@ -254,7 +377,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
     const updatedFavorites = refreshFavorites();
     setFavorites(updatedFavorites);
     setShareText(generateShareText(updatedFavorites, data));
-  }
+  };
 
   const generateShareURL = () => {
     const list = favoriteService.findListById(selectedList);
@@ -262,35 +385,73 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
     const exportedList = {
       ...list,
-      data: items.reduce((acc, curr) => {
-        let { targetId, targetType } = curr;
-        return { ...acc, [targetType]: [...(acc[targetType] || []), targetId] };
-      }, {} as Record<string, string[]>)
+      data: items.reduce(
+        (acc, curr) => {
+          let { targetId, targetType } = curr;
+          return {
+            ...acc,
+            [targetType]: [...(acc[targetType] || []), targetId],
+          };
+        },
+        {} as Record<string, string[]>,
+      ),
     };
 
-    const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(exportedList));
+    const compressedData = LZString.compressToEncodedURIComponent(
+      JSON.stringify(exportedList),
+    );
     return `${window.location.origin}/share/list/${compressedData}`;
   };
 
   const drawerContent = (
-    <Box sx={{ height: '100%', bgcolor: 'lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box
+      sx={{
+        height: "100%",
+        bgcolor: "lightgray",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <Box p={2} width="100%">
-        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#000', textAlign: 'center' }}>Listes de Favoris</Typography>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: "bold", mb: 2, color: "#000", textAlign: "center" }}
+        >
+          Listes de Favoris
+        </Typography>
         <List>
-          {allLists.map(list => (
-            <ListItem 
-              button 
-              key={list.id} 
+          {allLists.map((list) => (
+            <ListItem
+              button
+              key={list.id}
               onClick={() => handleListSelect(list.id)}
-              sx={{ borderRadius: '8px', mb: 1, bgcolor: selectedList === list.id ? '#FFD700' : 'transparent', color: selectedList === list.id ? '#fff' : '#000', transition: 'background-color 0.3s, color 0.3s' }}
+              sx={{
+                borderRadius: "8px",
+                mb: 1,
+                bgcolor: selectedList === list.id ? "#FFD700" : "transparent",
+                color: selectedList === list.id ? "#fff" : "#000",
+                transition: "background-color 0.3s, color 0.3s",
+              }}
             >
               <ListItemText primary={list.name} />
-              {list.id !== 'default' && (
+              {list.id !== "default" && (
                 <>
-                  <IconButton onClick={(e) => { e.stopPropagation(); handleRemoveFavoriteList(list.id); }}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFavoriteList(list.id);
+                    }}
+                  >
                     <DeleteForever />
                   </IconButton>
-                  <IconButton onClick={(e) => { e.stopPropagation(); setListToRename(list.id); setRenameDialogOpen(true); }}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setListToRename(list.id);
+                      setRenameDialogOpen(true);
+                    }}
+                  >
                     <Edit />
                   </IconButton>
                 </>
@@ -305,20 +466,34 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   return (
     <Layout>
       <CssBaseline />
-      <Grid container sx={{ height: '100vh' }}>
+      <Grid container sx={{ height: "100vh" }}>
         <Hidden smDown>
           <Grid item xs={12} md={3} lg={2}>
-            <Box sx={{ height: '100%', bgcolor: 'lightgray' }}>
+            <Box sx={{ height: "100%", bgcolor: "lightgray" }}>
               {drawerContent}
             </Box>
           </Grid>
         </Hidden>
         <Hidden mdUp>
-          <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+          <Drawer
+            anchor="left"
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+          >
             {drawerContent}
           </Drawer>
         </Hidden>
-        <Grid item xs={12} md={9} lg={10} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <Grid
+          item
+          xs={12}
+          md={9}
+          lg={10}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
           <Box>
             <Box display="flex" alignItems="center" mb={2}>
               <Hidden smUp>
@@ -326,13 +501,34 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
                   <Menu />
                 </IconButton>
               </Hidden>
-              <Typography align="center" variant="h3" my={4} sx={{ flexGrow: 1, fontWeight: 'bold', color: '#FFD700' }}>Mes Favoris</Typography>
+              <Typography
+                align="center"
+                variant="h3"
+                my={4}
+                sx={{ flexGrow: 1, fontWeight: "bold", color: "#FFD700" }}
+              >
+                Mes Favoris
+              </Typography>
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
-              <ButtonGroup variant="outlined" sx={{flexWrap: "wrap", justifyContent: "center"}}>
+              <ButtonGroup
+                variant="outlined"
+                sx={{ flexWrap: "wrap", justifyContent: "center" }}
+              >
                 {filters.map(({ title, key }) => (
-                  <Button key={title} onClick={() => handleFilterChange(key)}
-                    sx={{ color: 'black', backgroundColor: filter.find(i => i.collectionName == key)?.visible ? 'rgba(0, 0, 0, 0.1)' : 'transparent', fontWeight: 'bold' }}>
+                  <Button
+                    key={title}
+                    onClick={() => handleFilterChange(key)}
+                    sx={{
+                      color: "black",
+                      backgroundColor: filter.find(
+                        (i) => i.collectionName == key,
+                      )?.visible
+                        ? "rgba(0, 0, 0, 0.1)"
+                        : "transparent",
+                      fontWeight: "bold",
+                    }}
+                  >
                     {title}
                   </Button>
                 ))}
@@ -340,38 +536,79 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
             </Box>
             <Box display="flex" justifyContent="center" my={2}>
               <ButtonGroup variant="outlined">
-                {['json', 'xlsx', 'pdf'].map(format => (
-                  <Tooltip key={format} title={`Exporter en ${format.toUpperCase()}`}>
-                    <IconButton onClick={() => exportFavorites(format)} sx={{ backgroundColor: '#FFD700', color: 'black' }}>
-                      {format === 'pdf' ? <PictureAsPdf /> : <GetApp />}
-                      <Typography variant="button" sx={{ ml: 1, fontWeight: 'bold' }}>{format.toUpperCase()}</Typography>
+                {["json", "xlsx", "pdf"].map((format) => (
+                  <Tooltip
+                    key={format}
+                    title={`Exporter en ${format.toUpperCase()}`}
+                  >
+                    <IconButton
+                      onClick={() => exportFavorites(format)}
+                      sx={{ backgroundColor: "#FFD700", color: "black" }}
+                    >
+                      {format === "pdf" ? <PictureAsPdf /> : <GetApp />}
+                      <Typography
+                        variant="button"
+                        sx={{ ml: 1, fontWeight: "bold" }}
+                      >
+                        {format.toUpperCase()}
+                      </Typography>
                     </IconButton>
                   </Tooltip>
                 ))}
                 <Tooltip title="Partager">
-                  <IconButton onClick={() => { const url = generateShareURL(); navigator.clipboard.writeText(url); alert(`URL de partage copiée: ${url}`); }}>
+                  <IconButton
+                    onClick={() => {
+                      const url = generateShareURL();
+                      navigator.clipboard.writeText(url);
+                      alert(`URL de partage copiée: ${url}`);
+                    }}
+                  >
                     <Share />
                   </IconButton>
                 </Tooltip>
               </ButtonGroup>
             </Box>
-            <Box p={2} width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-              <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
-                
-                {selectedList && sectionsOrder.map((sectionKey, index) => {
-                  const filterItem = filters.find(f => f.key === sectionKey);
-                  if (!filterItem) {
-                    return null;
-                  }
-                  const { title, dataKey, dataNodes } = filterItem;
-                    
-                  return (
-                    <FavoritesList key={title} title={title} favorites={filteredFavorites[index]} handleItemClick={handleItemClick}
-                      handleRemoveFavorite={(id) => handleRemoveFavorite(id, dataKey, selectedList)}
-                      dataKey={dataKey} dataNodes={dataNodes}
-                      moveSection={moveSection} index={index} totalSections={sectionsOrder.length} />
-                  );
-                })}
+            <Box
+              p={2}
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              flexDirection="column"
+              alignItems="center"
+            >
+              <Grid
+                container
+                spacing={2}
+                justifyContent="center"
+                alignItems="flex-start"
+              >
+                {selectedList &&
+                  sectionsOrder.map((sectionKey, index) => {
+                    const filterItem = filters.find(
+                      (f) => f.key === sectionKey,
+                    );
+                    if (!filterItem) {
+                      return null;
+                    }
+                    const { title, dataKey, dataNodes } = filterItem;
+
+                    return (
+                      <FavoritesList
+                        key={title}
+                        title={title}
+                        favorites={filteredFavorites[index]}
+                        handleItemClick={handleItemClick}
+                        handleRemoveFavorite={(id) =>
+                          handleRemoveFavorite(id, dataKey, selectedList)
+                        }
+                        dataKey={dataKey}
+                        dataNodes={dataNodes}
+                        moveSection={moveSection}
+                        index={index}
+                        totalSections={sectionsOrder.length}
+                      />
+                    );
+                  })}
               </Grid>
             </Box>
           </Box>
@@ -381,22 +618,24 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
       <ConfirmationDialog
         open={confirmDialogOpen}
         onClose={() => setConfirmDialogOpen(false)}
-        onConfirm={listToRemove ? confirmRemoveFavoriteList : confirmRemoveFavorite}
+        onConfirm={
+          listToRemove ? confirmRemoveFavoriteList : confirmRemoveFavorite
+        }
         title="Confirmation de suppression"
-        content={`Êtes-vous sûr de vouloir supprimer ${listToRemove ? 'cette liste de favoris' : 'cet élément de vos favoris'} ?`}
+        content={`Êtes-vous sûr de vouloir supprimer ${listToRemove ? "cette liste de favoris" : "cet élément de vos favoris"} ?`}
       />
-        
+
       <RenameDialog
         listToRename={listToRename}
         open={renameDialogOpen}
-        onClose={() => { 
-          setRenameDialogOpen(false); 
-          refresh()}
-        }
+        onClose={() => {
+          setRenameDialogOpen(false);
+          refresh();
+        }}
       />
     </Layout>
   );
-}
+};
 
 export default FavoritesPage;
 
@@ -408,15 +647,15 @@ export const query = graphql`
         name
       }
     }
-    products: allMongodbProducts { 
+    products: allMongodbProducts {
       nodes {
         _id
         name
-        producer { 
-          activity { 
-            _id 
-            name 
-          } 
+        producer {
+          activity {
+            _id
+            name
+          }
         }
       }
     }
@@ -446,4 +685,3 @@ export const query = graphql`
     }
   }
 `;
-

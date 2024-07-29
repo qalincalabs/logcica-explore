@@ -35,10 +35,10 @@ export function ProfileExternalLink({ profile }: any) {
 export default function MarketplaceTemplate({ data }: any) {
   const marketplace = data.marketplace;
   const stalls = data.stalls.nodes.sort((a: any, b: any) =>
-    a.name.localeCompare(b.name)
+    a.name.localeCompare(b.name),
   );
   const marketplaceFacebookProfile = marketplace.profiles?.find(
-    (p: any) => p.type == "facebook"
+    (p: any) => p.type == "facebook",
   );
 
   return (
@@ -87,13 +87,13 @@ export default function MarketplaceTemplate({ data }: any) {
                     {stall.manager.activity?.name ?? stall.name}
                   </Typography>
                   {stall.manager.activity?.profiles?.find(
-                    (p: any) => p.type == "facebook"
+                    (p: any) => p.type == "facebook",
                   ) && (
                     <a
                       href={
                         "https://www.facebook.com/" +
                         stall.manager.activity?.profiles?.find(
-                          (p: any) => p.type == "facebook"
+                          (p: any) => p.type == "facebook",
                         ).localKey
                       }
                     >
@@ -103,12 +103,12 @@ export default function MarketplaceTemplate({ data }: any) {
                     </a>
                   )}
                   {stall.manager.activity?.profiles?.find(
-                    (p: any) => p.type == "website"
+                    (p: any) => p.type == "website",
                   ) && (
                     <a
                       href={
                         stall.manager.activity?.profiles.find(
-                          (p: any) => p.type == "website"
+                          (p: any) => p.type == "website",
                         ).link
                       }
                     >
