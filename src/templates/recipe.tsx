@@ -69,7 +69,7 @@ export default function RecipeTemplate({ data }: any) {
               <IngredientListCard recipe={recipe} />
             </Grid>
           )}
-          {recipe.stepStatement?.short?.markdown && (
+          {recipe.stepStatement?.long?.markdown  && (
             <Grid item xs={12} md={9}>
               <StepsCard recipe={recipe} />
             </Grid>
@@ -183,7 +183,7 @@ export function StepsCard({ recipe }: any) {
             },
           }}
         >
-          {recipe.stepStatement.short.markdown}
+          {recipe.stepStatement.long.markdown}
         </ReactMarkdown>
         <Box sx={{ display: "flex", justifyContent: "right" }}>
           <ReceiptLongIcon sx={{ fontSize: 40 }} />
@@ -443,7 +443,7 @@ export const query = graphql`
         name
       }
       stepStatement {
-        short {
+        long {
           markdown
         }
       }
