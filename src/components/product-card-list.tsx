@@ -212,7 +212,6 @@ export function ProductCardList() {
             <LoadingButton
               onClick={handleLoadMore}
               loading={loadMore}
-              loadingPosition="end"
               variant="contained"
               fullWidth
               sx={{ backgroundColor: backgroundColor, color: textColor }} // Couleur du bouton "Load more"

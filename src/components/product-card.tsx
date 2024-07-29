@@ -352,7 +352,7 @@ export function ProductCard({ item }: any) {
           item.nutrientList) && (
           <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
             <TabContext value={tab}>
-              <Box>
+              <Stack direction="row">
                 <TabList
                   onChange={handleTabChange}
                   aria-label="lab API tabs example"
@@ -366,7 +366,15 @@ export function ProductCard({ item }: any) {
                     },
                   }}
                 >
-                  <Tab label="Hidden" value="0" sx={{ display: "none" }} />
+                  <Tab
+                    value={"0"}
+                    label="Hidden"
+                    sx={{
+                      position: "fixed",
+                      top: "-20000000px",
+                      left: "-20000000px",
+                    }}
+                  />
                   {item.consumerUsageInstructions?.short && (
                     <Tab
                       label="Utilisation"
@@ -388,15 +396,14 @@ export function ProductCard({ item }: any) {
                       sx={{ fontSize: "0.8rem" }}
                     />
                   )}
-                  <IconButton
-                    onClick={handleChange2("0")}
-                    sx={{ display: tab === "0" ? "none" : "block" }}
-                  >
-                    <VisibilityOff fontSize="small" />
-                  </IconButton>
                 </TabList>
-              </Box>
-              <TabPanel value="0" sx={{ display: "none" }}></TabPanel>
+                <IconButton
+                  onClick={handleChange2("0")}
+                  sx={{ display: tab === "0" ? "none" : "block" }}
+                >
+                  <VisibilityOff fontSize="small" />
+                </IconButton>
+              </Stack>
               {item.consumerUsageInstructions?.short && (
                 <TabPanel value="1">
                   <Markdown>

@@ -4,12 +4,7 @@ import React from "react";
 
 export function AllergenList({ allergenList }: any) {
   return allergenList.map((productAllergen: any) => (
-    <Stack
-      direction="row"
-      gap={1}
-      flexGrow={1}
-      key={productAllergen.allergen._id}
-    >
+    <Stack direction="row" gap={1} flexGrow={1}>
       <CrisisAlert />
       <Typography>
         {productAllergen.containmentLevel.name +
