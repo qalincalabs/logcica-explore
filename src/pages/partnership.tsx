@@ -4,7 +4,6 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
 import { graphql, navigate, type HeadFC, type PageProps } from "gatsby";
@@ -36,14 +35,20 @@ function PartnershipListItem(p: any) {
       <ListItemText
         primary={p.name}
         secondary={
-          <Stack>
+          <>
             {p.area && (
-              <Typography sx={{ fontWeight: "bold" }}>{p.area.name}</Typography>
+              <Typography
+                component={"span"}
+                display="inline-block"
+                sx={{ fontWeight: "bold" }}
+              >
+                {p.area.name}
+              </Typography>
             )}
             {p.profiles.find(
               (p: any) => p.description?.short && p.type == "website",
             )?.description?.short && (
-              <Typography>
+              <Typography component={"span"} display="inline-block">
                 {
                   p.profiles.find(
                     (p: any) => p.description?.short && p.type == "website",
@@ -51,7 +56,7 @@ function PartnershipListItem(p: any) {
                 }
               </Typography>
             )}
-          </Stack>
+          </>
         }
       />
     </ListItemButton>
