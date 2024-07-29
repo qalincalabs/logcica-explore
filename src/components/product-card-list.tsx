@@ -64,6 +64,7 @@ export function ProductCardList() {
           }
           allergenList {
             allergen {
+              _id
               name
             }
             containmentLevel {

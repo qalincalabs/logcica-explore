@@ -394,6 +394,7 @@ export const query = graphql`
         }
         allergenList {
           allergen {
+            _id
             name
           }
           containmentLevel {

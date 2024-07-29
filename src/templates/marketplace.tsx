@@ -68,7 +68,7 @@ export default function MarketplaceTemplate({ data }: any) {
         </Typography>
         <Grid container spacing={2}>
           {stalls.map((stall: any) => (
-            <Grid item xs={12} sm={6} md={4} xl={3}>
+            <Grid key={stall._id} item xs={12} sm={6} md={4} xl={3}>
               <Paper sx={{ p: 1 }}>
                 <Stack direction="row">
                   <Typography
@@ -112,7 +112,7 @@ export default function MarketplaceTemplate({ data }: any) {
                     </a>
                   )}
                   {stall.actions?.map((a: any) => (
-                    <a href={a.url}>
+                    <a key={a._id} href={a.url}>
                       <IconButton size="small" sx={{ color: "black" }}>
                         <ShoppingBasket />
                       </IconButton>
@@ -170,6 +170,7 @@ export const query = graphql`
           }
         }
         actions {
+          _id
           name
           fontAwesomeIcon
           link
