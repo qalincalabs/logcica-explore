@@ -1,16 +1,16 @@
-const path = require('path');
-const { collections } = require('./collections');
+const path = require("path");
+const { collections } = require("./collections");
 
-function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-exports.createSchemaCustomization = ({ actions }) => {
+exports.createSchemaCustomization = ({ actions }: any) => {
   const { createTypes } = actions;
 
   const mongoIdTypeDefs = collections
     .map(
-      (c) =>
+      (c: string) =>
         `type mongodb${capitalizeFirstLetter(c)} implements Node {
             _id: String @proxy(from: "mongodb_id")
         }`
@@ -120,6 +120,7 @@ exports.createSchemaCustomization = ({ actions }) => {
         difficulty: mongodbCategories @link(by: "mongodb_id")
         seasonality: mongodbCategories @link(by: "mongodb_id")
         costCategory: mongodbCategories @link(by: "mongodb_id")
+        categories: [mongodbCategories] @link(by: "mongodb_id")
       }
       type mongodbContributionsSubject{
         partnership: mongodbPartnerships @link(by: "mongodb_id")
@@ -137,7 +138,7 @@ exports.createSchemaCustomization = ({ actions }) => {
   createTypes(typeDefs1);
 };
 
-exports.createPages = async function ({ actions, graphql }) {
+exports.createPages = async function ({ actions, graphql }: any) {
   const { data: marketplacesQuery } = await graphql(`
     query {
       allMongodbCounters(filter: { type: { eq: "marketplace" } }) {
@@ -148,7 +149,7 @@ exports.createPages = async function ({ actions, graphql }) {
       }
     }
   `);
-  marketplacesQuery.allMongodbCounters.nodes.forEach((node) => {
+  marketplacesQuery.allMongodbCounters.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/marketplace.tsx`);
 
@@ -169,7 +170,7 @@ exports.createPages = async function ({ actions, graphql }) {
       }
     }
   `);
-  partnershipsQuery.allMongodbPartnerships.nodes.forEach((node) => {
+  partnershipsQuery.allMongodbPartnerships.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/partnership.tsx`);
 
@@ -190,7 +191,7 @@ exports.createPages = async function ({ actions, graphql }) {
       }
     }
   `);
-  activitiesQuery.allMongodbActivities.nodes.forEach((node) => {
+  activitiesQuery.allMongodbActivities.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/activity.tsx`);
 
@@ -231,7 +232,7 @@ exports.createPages = async function ({ actions, graphql }) {
       }
     }
   `);
-  sessionsQuery.allMongodbSessions.nodes.forEach((node) => {
+  sessionsQuery.allMongodbSessions.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/event.tsx`);
 

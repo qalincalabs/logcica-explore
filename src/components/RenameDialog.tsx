@@ -1,34 +1,43 @@
-import React, { useState, useEffect } from 'react';
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   TextField,
-  Button
-} from '@mui/material';
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import * as favoriteService from "../utils/favoritesService";
 
 interface RenameDialogProps {
   open: boolean;
   onClose: () => void;
-  listToRename: string | null;
+  listToRename: string | undefined;
 }
 
-const RenameDialog: React.FC<RenameDialogProps> = ({ open, onClose, listToRename }) => {
+const RenameDialog: React.FC<RenameDialogProps> = ({
+  open,
+  onClose,
+  listToRename,
+}) => {
   const [newListName, setNewListName] = useState("");
 
   useEffect(() => {
     if (open) {
-      const list = favoriteService.allLists().find(list => list.id === listToRename);
+      const list = favoriteService
+        .allLists()
+        .find((list) => list.id === listToRename);
       setNewListName(list?.name || "");
     }
   }, [open, listToRename]);
 
   const handleRenameFavoriteList = () => {
     if (listToRename && newListName.trim()) {
-      favoriteService.renameList({ id: listToRename, name: newListName.trim() });
+      favoriteService.renameList({
+        id: listToRename,
+        name: newListName.trim(),
+      });
       onClose();
     }
   };

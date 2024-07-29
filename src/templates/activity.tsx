@@ -1,12 +1,12 @@
-import React from 'react';
-import { graphql, navigate, PageProps } from 'gatsby';
-import { Box, Grid, Paper, Stack, Typography, Link } from '@mui/material';
-import { OpenInNew, Email, Phone } from '@mui/icons-material';
-import Layout from '../components/layout';
-import Markdown from 'markdown-to-jsx';
-import { ProductCard } from '../components/product-card';
-import FavoriteIcons from '../components/FavoriteIcons';
-import { startOfDay, subDays, compareAsc, parseISO } from "date-fns";
+import { Email, OpenInNew, Phone } from "@mui/icons-material";
+import { Box, Grid, Link, Paper, Stack, Typography } from "@mui/material";
+import { compareAsc, parseISO, startOfDay, subDays } from "date-fns";
+import { graphql, navigate, PageProps } from "gatsby";
+import Markdown from "markdown-to-jsx";
+import React from "react";
+import FavoriteIcons from "../components/FavoriteIcons";
+import Layout from "../components/layout";
+import { ProductCard } from "../components/product-card";
 
 const ActivityTemplate = ({ data }: PageProps<any>) => {
   const activity = data.activity;
@@ -17,8 +17,10 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
   const contributions = data.contributions.nodes;
   const products = data.products.nodes;
 
-  const date = startOfDay(subDays(new Date(), 7)) // 7 days in the past
-  const sessions = data.sessions.nodes.filter(s => compareAsc(parseISO(s.timeRange.to),date) > 0);
+  const date = startOfDay(subDays(new Date(), 7)); // 7 days in the past
+  const sessions = data.sessions.nodes.filter(
+    (s: any) => compareAsc(parseISO(s.timeRange.to), date) > 0,
+  );
 
   return (
     <Layout>
@@ -41,10 +43,10 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                         href={props.href}
                         target="_blank"
                         sx={{
-                          color: 'primary.main',
-                          textDecoration: 'underline',
-                          display: 'inline-flex',
-                          alignItems: 'center',
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
                         }}
                       >
                         {props.children} <OpenInNew sx={{ ml: 0.5 }} />
@@ -60,7 +62,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
         )}
 
         {activity.profiles?.find(
-          (p: any) => p.description?.long && p.type === 'web_element'
+          (p: any) => p.description?.long && p.type === "web_element",
         ) && (
           <Paper sx={{ p: 1, m: 2 }}>
             <Markdown
@@ -72,10 +74,10 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                         href={props.href}
                         target="_blank"
                         sx={{
-                          color: 'primary.main',
-                          textDecoration: 'underline',
-                          display: 'inline-flex',
-                          alignItems: 'center',
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
                         }}
                       >
                         {props.children} <OpenInNew sx={{ ml: 0.5 }} />
@@ -85,9 +87,11 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                 },
               }}
             >
-              {activity.profiles.find(
-                (p: any) => p.description?.long && p.type === 'web_element'
-              ).description?.long?.markdown}
+              {
+                activity.profiles.find(
+                  (p: any) => p.description?.long && p.type === "web_element",
+                ).description?.long?.markdown
+              }
             </Markdown>
           </Paper>
         )}
@@ -108,13 +112,14 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                         href={`https://www.google.com/maps/search/?api=1&query=${place.center.coordinates[1]}%2C${place.center.coordinates[0]}&query_place_id=${place.gmaps?.id}`}
                         target="_blank"
                         sx={{
-                          color: 'primary.main',
-                          textDecoration: 'underline',
-                          display: 'inline-flex',
-                          alignItems: 'center',
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
                         }}
                       >
-                        {place.localKey ?? place.key} <OpenInNew sx={{ ml: 0.5 }} />
+                        {place.localKey ?? place.key}{" "}
+                        <OpenInNew sx={{ ml: 0.5 }} />
                       </Link>
                     )}
                   </Stack>
@@ -133,21 +138,26 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                   {contacts.map((contact: any) => (
                     <Paper key={contact.mainEmail} sx={{ p: 2 }}>
                       {contact.name && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        >
                           <Typography>{contact.name}</Typography>
                         </Box>
                       )}
                       {contact.mainEmail && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                        >
                           <Email sx={{ mr: 1 }} />
                           <Typography>{contact.mainEmail}</Typography>
                         </Box>
                       )}
                       {contact.mainPhoneNumber && (
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Phone sx={{ mr: 1 }} />
                           <Typography>
-                            {contact.mainPhoneNumberFormatted ?? contact.mainPhoneNumber}
+                            {contact.mainPhoneNumberFormatted ??
+                              contact.mainPhoneNumber}
                           </Typography>
                         </Box>
                       )}
@@ -168,24 +178,29 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                   <Stack direction="column" spacing={1}>
                     {profiles.map((profile: any) => (
                       <Stack direction="row" gap={1} key={profile.key}>
-                        <Typography sx={{ fontWeight: 'bold' }}>{profile.type}</Typography>
+                        <Typography sx={{ fontWeight: "bold" }}>
+                          {profile.type}
+                        </Typography>
                         {profile.link ? (
                           <Link
                             href={profile.link}
                             target="_blank"
                             sx={{
-                              color: 'primary.main',
-                              textDecoration: 'underline',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
+                              color: "primary.main",
+                              textDecoration: "underline",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
                             }}
                           >
-                            {profile.localKey ?? profile.key} <OpenInNew sx={{ ml: 0.5 }} />
+                            {profile.localKey ?? profile.key}{" "}
+                            <OpenInNew sx={{ ml: 0.5 }} />
                           </Link>
                         ) : (
-                          <Typography>{profile.localKey ?? profile.key}</Typography>
+                          <Typography>
+                            {profile.localKey ?? profile.key}
+                          </Typography>
                         )}
                       </Stack>
                     ))}
@@ -210,16 +225,17 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                     <Link
                       href={`https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?nummer=${organisation.number
                         .match(/\d+/g)
-                        .join('')}`}
+                        .join("")}`}
                       target="_blank"
                       sx={{
-                        color: 'primary.main',
-                        textDecoration: 'underline',
-                        display: 'inline-flex',
-                        alignItems: 'center',
+                        color: "primary.main",
+                        textDecoration: "underline",
+                        display: "inline-flex",
+                        alignItems: "center",
                       }}
                     >
-                      {place?.localKey ?? place?.key} <OpenInNew sx={{ ml: 0.5 }} />
+                      {place?.localKey ?? place?.key}{" "}
+                      <OpenInNew sx={{ ml: 0.5 }} />
                     </Link>
                   </Stack>
                   <Typography variant="subtitle1" component="p">
@@ -257,7 +273,10 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                 <Grid container spacing={2}>
                   {sessions.map((session: any) => (
                     <Grid item xs={12} md={6} xl={4} key={session._id}>
-                      <Paper sx={{ p: 2 }} onClick={() => navigate("/event/" + session._id)}>
+                      <Paper
+                        sx={{ p: 2 }}
+                        onClick={() => navigate("/event/" + session._id)}
+                      >
                         <Typography variant="h6" component="h6">
                           {session.name}
                         </Typography>
@@ -347,7 +366,7 @@ export const query = graphql`
       }
     }
     products: allMongodbProducts(
-      sort: [{ name: ASC}]
+      sort: [{ name: ASC }]
       filter: { producer: { activity: { _id: { eq: $id } } } }
     ) {
       nodes {
@@ -375,6 +394,7 @@ export const query = graphql`
         }
         allergenList {
           allergen {
+            _id
             name
           }
           containmentLevel {
@@ -445,13 +465,9 @@ export const query = graphql`
         }
       }
     }
-    sessions: allMongodbSessions(filter: {
-      manager: {
-        activity: {
-          _id: {eq: $id}
-        }
-      }
-    }) {
+    sessions: allMongodbSessions(
+      filter: { manager: { activity: { _id: { eq: $id } } } }
+    ) {
       nodes {
         _id
         name

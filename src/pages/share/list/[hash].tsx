@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
-import LZString from "lz-string";
+import { Box, Button, CssBaseline, Grid, Typography } from "@mui/material";
 import { navigate, PageProps } from "gatsby";
-import { Box, Typography, Grid, Button, CssBaseline } from "@mui/material";
+import LZString from "lz-string";
+import React, { useEffect, useState } from "react";
+import { FavoriteListContent } from "../../../components/favorite-list-content";
 import Layout from "../../../components/layout";
 import * as favoriteService from "../../../utils/favoritesService";
-import { FavoriteListContent } from "../../../components/favorite-list-content";
 
 const SharePage = ({ params }: PageProps) => {
-  const [exportedList, setExportedList] = useState({ name: "Loading", data: {}, id: null });
+  const [exportedList, setExportedList] = useState({
+    name: "Loading",
+    data: {},
+    id: null,
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const hash = params['hash'];
+    const hash = params["hash"];
     const decompressedData = LZString.decompressFromEncodedURIComponent(hash);
 
     const parsedData = JSON.parse(decompressedData);
@@ -21,7 +25,7 @@ const SharePage = ({ params }: PageProps) => {
 
   const handleAddToFavorites = () => {
     const listId = favoriteService.importList(exportedList); // Assurez-vous que cette fonction retourne l'ID de la liste ajoutée
-    navigate(`/favorites#${listId}`)
+    navigate(`/favorites#${listId}`);
   };
 
   return (

@@ -1,16 +1,15 @@
-import React from "react";
-import { graphql, HeadFC, navigate, PageProps } from "gatsby";
+import { Store } from "@mui/icons-material";
 import {
   Avatar,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
-import Layout from "../components/layout";
-import { Store } from "@mui/icons-material";
+import { graphql, HeadFC, navigate, PageProps } from "gatsby";
 import Markdown from "markdown-to-jsx";
+import React from "react";
+import Layout from "../components/layout";
 import MainContent from "../components/main-content";
 
 const MarketplacePage: React.FC<PageProps> = ({ data }: any) => {
@@ -37,12 +36,24 @@ function MarketplaceListItem(m: any) {
       <ListItemText
         primary={m.name}
         secondary={
-          <Stack>
-            <Typography>{m.availabilityStatement.short.markdown}</Typography>
+          <>
+            <Typography
+              variant="subtitle1"
+              component="span"
+              display="inline-block"
+            >
+              {m.availabilityStatement.short.markdown}
+            </Typography>
             {m.description && (
-              <Markdown>{m.description.short.markdown}</Markdown>
+              <Typography
+                variant="subtitle2"
+                component="span"
+                display="inline-block"
+              >
+                <Markdown>{m.description.short.markdown}</Markdown>
+              </Typography>
             )}
-          </Stack>
+          </>
         }
       />
     </ListItemButton>

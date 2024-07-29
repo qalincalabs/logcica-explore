@@ -1,21 +1,21 @@
 import { Store } from "@mui/icons-material";
 import {
+  Avatar,
   Box,
   Grid,
-  Typography,
   List,
   ListItem,
-  ListItemButton,
   ListItemAvatar,
-  Avatar,
+  ListItemButton,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import { graphql, useStaticQuery } from "gatsby";
 import React from "react";
 
 interface FavoriteListContent {
-    favorites: Record<string, string[]>;
-  }
+  favorites: Record<string, string[]>;
+}
 
 export function FavoriteListContent({ favorites }: FavoriteListContent) {
   const data = useStaticQuery(graphql`
@@ -172,7 +172,7 @@ export function FavoriteListContent({ favorites }: FavoriteListContent) {
                   })}
                 </List>
               </Grid>
-            )
+            ),
         )}
       </Grid>
     </Box>

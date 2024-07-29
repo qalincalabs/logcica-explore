@@ -1,19 +1,22 @@
-import * as React from "react";
+import {
+  Facebook as FacebookIcon,
+  Link as LinkIcon,
+} from "@mui/icons-material";
 import { graphql, Link, type HeadFC } from "gatsby";
-import Layout from "../components/layout";
 import L, { LatLng } from "leaflet";
 import "leaflet.markercluster";
-import "leaflet/dist/leaflet.css";
-import "leaflet/dist/images/layers.png";
-import "leaflet/dist/images/layers-2x.png";
-import "leaflet/dist/images/marker-icon-2x.png";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet/dist/images/layers-2x.png";
+import "leaflet/dist/images/layers.png";
+import "leaflet/dist/images/marker-icon-2x.png";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import ReactDOMServer from "react-dom/server";
+import "leaflet/dist/leaflet.css";
+import * as React from "react";
 import { useEffect } from "react";
-import { Link as LinkIcon, Facebook as FacebookIcon } from "@mui/icons-material";
+import ReactDOMServer from "react-dom/server";
+import Layout from "../components/layout";
 
 const ActivityPage = ({ data }: any) => {
   const mapStyles = {
@@ -27,7 +30,7 @@ const ActivityPage = ({ data }: any) => {
       {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }
+      },
     );
 
     const map = L.map("map", {
@@ -49,15 +52,17 @@ const ActivityPage = ({ data }: any) => {
       const coordinatesToSwap = activity.place?.center?.coordinates;
       if (coordinatesToSwap) {
         const marker = L.marker(
-          new LatLng(coordinatesToSwap[1], coordinatesToSwap[0])
+          new LatLng(coordinatesToSwap[1], coordinatesToSwap[0]),
         );
         marker.bindPopup(
           ReactDOMServer.renderToString(
             <div>
               <Link to={"/activity/" + activity._id}>{activity.name}</Link>
-              {activity.profiles && activity.profiles.length > 0 && getProfileLinkAndIcon(activity.profiles)}
-            </div>
-          )
+              {activity.profiles &&
+                activity.profiles.length > 0 &&
+                getProfileLinkAndIcon(activity.profiles)}
+            </div>,
+          ),
         );
         markers.addLayer(marker);
       }
@@ -98,20 +103,24 @@ export const query = graphql`
 `;
 
 const getProfileLinkAndIcon = (profiles: any) => {
-  console.log('Profiles:', profiles); // Ajout de logs pour débogage
   const linkProfile = profiles.find((profile: any) => profile.link);
   if (!linkProfile || !linkProfile.link) {
     return null;
   }
 
   const link = linkProfile.link;
-  console.log('Link:', link); // Ajout de logs pour débogage
-  const icon = link.includes("facebook.com") ? 
-               <FacebookIcon style={{ fontSize: 16, marginRight: 5 }} /> : 
-               <LinkIcon style={{ fontSize: 16, marginRight: 5 }} />;
-  
+  const icon = link.includes("facebook.com") ? (
+    <FacebookIcon style={{ fontSize: 16, marginRight: 5 }} />
+  ) : (
+    <LinkIcon style={{ fontSize: 16, marginRight: 5 }} />
+  );
+
   return (
-    <a href={link} target="_blank" style={{ textDecoration: "none", color: "#3b5998", cursor: "pointer" }}>
+    <a
+      href={link}
+      target="_blank"
+      style={{ textDecoration: "none", color: "#3b5998", cursor: "pointer" }}
+    >
       <div style={{ display: "flex", alignItems: "center" }}>
         {icon}
         <span style={{ fontSize: 12 }}>{linkProfile.type}</span>

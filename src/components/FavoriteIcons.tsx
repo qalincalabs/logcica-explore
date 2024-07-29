@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { Add, Star, StarBorder } from "@mui/icons-material";
 import {
-  IconButton,
-  MenuItem,
-  TextField,
-  Button,
-  Popover,
   Box,
-  Typography,
+  Button,
+  Checkbox,
+  IconButton,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Checkbox,
-  ListItem,
+  Popover,
+  TextField,
 } from "@mui/material";
-import { Star, StarBorder, Delete, Add } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
 import * as favoriteService from "../utils/favoritesService";
 
 interface FavoriteIconsProps {
@@ -38,14 +36,14 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
 
   useEffect(() => {
     setSelectedItems(
-      favoriteService.findItems({ targetIds: [targetId], targetTypes: [type] })
+      favoriteService.findItems({ targetIds: [targetId], targetTypes: [type] }),
     );
     setFavoriteLists(favoriteService.allLists());
   }, []);
 
   const handleOpenPopover = (
     event: React.MouseEvent<HTMLElement>,
-    targetId: string
+    targetId: string,
   ) => {
     setAnchorEl(event.currentTarget);
     setCurrentFavoriteTarget(targetId);
@@ -67,7 +65,7 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
 
   function handleToggle(
     assignement: favoriteService.FavoriteItemAssignement,
-    e: any
+    e: any,
   ) {
     e.preventDefault();
     favoriteService.assignItemToList(assignement);
@@ -75,14 +73,14 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
       favoriteService.findItems({
         targetIds: [assignement.targetId],
         targetTypes: [assignement.targetType],
-      })
+      }),
     );
     return;
   }
 
   const favouriteChecked = selectedItems.some(
     (f) =>
-      f.listId == "default" && f.targetId == targetId && f.targetType == type
+      f.listId == "default" && f.targetId == targetId && f.targetType == type,
   );
 
   return (
@@ -96,7 +94,7 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
               targetType: type,
               assign: !favouriteChecked,
             },
-            e
+            e,
           )
         }
       >
@@ -136,7 +134,7 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
                   (i) =>
                     i.listId == value.id &&
                     i.targetId == targetId &&
-                    i.targetType == type
+                    i.targetType == type,
                 );
 
                 return (
@@ -151,7 +149,7 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
                             targetType: type,
                             assign: !listChecked,
                           },
-                          e
+                          e,
                         )
                       }
                       dense

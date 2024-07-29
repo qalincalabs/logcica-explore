@@ -19,7 +19,7 @@ const Popover = css`
 `;
 
 export default styled(SearchResult)`
-  display: ${props => (props.show ? `block` : `none`)};
+  display: ${(props) => (props.show ? `block` : `none`)};
   ${Popover}
 
   .HitCount {

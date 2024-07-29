@@ -1,25 +1,23 @@
-import * as React from "react";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
-  Stack,
-  IconButton,
+  Badge,
   Box,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemText,
-  Badge,
+  Stack,
 } from "@mui/material";
-import { navigate } from "gatsby";
-import MenuIcon from "@mui/icons-material/Menu";
-import Search from "../components/search";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
-
-const searchIndices = [{ name: 'Activities', title: 'Activité' }];
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { navigate } from "gatsby";
+import * as React from "react";
+import Search from "./search";
 
 export default function AppTopBar() {
   const theme = useTheme();
@@ -31,9 +29,9 @@ export default function AppTopBar() {
     { label: "GROUPEMENTS", path: "/partnership" },
     { label: "MARCHÉS", path: "/marketplace" },
     { label: "PRODUITS", path: "/product" },
-    { label: "ÉVÉNEMENTS", path: "/event"},
+    { label: "ÉVÉNEMENTS", path: "/event" },
     { label: "RECETTES", path: "/recipe" },
-    { label: "FAVORIS", path: "/favorites" }
+    { label: "FAVORIS", path: "/favorites" },
   ];
 
   const handleMenuDrawerOpen = () => {
@@ -65,7 +63,11 @@ export default function AppTopBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ height: "64px" }}>
         <Toolbar>
-          <Drawer anchor="left" open={menuDrawerOpen} onClose={handleDrawerClose}>
+          <Drawer
+            anchor="left"
+            open={menuDrawerOpen}
+            onClose={handleDrawerClose}
+          >
             {list()}
           </Drawer>
           {isSmallScreen && (
@@ -82,20 +84,26 @@ export default function AppTopBar() {
           <Box
             sx={{
               flexGrow: 1,
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: { xs: 'column', md: 'row' },
-              textAlign: { xs: 'center', md: 'left' },
+              display: "flex",
+              alignItems: "center",
+              flexDirection: { xs: "column", md: "row" },
+              textAlign: { xs: "center", md: "left" },
             }}
           >
-            <Box sx={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+            <Box
+              sx={{
+                position: "relative",
+                display: "inline-flex",
+                alignItems: "center",
+              }}
+            >
               <Typography
                 variant="h6"
                 sx={{
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  fontSize: { xs: '1rem', md: '1.5rem' },
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  fontSize: { xs: "1rem", md: "1.5rem" },
                 }}
               >
                 logCiCa explore
@@ -104,17 +112,17 @@ export default function AppTopBar() {
                 badgeContent="beta"
                 color="primary"
                 sx={{
-                  position: 'absolute',
-                  top: '0.5rem',
-                  right: '-1rem',
-                  transform: 'translate(0%, -50%)',
+                  position: "absolute",
+                  top: "0.5rem",
+                  right: "-1rem",
+                  transform: "translate(0%, -50%)",
                 }}
               />
             </Box>
           </Box>
           <Box
             sx={{
-              display: { xs: 'none', sm: 'none', md: 'none', lg: 'flex' },
+              display: { xs: "none", sm: "none", md: "none", lg: "flex" },
               flexGrow: 1,
             }}
           >
@@ -123,11 +131,11 @@ export default function AppTopBar() {
                 <Button
                   key={index}
                   sx={{
-                    color: 'black',
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase',
-                    '&:hover': {
-                      backgroundColor: '#f0f0f0',
+                    color: "black",
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    "&:hover": {
+                      backgroundColor: "#f0f0f0",
                     },
                   }}
                   onClick={() => navigate(item.path)}
@@ -138,7 +146,7 @@ export default function AppTopBar() {
             </Stack>
           </Box>
           <Box>
-            <Search indices={searchIndices} />
+            <Search />
           </Box>
         </Toolbar>
       </AppBar>

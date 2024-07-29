@@ -1,42 +1,41 @@
-import * as React from "react";
-import moment from "moment";
-import Markdown from "markdown-to-jsx";
 import {
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CardHeader,
-  Typography,
-  Stack,
-  Breadcrumbs,
-  Link,
-  Box,
-  Avatar,
-  IconButton,
-  Tab,
-  CardActions,
-  TableContainer,
-} from "@mui/material";
-import {
-  CalendarMonth,
-  LocalDining,
-  CrisisAlert,
-  WineBar,
   Agriculture,
   Blender,
+  CalendarMonth,
   Inventory,
+  LocalDining,
   SquareFoot,
   VisibilityOff,
+  WineBar,
 } from "@mui/icons-material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import {
+  Avatar,
+  Box,
+  Breadcrumbs,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Grid,
+  IconButton,
+  Link,
+  Stack,
+  Tab,
+  TableContainer,
+  Typography,
+} from "@mui/material";
+import Markdown from "markdown-to-jsx";
+import moment from "moment";
+import * as React from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
-import NutrientListTable from "./nutrient-list-table";
 import AllergenList from "./allergen-list";
+import NutrientListTable from "./nutrient-list-table";
 
-const collectionType = 'product'
+const collectionType = "product";
 
 const Strong = ({ children }: any) => <strong>{children}</strong>;
 
@@ -94,7 +93,10 @@ export function ProductCard({ item }: any) {
   };
 
   return (
-    <Card style={{ scrollPaddingTop: "100px", scrollMarginTop: "100px" }} id={item._id}>
+    <Card
+      style={{ scrollPaddingTop: "100px", scrollMarginTop: "100px" }}
+      id={item._id}
+    >
       <Grid container>
         {item.mainImage && (
           <Grid item xs={3} sm={2} md={3}>
@@ -138,10 +140,7 @@ export function ProductCard({ item }: any) {
                 >
                   <span>{item.name}</span>
                   <span>{netContentsText(item)}</span>
-                  <FavoriteIcons
-                    type={collectionType}
-                    targetId={item._id}
-                  />
+                  <FavoriteIcons type={collectionType} targetId={item._id} />
                 </Box>
               }
               subheader={
@@ -177,7 +176,7 @@ export function ProductCard({ item }: any) {
                               margin: "1px",
                               backgroundColor:
                                 item.availabilities?.[0]?.season?.year?.months.includes(
-                                  moment(monthNumber, "M").format("MMM")
+                                  moment(monthNumber, "M").format("MMM"),
                                 )
                                   ? "#AFE1AF"
                                   : "default",
@@ -185,7 +184,7 @@ export function ProductCard({ item }: any) {
                           >
                             {moment(monthNumber, "M").format("MMM").charAt(0)}
                           </Typography>
-                        )
+                        ),
                       )}
                     </Stack>
                   )}
@@ -259,7 +258,9 @@ export function ProductCard({ item }: any) {
             )}
           </Box>
         </Grid>
-        {(item.references?.find((r: any) => r.system?.key === "openbatra.org") ||
+        {(item.references?.find(
+          (r: any) => r.system?.key === "openbatra.org",
+        ) ||
           item.description?.short) && (
           <Box display="flex" width="100%">
             {item.description?.short && (
@@ -275,7 +276,7 @@ export function ProductCard({ item }: any) {
               </CardContent>
             )}
             {item.references?.find(
-              (r: any) => r.system?.key === "openbatra.org"
+              (r: any) => r.system?.key === "openbatra.org",
             ) && (
               <CardActions>
                 <a
@@ -283,8 +284,8 @@ export function ProductCard({ item }: any) {
                     "https://www.batra.link/batra2.0/productFull.html?gtin=" +
                     encodeURIComponent(
                       item.references.find(
-                        (r: any) => r.system?.key === "openbatra.org"
-                      ).number
+                        (r: any) => r.system?.key === "openbatra.org",
+                      ).number,
                     )
                   }
                 >
@@ -326,7 +327,9 @@ export function ProductCard({ item }: any) {
                   </Markdown>
                 </Stack>
               )}
-              {item.allergenList && <AllergenList allergenList={item.allergenList} />}
+              {item.allergenList && (
+                <AllergenList allergenList={item.allergenList} />
+              )}
               {item.alcoholPercentage != null && (
                 <Stack direction="row" gap={1} flexGrow={1}>
                   <WineBar />
@@ -349,7 +352,7 @@ export function ProductCard({ item }: any) {
           item.nutrientList) && (
           <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
             <TabContext value={tab}>
-              <Box>
+              <Stack direction="row">
                 <TabList
                   onChange={handleTabChange}
                   aria-label="lab API tabs example"
@@ -363,7 +366,15 @@ export function ProductCard({ item }: any) {
                     },
                   }}
                 >
-                  <Tab label="Hidden" value="0" sx={{ display: "none" }} />
+                  <Tab
+                    value={"0"}
+                    label="Hidden"
+                    sx={{
+                      position: "fixed",
+                      top: "-20000000px",
+                      left: "-20000000px",
+                    }}
+                  />
                   {item.consumerUsageInstructions?.short && (
                     <Tab
                       label="Utilisation"
@@ -385,15 +396,14 @@ export function ProductCard({ item }: any) {
                       sx={{ fontSize: "0.8rem" }}
                     />
                   )}
-                  <IconButton
-                    onClick={handleChange2("0")}
-                    sx={{ display: tab === "0" ? "none" : "block" }}
-                  >
-                    <VisibilityOff fontSize="small" />
-                  </IconButton>
                 </TabList>
-              </Box>
-              <TabPanel value="0" sx={{ display: "none" }}></TabPanel>
+                <IconButton
+                  onClick={handleChange2("0")}
+                  sx={{ display: tab === "0" ? "none" : "block" }}
+                >
+                  <VisibilityOff fontSize="small" />
+                </IconButton>
+              </Stack>
               {item.consumerUsageInstructions?.short && (
                 <TabPanel value="1">
                   <Markdown>

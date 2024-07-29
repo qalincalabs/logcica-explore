@@ -1,7 +1,7 @@
-import * as React from "react";
-import { useStaticQuery, graphql } from "gatsby";
-import AppTopBar from "../components/app-top-bar";
 import { Box, ThemeProvider, Toolbar, createTheme } from "@mui/material";
+import { graphql, useStaticQuery } from "gatsby";
+import * as React from "react";
+import AppTopBar from "../components/app-top-bar";
 
 const pageStyles = {
   color: "#ffcb01",

@@ -1,19 +1,3 @@
-import React from "react";
-import { graphql, navigate } from "gatsby";
-import AppTopBar from "../components/app-top-bar";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Icon,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
 import {
   CalendarMonth,
   Facebook,
@@ -21,8 +5,19 @@ import {
   Place,
   ShoppingBasket,
 } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { graphql, navigate } from "gatsby";
+import React from "react";
 import Layout from "../components/layout";
+import FavoriteIcons from "../components/FavoriteIcons";
 
 export function ProfileExternalLink({ profile }: any) {
   return (
@@ -35,18 +30,21 @@ export function ProfileExternalLink({ profile }: any) {
 export default function MarketplaceTemplate({ data }: any) {
   const marketplace = data.marketplace;
   const stalls = data.stalls.nodes.sort((a: any, b: any) =>
-    a.name.localeCompare(b.name)
+    a.name.localeCompare(b.name),
   );
   const marketplaceFacebookProfile = marketplace.profiles?.find(
-    (p: any) => p.type == "facebook"
+    (p: any) => p.type == "facebook",
   );
 
   return (
     <Layout>
       <Box>
-        <Typography align="center" variant="h3" component="h3">
-          {marketplace.name}
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
+          <Typography align="center" variant="h3" component="h3" mr={2}>
+            {marketplace.name}
+          </Typography>
+          <FavoriteIcons type="counter" targetId={marketplace._id} />
+        </Box>
         <Paper variant="outlined" sx={{ p: 1, m: 1 }}>
           {marketplace.availabilityStatement?.short?.markdown && (
             <Stack direction="row" gap={1} flexGrow={1}>
@@ -74,7 +72,7 @@ export default function MarketplaceTemplate({ data }: any) {
         </Typography>
         <Grid container spacing={2}>
           {stalls.map((stall: any) => (
-            <Grid item xs={12} sm={6} md={4} xl={3}>
+            <Grid key={stall._id} item xs={12} sm={6} md={4} xl={3}>
               <Paper sx={{ p: 1 }}>
                 <Stack direction="row">
                   <Typography
@@ -87,13 +85,13 @@ export default function MarketplaceTemplate({ data }: any) {
                     {stall.manager.activity?.name ?? stall.name}
                   </Typography>
                   {stall.manager.activity?.profiles?.find(
-                    (p: any) => p.type == "facebook"
+                    (p: any) => p.type == "facebook",
                   ) && (
                     <a
                       href={
                         "https://www.facebook.com/" +
                         stall.manager.activity?.profiles?.find(
-                          (p: any) => p.type == "facebook"
+                          (p: any) => p.type == "facebook",
                         ).localKey
                       }
                     >
@@ -103,12 +101,12 @@ export default function MarketplaceTemplate({ data }: any) {
                     </a>
                   )}
                   {stall.manager.activity?.profiles?.find(
-                    (p: any) => p.type == "website"
+                    (p: any) => p.type == "website",
                   ) && (
                     <a
                       href={
                         stall.manager.activity?.profiles.find(
-                          (p: any) => p.type == "website"
+                          (p: any) => p.type == "website",
                         ).link
                       }
                     >
@@ -118,7 +116,7 @@ export default function MarketplaceTemplate({ data }: any) {
                     </a>
                   )}
                   {stall.actions?.map((a: any) => (
-                    <a href={a.url}>
+                    <a key={a._id} href={a.url}>
                       <IconButton size="small" sx={{ color: "black" }}>
                         <ShoppingBasket />
                       </IconButton>
@@ -176,6 +174,7 @@ export const query = graphql`
           }
         }
         actions {
+          _id
           name
           fontAwesomeIcon
           link

@@ -160,6 +160,99 @@ ${placeFieldsFragment}
 ${catalogFieldsFragment}
 `;
 
+const recipesQuery = `
+{
+  recipes: allMongodbRecipes {
+    nodes {
+      _id
+      name
+      area
+      categories {
+        name
+      }
+      author {
+        organisation {
+          name
+        }
+        partnership {
+          name
+        }
+      }
+      costCategory {
+        name
+      }
+      difficulty {
+        name
+      }
+      seasonality {
+        name
+      }
+      description {
+        short {
+          markdown
+        }
+      }
+      cookTime
+      prepTime
+      totalTime
+      ingredientList {
+        name
+      }
+    }
+  }
+}
+`;
+
+const sessionsQuery = `
+{
+  sessions: allMongodbSessions {
+    nodes {
+      _id
+      name
+      manager {
+        activity {
+          name
+        }
+        organisation {
+          name
+        }
+        partnership {
+          name
+        }
+      }
+      description {
+        short {
+          markdown
+        }
+        long {
+          markdown
+        }
+      }
+      timeRange {
+        from
+        to
+      }
+      place {
+        title
+        address {
+          street
+          locality
+        }
+      }
+      profiles {
+        type
+        localKey
+        key
+        link
+      }
+      categories {
+        name
+      }
+    }
+  }
+}
+`;
+
 const addContentDigest = (obj) => {
   const content = JSON.stringify(obj);
   const digest = crypto.createHash("md5").update(content).digest("hex");
@@ -170,10 +263,10 @@ const addContentDigest = (obj) => {
 };
 
 const indexBaseSettings = {
-  queryLanguages: ['fr'],
-  indexLanguages: ['fr'],
-  removeStopWords: true
-}
+  queryLanguages: ["fr"],
+  indexLanguages: ["fr"],
+  removeStopWords: true,
+};
 
 const queries = [
   {
@@ -194,7 +287,11 @@ const queries = [
     indexName: "activity",
     settings: {
       ...indexBaseSettings,
-      attributesForFaceting: ['searchable(categories.name)', 'type', 'searchable(place.address.locality)'],
+      attributesForFaceting: [
+        "searchable(categories.name)",
+        "type",
+        "searchable(place.address.locality)",
+      ],
     },
   },
   {
@@ -208,7 +305,7 @@ const queries = [
     indexName: "partnership",
     settings: {
       ...indexBaseSettings,
-      attributesForFaceting: ['searchable(categories.name)'],
+      attributesForFaceting: ["searchable(categories.name)"],
     },
   },
   {
@@ -222,7 +319,37 @@ const queries = [
     indexName: "product",
     settings: {
       ...indexBaseSettings,
-      attributesForFaceting: ['searchable(categories.name)', 'searchable(producer.organisation.name)', 'searchable(owner.organisation.name)'],
+      attributesForFaceting: [
+        "searchable(categories.name)",
+        "searchable(producer.organisation.name)",
+        "searchable(owner.organisation.name)",
+      ],
+    },
+  },
+  {
+    query: recipesQuery,
+    transformer: ({ data }) =>
+      data.recipes.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
+    indexName: "recipe",
+    settings: {
+      ...indexBaseSettings,
+    },
+  },
+  {
+    query: sessionsQuery,
+    transformer: ({ data }) =>
+      data.sessions.nodes.map((n) => {
+        n.objectID = n._id;
+        delete n._id;
+        return addContentDigest(n);
+      }),
+    indexName: "event",
+    settings: {
+      ...indexBaseSettings,
     },
   },
   {
@@ -243,7 +370,12 @@ const queries = [
     indexName: "marketplace",
     settings: {
       ...indexBaseSettings,
-      attributesForFaceting: ['searchable(type)', 'searchable(marketplace.name)', 'searchable(manager.organisation.name)', 'searchable(place.address.locality)'],
+      attributesForFaceting: [
+        "searchable(type)",
+        "searchable(marketplace.name)",
+        "searchable(manager.organisation.name)",
+        "searchable(place.address.locality)",
+      ],
     },
   },
 ];

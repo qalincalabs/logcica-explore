@@ -1,21 +1,29 @@
-import React from "react";
+import { Event as EventIcon, OpenInNew } from "@mui/icons-material";
+import { Box, Grid, Link, Paper, Stack, Typography } from "@mui/material";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { graphql, PageProps } from "gatsby";
-import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Event as EventIcon } from "@mui/icons-material";
-import Layout from "../components/layout";
 import Markdown from "markdown-to-jsx";
+import React from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import Layout from "../components/layout";
 
 export default function EventTemplate({ data }: PageProps<any>) {
   const event = data.event || {};
   const place = event.place || {};
-  const manager = event.manager?.organisation || event.manager?.activity || event.manager?.partnership || {};
+  const manager =
+    event.manager?.organisation ||
+    event.manager?.activity ||
+    event.manager?.partnership ||
+    {};
   const categories = event.categories || [];
   const profiles = event.profiles || [];
-  const formattedFrom = event.timeRange?.from ? format(new Date(event.timeRange.from), 'PPP p', { locale: fr }) : null;
-  const formattedTo = event.timeRange?.to ? format(new Date(event.timeRange.to), 'PPP p', { locale: fr }) : null;
+  const formattedFrom = event.timeRange?.from
+    ? format(new Date(event.timeRange.from), "PPP p", { locale: fr })
+    : null;
+  const formattedTo = event.timeRange?.to
+    ? format(new Date(event.timeRange.to), "PPP p", { locale: fr })
+    : null;
 
   return (
     <Layout>
@@ -28,7 +36,6 @@ export default function EventTemplate({ data }: PageProps<any>) {
         </Box>
 
         <Grid container>
-
           {formattedFrom && formattedTo && (
             <Grid item xs={12} sm={6} md={4} xl={3}>
               <Box sx={{ m: 2 }}>
@@ -40,7 +47,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
                     <EventIcon sx={{ mr: 1 }} />
                     <Typography>
                       {formattedFrom}
-                      <br/>
+                      <br />
                       {formattedTo}
                     </Typography>
                   </Stack>
@@ -58,7 +65,9 @@ export default function EventTemplate({ data }: PageProps<any>) {
                 <Paper sx={{ p: 2 }}>
                   <Stack>
                     {categories.map((category: any) => (
-                      <Typography key={category._id}>{category.name}</Typography>
+                      <Typography key={category._id}>
+                        {category.name}
+                      </Typography>
                     ))}
                   </Stack>
                 </Paper>
@@ -74,7 +83,9 @@ export default function EventTemplate({ data }: PageProps<any>) {
                 </Typography>
                 <Paper sx={{ p: 2 }}>
                   <Stack direction="column">
-                    <Typography>{place.address.street}, {place.address.locality}</Typography>
+                    <Typography>
+                      {place.address.street}, {place.address.locality}
+                    </Typography>
                     {place.center?.coordinates && (
                       <Link
                         href={`https://www.google.com/maps/search/?api=1&query=${place.center.coordinates[1]}%2C${place.center.coordinates[0]}&query_place_id=${place.gmaps?.id}`}
@@ -126,10 +137,11 @@ export default function EventTemplate({ data }: PageProps<any>) {
                           textDecoration: "underline",
                           display: "inline-flex",
                           alignItems: "center",
-                          my: 0.5
+                          my: 0.5,
                         }}
                       >
-                        {profile.type}: {event.name} ({profile.localKey}) <OpenInNew sx={{ ml: 0.5 }} />
+                        {profile.type}: {event.name} ({profile.localKey}){" "}
+                        <OpenInNew sx={{ ml: 0.5 }} />
                       </Link>
                     ))}
                   </Stack>
@@ -139,9 +151,8 @@ export default function EventTemplate({ data }: PageProps<any>) {
           )}
         </Grid>
 
-
-
-        {(event.description?.long?.markdown || event.description?.short?.markdown) && (
+        {(event.description?.long?.markdown ||
+          event.description?.short?.markdown) && (
           <Paper sx={{ p: 1, m: 2 }}>
             <Markdown
               options={{
@@ -165,10 +176,11 @@ export default function EventTemplate({ data }: PageProps<any>) {
                 },
               }}
             >
-              {event.description?.long?.markdown ?? event.description?.short?.markdown}
+              {event.description?.long?.markdown ??
+                event.description?.short?.markdown}
             </Markdown>
           </Paper>
-        )}  
+        )}
       </Box>
     </Layout>
   );

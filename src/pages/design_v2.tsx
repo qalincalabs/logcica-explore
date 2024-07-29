@@ -1,5 +1,27 @@
-import * as React from "react";
-import { HeadFC, PageProps, graphql } from "gatsby";
+import {
+  AccountCircle,
+  Add,
+  ArrowDropDown,
+  ArrowDropUp,
+  BeachAccess,
+  Event,
+  Facebook,
+  FilterAlt,
+  Hexagon,
+  Image,
+  MoreVert,
+  MyLocation,
+  Place,
+  Settings,
+  Shop,
+  Sort,
+  Star,
+  Storefront,
+  ViewList,
+  ViewModule,
+  VolunteerActivism,
+  Web,
+} from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -32,30 +54,8 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
-import {
-  Image,
-  Storefront,
-  Event,
-  VolunteerActivism,
-  ArrowDropUp,
-  ArrowDropDown,
-  Sort,
-  ViewList,
-  Add,
-  BeachAccess,
-  Star,
-  ViewModule,
-  Shop,
-  Facebook,
-  Web,
-  Place,
-  MyLocation,
-  Hexagon,
-  AccountCircle,
-  FilterAlt,
-  MoreVert,
-  Settings,
-} from "@mui/icons-material";
+import { HeadFC, PageProps, graphql } from "gatsby";
+import * as React from "react";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
@@ -113,10 +113,10 @@ const Map: React.FC<PageProps> = () => {
   );
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
+    null,
   );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
+    null,
   );
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -142,7 +142,15 @@ const Map: React.FC<PageProps> = () => {
             <Button color="secondary" startIcon={<Hexagon></Hexagon>}>
               Explore
             </Button>
-            <Box display="flex" sx={{ flexGrow: 1, m:1, backgroundColor: "white", borderRadius:2 }}>
+            <Box
+              display="flex"
+              sx={{
+                flexGrow: 1,
+                m: 1,
+                backgroundColor: "white",
+                borderRadius: 2,
+              }}
+            >
               <InputBase sx={{ flexGrow: 1 }}></InputBase>
               <IconButton color="secondary">
                 <FilterAlt />
@@ -240,7 +248,7 @@ type MainBottomListDrawerProps = {
 };
 
 function MainBottomListDrawer(
-  props: BoxProps<"div", MainBottomListDrawerProps>
+  props: BoxProps<"div", MainBottomListDrawerProps>,
 ) {
   return (
     <Box sx={props.sx}>
@@ -362,7 +370,7 @@ function ListSortMenu(props: ListSortMenuProps) {
           <Sort fontSize="small" />
         </Button>
       </ButtonGroup>
-      <Box flexGrow={1} ></Box>
+      <Box flexGrow={1}></Box>
       <ToggleButtonGroup
         value={props.alignement}
         color="primary"
@@ -405,7 +413,7 @@ export function FolderGrid() {
         title: "Test " + i,
         subtitle: "Paliseul",
       };
-    })
+    }),
   );
 
   return (
@@ -462,30 +470,34 @@ export function FolderList() {
         title: "Test " + i,
         subtitle: "Paliseul",
       };
-    })
+    }),
   );
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-      {list.map((e,i) => (
+      {list.map((e, i) => (
         <>
-        <ListSubheader sx={{width:"100%", display:  i == 0 || i == 5 ? "block": "none" }}>Moins de {i*2+5}km</ListSubheader>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar>
-              <Image />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={e.title} secondary={e.subtitle} />
-          <ListItemIcon>
-            <IconButton>
-              <Add />
-            </IconButton>
-            <IconButton>
-              <Star />
-            </IconButton>
-          </ListItemIcon>
-        </ListItem>
+          <ListSubheader
+            sx={{ width: "100%", display: i == 0 || i == 5 ? "block" : "none" }}
+          >
+            Moins de {i * 2 + 5}km
+          </ListSubheader>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar>
+                <Image />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={e.title} secondary={e.subtitle} />
+            <ListItemIcon>
+              <IconButton>
+                <Add />
+              </IconButton>
+              <IconButton>
+                <Star />
+              </IconButton>
+            </ListItemIcon>
+          </ListItem>
         </>
       ))}
     </List>
