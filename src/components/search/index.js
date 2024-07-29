@@ -20,6 +20,7 @@ export default function Search() {
     { name: "marketplace" },
     { name: "product" },
     { name: "recipe" },
+    { name: "event" },
   ];
   const rootRef = createRef();
   const [query, setQuery] = useState();

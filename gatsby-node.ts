@@ -232,7 +232,7 @@ exports.createPages = async function ({ actions, graphql }) {
       }
     }
   `);
-  sessionsQuery.allMongodbSessions.nodes.forEach((node) => {
+  sessionsQuery.allMongodbSessions.nodes.forEach((node: any) => {
     const _id = node._id;
     const component = path.resolve(`./src/templates/event.tsx`);
 
