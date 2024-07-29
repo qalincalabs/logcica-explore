@@ -103,14 +103,12 @@ export const query = graphql`
 `;
 
 const getProfileLinkAndIcon = (profiles: any) => {
-  console.log("Profiles:", profiles); // Ajout de logs pour débogage
   const linkProfile = profiles.find((profile: any) => profile.link);
   if (!linkProfile || !linkProfile.link) {
     return null;
   }
 
   const link = linkProfile.link;
-  console.log("Link:", link); // Ajout de logs pour débogage
   const icon = link.includes("facebook.com") ? (
     <FacebookIcon style={{ fontSize: 16, marginRight: 5 }} />
   ) : (
