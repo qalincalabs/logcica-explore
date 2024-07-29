@@ -4,7 +4,6 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
 import { format, isAfter } from "date-fns";
@@ -58,19 +57,37 @@ function EventListItem(event: any) {
       <ListItemText
         primary={event.name}
         secondary={
-          <Stack>
-            <Typography>
+          <>
+            <Typography
+              variant="subtitle1"
+              component="span"
+              display="inline-block"
+              sx={{ "white-space": "nowrap" }}
+            >
               {formattedFrom} - {formattedTo}
             </Typography>
             {event.place?.address && (
-              <Typography>
-                {event.place.address.street}, {event.place.address.locality}
-              </Typography>
+              <>
+                <br />
+                <Typography
+                  variant="subtitle1"
+                  component="span"
+                  display="inline-block"
+                >
+                  {event.place.address.street}, {event.place.address.locality}
+                </Typography>
+              </>
             )}
             {event.description?.short?.markdown && (
-              <Markdown>{event.description.short.markdown}</Markdown>
+              <Typography
+                variant="subtitle2"
+                component="span"
+                display="inline-block"
+              >
+                <Markdown>{event.description.short.markdown}</Markdown>
+              </Typography>
             )}
-          </Stack>
+          </>
         }
       />
     </ListItemButton>
