@@ -38,32 +38,49 @@ const PageHit = ({ hit, indexName }: any) => {
   );
 };
 
-const HitsInIndex = ({ index }: any) => (
-  <Index indexName={index.name}>
-    <div className="HitHeader">
-      <h2>
-        {index.name === "activity"
-          ? "Producteurs"
-          : index.name === "partnership"
-            ? "Groupements"
-            : index.name === "product"
-              ? "Produits"
-              : index.name === "marketplace"
-                ? "Marchés"
-                : index.name === "recipe"
-                  ? "Recettes"
-                  : index.name === "event"
-                    ? "Événements"
-                    : "aucune valeur"}
-      </h2>
-      <HitCount />
-    </div>
-    <Hits
-      className="Hits"
-      hitComponent={({ hit }) => <PageHit hit={hit} indexName={index.name} />}
-    />
-  </Index>
-);
+const HitsInIndex = ({ index }: any) => {
+  return (
+    <Index indexName={index.name}>
+      <MyHits index={index} />
+    </Index>
+  );
+};
+
+const MyHits = ({ index }: any) => {
+  const { nbHits } = useStats();
+
+  if (nbHits === 0) return <></>;
+
+  return (
+    <>
+      <div className="HitHeader">
+        <h4>
+          {index.name === "activity"
+            ? "Producteurs"
+            : index.name === "partnership"
+              ? "Groupements"
+              : index.name === "product"
+                ? "Produits"
+                : index.name === "marketplace"
+                  ? "Marchés"
+                  : index.name === "recipe"
+                    ? "Recettes"
+                    : index.name === "event"
+                      ? "Événements"
+                      : "aucune valeur"}
+        </h4>
+        <h4>
+          <HitCount />
+        </h4>
+      </div>
+
+      <Hits
+        className="Hits"
+        hitComponent={({ hit }) => <PageHit hit={hit} indexName={index.name} />}
+      />
+    </>
+  );
+};
 
 const SearchResult = ({ indices, className }: any) => (
   <div className={className}>
