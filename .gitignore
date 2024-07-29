@@ -7,4 +7,3 @@ src/gatsby-types.d.ts
 .netlify
 .DS_Store
 package-lock.json
-.vscode

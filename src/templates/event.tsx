@@ -1,12 +1,12 @@
-import React from "react";
-import { graphql, PageProps } from "gatsby";
-import { Box, Grid, Paper, Stack, Typography, Link } from "@mui/material";
-import { OpenInNew, Event as EventIcon } from "@mui/icons-material";
-import Layout from "../components/layout";
-import Markdown from "markdown-to-jsx";
-import FavoriteIcons from "../components/FavoriteIcons";
+import { Event as EventIcon, OpenInNew } from "@mui/icons-material";
+import { Box, Grid, Link, Paper, Stack, Typography } from "@mui/material";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { graphql, PageProps } from "gatsby";
+import Markdown from "markdown-to-jsx";
+import React from "react";
+import FavoriteIcons from "../components/FavoriteIcons";
+import Layout from "../components/layout";
 
 export default function EventTemplate({ data }: PageProps<any>) {
   const event = data.event || {};

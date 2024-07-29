@@ -1,5 +1,27 @@
-import * as React from "react";
-import { HeadFC, PageProps, graphql } from "gatsby";
+import {
+  AccountCircle,
+  Add,
+  ArrowDropDown,
+  ArrowDropUp,
+  BeachAccess,
+  Event,
+  Facebook,
+  FilterAlt,
+  Hexagon,
+  Image,
+  MoreVert,
+  MyLocation,
+  Place,
+  Settings,
+  Shop,
+  Sort,
+  Star,
+  Storefront,
+  ViewList,
+  ViewModule,
+  VolunteerActivism,
+  Web,
+} from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -32,30 +54,8 @@ import {
   Typography,
   createTheme,
 } from "@mui/material";
-import {
-  Image,
-  Storefront,
-  Event,
-  VolunteerActivism,
-  ArrowDropUp,
-  ArrowDropDown,
-  Sort,
-  ViewList,
-  Add,
-  BeachAccess,
-  Star,
-  ViewModule,
-  Shop,
-  Facebook,
-  Web,
-  Place,
-  MyLocation,
-  Hexagon,
-  AccountCircle,
-  FilterAlt,
-  MoreVert,
-  Settings,
-} from "@mui/icons-material";
+import { HeadFC, PageProps, graphql } from "gatsby";
+import * as React from "react";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",

@@ -1,21 +1,17 @@
-import React, { useState } from "react";
-import { graphql, navigate, type PageProps, type HeadFC } from "gatsby";
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import ContrastIcon from "@mui/icons-material/Contrast";
+import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 import {
-  Box,
   Avatar,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
+import { graphql, HeadFC, navigate, type PageProps } from "gatsby";
+import React from "react";
 import Layout from "../components/layout";
-import RestaurantIcon from "@mui/icons-material/Restaurant";
-import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
-import ContrastIcon from "@mui/icons-material/Contrast";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import DescriptionIcon from "@mui/icons-material/Description";
 import MainContent from "../components/main-content";
 
 const RecipePage: React.FC<PageProps> = ({ data }: any) => {
@@ -40,48 +36,77 @@ function RecipeListItem(p: any) {
         </Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={<Box sx={{ display: "flex", p: 1 }}>{p.name}</Box>}
+        primary={p.name}
         secondary={
-          <Stack>
+          <>
             {p.author?.organisation?.name && (
-              <Box sx={{ display: "flex" }}>
-                <AccountCircleIcon />
-                <Typography sx={{ fontWeight: "bold" }}>
-                  {p.author.organisation.name}
-                </Typography>
-              </Box>
+              <Typography
+                variant="subtitle1"
+                component={"span"}
+                display="inline-block"
+              >
+                {p.author.organisation.name}
+              </Typography>
             )}
 
             {p.description?.short?.markdown && (
-              <Box sx={{ display: "flex" }}>
-                <DescriptionIcon />
-                <Typography>{p.description.short.markdown}</Typography>
-              </Box>
+              <>
+                <br />
+                <Typography
+                  variant="subtitle2"
+                  component={"span"}
+                  display="inline-block"
+                >
+                  {p.description.short.markdown}
+                </Typography>
+              </>
             )}
 
-            <Box sx={{ display: "flex" }}>
+            <>
+              <br />
               {p.totalTime && (
-                <Box sx={{ display: "flex", p: 1 }}>
-                  <AccessAlarmIcon />
-                  <Typography>{p.totalTime}</Typography>
-                </Box>
+                <Typography
+                  variant="subtitle2"
+                  component={"span"}
+                  sx={{
+                    marginRight: 1,
+                    verticalAlign: "middle",
+                    display: "inline-flex",
+                  }}
+                >
+                  <AccessAlarmIcon fontSize="small" /> {p.totalTime}
+                </Typography>
               )}
 
               {p.seasonality?.name && (
-                <Box sx={{ display: "flex", p: 1 }}>
-                  <ContrastIcon />
-                  <Typography>{p.seasonality.name}</Typography>
-                </Box>
+                <Typography
+                  variant="subtitle2"
+                  component={"span"}
+                  sx={{
+                    marginRight: 1,
+                    verticalAlign: "middle",
+                    display: "inline-flex",
+                  }}
+                >
+                  <ContrastIcon fontSize="small" /> {p.seasonality.name}
+                </Typography>
               )}
 
               {p.difficulty?.name && (
-                <Box sx={{ display: "flex", p: 1 }}>
-                  <FitnessCenterIcon />
-                  <Typography>{p.difficulty.name}</Typography>
-                </Box>
+                <Typography
+                  variant="subtitle2"
+                  component={"span"}
+                  sx={{
+                    marginRight: 1,
+                    verticalAlign: "middle",
+                    display: "inline-flex",
+                  }}
+                >
+                  <FitnessCenterIcon fontSize="small" /> {p.difficulty.name}
+                </Typography>
               )}
-            </Box>
-          </Stack>
+            </>
+          </>
         }
       />
     </ListItemButton>

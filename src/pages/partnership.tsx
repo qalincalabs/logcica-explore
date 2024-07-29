@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import { graphql, navigate, type PageProps, type HeadFC } from "gatsby";
+import { Store } from "@mui/icons-material";
 import {
   Avatar,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
+import { graphql, navigate, type HeadFC, type PageProps } from "gatsby";
+import React from "react";
 import Layout from "../components/layout";
-import { Store } from "@mui/icons-material";
 import MainContent from "../components/main-content";
 
 const PartnershipPage: React.FC<PageProps> = ({ data }: any) => {
@@ -36,14 +35,24 @@ function PartnershipListItem(p: any) {
       <ListItemText
         primary={p.name}
         secondary={
-          <Stack>
+          <>
             {p.area && (
-              <Typography sx={{ fontWeight: "bold" }}>{p.area.name}</Typography>
+              <Typography
+                variant="subtitle1"
+                component={"span"}
+                display="inline-block"
+              >
+                {p.area.name}
+              </Typography>
             )}
             {p.profiles.find(
               (p: any) => p.description?.short && p.type == "website",
             )?.description?.short && (
-              <Typography>
+              <Typography
+                variant="subtitle2"
+                component={"span"}
+                display="inline-block"
+              >
                 {
                   p.profiles.find(
                     (p: any) => p.description?.short && p.type == "website",
@@ -51,7 +60,7 @@ function PartnershipListItem(p: any) {
                 }
               </Typography>
             )}
-          </Stack>
+          </>
         }
       />
     </ListItemButton>

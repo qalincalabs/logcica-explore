@@ -1,5 +1,5 @@
-import React, { createRef, useState, useMemo } from "react";
 import algoliasearch from "algoliasearch/lite";
+import React, { createRef, useMemo, useState } from "react";
 import { InstantSearch } from "react-instantsearch";
 import { ThemeProvider } from "styled-components";
 import StyledSearchBox from "./styled-search-box";
@@ -22,14 +22,15 @@ export default function Search() {
     { name: "recipe" },
     { name: "event" },
   ];
-  const rootRef = createRef();
-  const [query, setQuery] = useState();
+
+  const rootRef = createRef<HTMLDivElement>();
+  const [query, setQuery] = useState<any>();
   const [hasFocus, setFocus] = useState(false);
   const searchClient = useMemo(
     () =>
       algoliasearch(
-        process.env.GATSBY_ALGOLIA_APP_ID,
-        process.env.GATSBY_ALGOLIA_SEARCH_KEY,
+        process.env.GATSBY_ALGOLIA_APP_ID as string,
+        process.env.GATSBY_ALGOLIA_SEARCH_KEY as string,
       ),
     [],
   );
@@ -39,9 +40,15 @@ export default function Search() {
   return (
     <ThemeProvider theme={theme}>
       <StyledSearchRoot ref={rootRef}>
-        <InstantSearch searchClient={searchClient} indexName={indices[0].name}>
+        <InstantSearch
+          searchClient={searchClient}
+          indexName={indices[0].name}
+          future={{
+            preserveSharedStateOnUnmount: true,
+          }}
+        >
           <StyledSearchBox
-            onChange={(query) => setQuery(query)}
+            onChange={(query: any) => setQuery(query)}
             onFocus={() => setFocus(true)}
             hasFocus={hasFocus}
           />

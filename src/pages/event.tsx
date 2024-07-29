@@ -1,21 +1,18 @@
-import React from "react";
-import { graphql, HeadFC, navigate, PageProps } from "gatsby";
+import { Event } from "@mui/icons-material";
 import {
   Avatar,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Stack,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import Layout from "../components/layout";
-import { Event } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
-import MainContent from "../components/main-content";
 import { format, isAfter } from "date-fns";
 import { fr } from "date-fns/locale";
+import { graphql, HeadFC, navigate, PageProps } from "gatsby";
+import Markdown from "markdown-to-jsx";
+import React from "react";
+import Layout from "../components/layout";
+import MainContent from "../components/main-content";
 
 const EventPage: React.FC<PageProps> = ({ data }: any) => {
   const now = new Date();
@@ -60,19 +57,37 @@ function EventListItem(event: any) {
       <ListItemText
         primary={event.name}
         secondary={
-          <Stack>
-            <Typography>
+          <>
+            <Typography
+              variant="subtitle1"
+              component="span"
+              display="inline-block"
+              sx={{ "white-space": "nowrap" }}
+            >
               {formattedFrom} - {formattedTo}
             </Typography>
             {event.place?.address && (
-              <Typography>
-                {event.place.address.street}, {event.place.address.locality}
-              </Typography>
+              <>
+                <br />
+                <Typography
+                  variant="subtitle1"
+                  component="span"
+                  display="inline-block"
+                >
+                  {event.place.address.street}, {event.place.address.locality}
+                </Typography>
+              </>
             )}
             {event.description?.short?.markdown && (
-              <Markdown>{event.description.short.markdown}</Markdown>
+              <Typography
+                variant="subtitle2"
+                component="span"
+                display="inline-block"
+              >
+                <Markdown>{event.description.short.markdown}</Markdown>
+              </Typography>
             )}
-          </Stack>
+          </>
         }
       />
     </ListItemButton>
