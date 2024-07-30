@@ -1,3 +1,8 @@
 [build]
   publish = "public"
   command = "gatsby clean && gatsby build --verbose"
+
+[[redirects]]
+    from = "/share/list/*"
+    to = "/share/list/[hash]/index.html"
+    status = 200
