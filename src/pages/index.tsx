@@ -17,6 +17,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
 import Layout from "../components/layout";
+import BoulangerieIcon from "../images/icon.png";
 
 const ActivityPage = ({ data }: any) => {
   const mapStyles = {
@@ -44,15 +45,27 @@ const ActivityPage = ({ data }: any) => {
       shadowUrl: iconShadow,
     });
 
+    const icons_dict: { [key: string]: any } = {
+      Boulangerie: BoulangerieIcon,
+    };
+
     L.Marker.prototype.options.icon = DefaultIcon;
 
     var markers = L.markerClusterGroup();
 
     data.activities.nodes.forEach((activity: any) => {
       const coordinatesToSwap = activity.place?.center?.coordinates;
+      const activityCategory = activity.categories?.[0]?.name;
       if (coordinatesToSwap) {
+        const activityIcon =
+          activityCategory == "Boulangerie"
+            ? icons_dict[activityCategory]
+            : icon;
+
         const marker = L.marker(
           new LatLng(coordinatesToSwap[1], coordinatesToSwap[0]),
+          { icon: L.icon({ iconUrl: activityIcon }) },
+          //{ icon: DefaultIcon },
         );
         marker.bindPopup(
           ReactDOMServer.renderToString(
@@ -96,6 +109,9 @@ export const query = graphql`
         profiles {
           type
           link
+        }
+        categories {
+          name
         }
       }
     }
