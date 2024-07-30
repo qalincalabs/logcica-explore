@@ -34,11 +34,15 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
     favoriteService.FavoriteList[]
   >([]);
 
-  useEffect(() => {
+  const refreshList = () => {
     setSelectedItems(
       favoriteService.findItems({ targetIds: [targetId], targetTypes: [type] }),
     );
     setFavoriteLists(favoriteService.allLists());
+  };
+
+  useEffect(() => {
+    refreshList();
   }, []);
 
   const handleOpenPopover = (
@@ -47,6 +51,7 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
   ) => {
     setAnchorEl(event.currentTarget);
     setCurrentFavoriteTarget(targetId);
+    refreshList();
   };
 
   const handleClosePopover = () => {
@@ -60,6 +65,7 @@ const FavoriteIcons: React.FC<FavoriteIconsProps> = ({ type, targetId }) => {
 
     favoriteService.addList({ name: newFavoriteListName });
     setNewFavoriteListName("");
+
     setFavoriteLists(favoriteService.allLists());
   };
 
