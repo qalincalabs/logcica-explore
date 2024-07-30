@@ -1,40 +1,39 @@
-import * as React from "react";
-import moment from "moment";
-import Markdown from "markdown-to-jsx";
 import {
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CardHeader,
-  Typography,
-  Stack,
-  Breadcrumbs,
-  Link,
-  Box,
-  Avatar,
-  IconButton,
-  Tab,
-  CardActions,
-  TableContainer,
-} from "@mui/material";
-import {
-  CalendarMonth,
-  LocalDining,
-  CrisisAlert,
-  WineBar,
   Agriculture,
   Blender,
+  CalendarMonth,
   Inventory,
+  LocalDining,
   SquareFoot,
   VisibilityOff,
+  WineBar,
 } from "@mui/icons-material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import {
+  Avatar,
+  Box,
+  Breadcrumbs,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Grid,
+  IconButton,
+  Link,
+  Stack,
+  Tab,
+  TableContainer,
+  Typography,
+} from "@mui/material";
+import Markdown from "markdown-to-jsx";
+import moment from "moment";
+import * as React from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
-import NutrientListTable from "./nutrient-list-table";
 import AllergenList from "./allergen-list";
+import NutrientListTable from "./nutrient-list-table";
 
 const collectionType = "product";
 
@@ -353,7 +352,7 @@ export function ProductCard({ item }: any) {
           item.nutrientList) && (
           <CardContent sx={{ paddingTop: 1, paddingBottom: 1, width: "100%" }}>
             <TabContext value={tab}>
-              <Box>
+              <Stack direction="row">
                 <TabList
                   onChange={handleTabChange}
                   aria-label="lab API tabs example"
@@ -367,7 +366,15 @@ export function ProductCard({ item }: any) {
                     },
                   }}
                 >
-                  <Tab label="Hidden" value="0" sx={{ display: "none" }} />
+                  <Tab
+                    value={"0"}
+                    label="Hidden"
+                    sx={{
+                      position: "fixed",
+                      top: "-20000000px",
+                      left: "-20000000px",
+                    }}
+                  />
                   {item.consumerUsageInstructions?.short && (
                     <Tab
                       label="Utilisation"
@@ -389,15 +396,14 @@ export function ProductCard({ item }: any) {
                       sx={{ fontSize: "0.8rem" }}
                     />
                   )}
-                  <IconButton
-                    onClick={handleChange2("0")}
-                    sx={{ display: tab === "0" ? "none" : "block" }}
-                  >
-                    <VisibilityOff fontSize="small" />
-                  </IconButton>
                 </TabList>
-              </Box>
-              <TabPanel value="0" sx={{ display: "none" }}></TabPanel>
+                <IconButton
+                  onClick={handleChange2("0")}
+                  sx={{ display: tab === "0" ? "none" : "block" }}
+                >
+                  <VisibilityOff fontSize="small" />
+                </IconButton>
+              </Stack>
               {item.consumerUsageInstructions?.short && (
                 <TabPanel value="1">
                   <Markdown>

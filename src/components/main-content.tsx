@@ -1,16 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { graphql, HeadFC, navigate, PageProps } from "gatsby";
-import {
-  Box,
-  List,
-  ListItem,
-  Typography,
-  Snackbar,
-  Alert,
-} from "@mui/material";
-import * as favoriteService from "../utils/favoritesService";
-import FilterBar from "../components/filter-bar";
+import { Box, List, ListItem, Typography } from "@mui/material";
+import React, { useState } from "react";
 import FavoriteIcons from "../components/FavoriteIcons";
+import FilterBar from "../components/filter-bar";
+import * as favoriteService from "../utils/favoritesService";
 
 interface MainContentProps {
   title: string;

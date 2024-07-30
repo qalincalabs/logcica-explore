@@ -1,27 +1,27 @@
-import React from "react";
-import { graphql, navigate } from "gatsby";
-import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  Grid,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-  Link as MuiLink,
-} from "@mui/material";
 import {
   Email,
   Facebook,
   Language,
-  Phone,
-  Place,
   OpenInNew,
+  Phone,
 } from "@mui/icons-material";
-import Layout from "../components/layout";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  Grid,
+  IconButton,
+  Link as MuiLink,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { graphql, navigate } from "gatsby";
 import Markdown from "markdown-to-jsx";
+import React from "react";
+import Layout from "../components/layout";
 
 import FavoriteIcons from "../components/FavoriteIcons";
 
@@ -268,39 +268,7 @@ export default function PartnershipTemplate({ data }: any) {
                       onClick={() => navigate("/activity/" + activity._id)}
                     >
                       <CardContent>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Typography variant="h6">{activity.name}</Typography>
-                          {activity.profiles?.find(
-                            (p: any) => p.type === "facebook",
-                          ) && (
-                            <a
-                              href={`https://www.facebook.com/${activity.profiles.find((p: any) => p.type === "facebook").key}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <IconButton size="small">
-                                <Facebook />
-                              </IconButton>
-                            </a>
-                          )}
-                          {activity.profiles?.find(
-                            (p: any) => p.type === "website",
-                          ) && (
-                            <a
-                              href={
-                                activity.profiles.find(
-                                  (p: any) => p.type === "website",
-                                ).link
-                              }
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <IconButton size="small">
-                                <Language />
-                              </IconButton>
-                            </a>
-                          )}
-                        </Stack>
+                        <Typography variant="h6">{activity.name}</Typography>
                         {activity.place && (
                           <Typography variant="subtitle1">
                             {activity.place.name}
@@ -308,6 +276,38 @@ export default function PartnershipTemplate({ data }: any) {
                         )}
                       </CardContent>
                     </CardActionArea>
+                    <CardActions>
+                      {activity.profiles?.find(
+                        (p: any) => p.type === "facebook",
+                      ) && (
+                        <a
+                          href={`https://www.facebook.com/${activity.profiles.find((p: any) => p.type === "facebook").key}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <IconButton size="small">
+                            <Facebook />
+                          </IconButton>
+                        </a>
+                      )}
+                      {activity.profiles?.find(
+                        (p: any) => p.type === "website",
+                      ) && (
+                        <a
+                          href={
+                            activity.profiles.find(
+                              (p: any) => p.type === "website",
+                            ).link
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <IconButton size="small">
+                            <Language />
+                          </IconButton>
+                        </a>
+                      )}
+                    </CardActions>
                   </Card>
                 </Grid>
               ))}

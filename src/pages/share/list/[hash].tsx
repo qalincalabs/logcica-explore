@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import LZString from "lz-string";
+import { Box, Button, CssBaseline, Grid, Typography } from "@mui/material";
 import { navigate, PageProps } from "gatsby";
-import { Box, Typography, Grid, Button, CssBaseline } from "@mui/material";
+import LZString from "lz-string";
+import React, { useEffect, useState } from "react";
+import { FavoriteListContent } from "../../../components/favorite-list-content";
 import Layout from "../../../components/layout";
 import * as favoriteService from "../../../utils/favoritesService";
-import { FavoriteListContent } from "../../../components/favorite-list-content";
 
 const SharePage = ({ params }: PageProps) => {
   const [exportedList, setExportedList] = useState({

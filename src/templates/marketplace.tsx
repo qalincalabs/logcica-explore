@@ -1,19 +1,3 @@
-import React from "react";
-import { graphql, navigate } from "gatsby";
-import AppTopBar from "../components/app-top-bar";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Icon,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
 import {
   CalendarMonth,
   Facebook,
@@ -21,7 +5,17 @@ import {
   Place,
   ShoppingBasket,
 } from "@mui/icons-material";
-import Markdown from "markdown-to-jsx";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { graphql, navigate } from "gatsby";
+import React from "react";
 import Layout from "../components/layout";
 import FavoriteIcons from "../components/FavoriteIcons";
 
@@ -78,7 +72,7 @@ export default function MarketplaceTemplate({ data }: any) {
         </Typography>
         <Grid container spacing={2}>
           {stalls.map((stall: any) => (
-            <Grid item xs={12} sm={6} md={4} xl={3}>
+            <Grid key={stall._id} item xs={12} sm={6} md={4} xl={3}>
               <Paper sx={{ p: 1 }}>
                 <Stack direction="row">
                   <Typography
@@ -122,7 +116,7 @@ export default function MarketplaceTemplate({ data }: any) {
                     </a>
                   )}
                   {stall.actions?.map((a: any) => (
-                    <a href={a.url}>
+                    <a key={a._id} href={a.url}>
                       <IconButton size="small" sx={{ color: "black" }}>
                         <ShoppingBasket />
                       </IconButton>
@@ -180,6 +174,7 @@ export const query = graphql`
           }
         }
         actions {
+          _id
           name
           fontAwesomeIcon
           link

@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { Add, Star, StarBorder } from "@mui/icons-material";
 import {
-  IconButton,
-  MenuItem,
-  TextField,
-  Button,
-  Popover,
   Box,
-  Typography,
+  Button,
+  Checkbox,
+  IconButton,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Checkbox,
-  ListItem,
+  Popover,
+  TextField,
 } from "@mui/material";
-import { Star, StarBorder, Delete, Add } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
 import * as favoriteService from "../utils/favoritesService";
 
 interface FavoriteIconsProps {

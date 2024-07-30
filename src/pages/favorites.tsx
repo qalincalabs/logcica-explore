@@ -1,44 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { graphql, PageProps, navigate } from "gatsby";
+import {
+  ArrowDownward,
+  ArrowUpward,
+  Delete,
+  DeleteForever,
+  Edit,
+  GetApp,
+  Menu,
+  PictureAsPdf,
+  Share,
+  Store,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
+  Button,
+  ButtonGroup,
+  CssBaseline,
+  Drawer,
+  Grid,
+  Hidden,
+  IconButton,
   List,
   ListItem,
   ListItemAvatar,
   ListItemButton,
-  ListItemText,
-  Typography,
-  IconButton,
   ListItemIcon,
-  Grid,
-  ButtonGroup,
-  Button,
+  ListItemText,
   Tooltip,
-  Drawer,
-  Hidden,
-  CssBaseline,
-  useTheme,
+  Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import {
-  Store,
-  Delete,
-  GetApp,
-  PictureAsPdf,
-  DeleteForever,
-  Menu,
-  ArrowUpward,
-  ArrowDownward,
-  Edit,
-  Share,
-} from "@mui/icons-material";
+import { graphql, navigate, PageProps } from "gatsby";
+import LZString from "lz-string";
+import React, { useEffect, useState } from "react";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import Layout from "../components/layout";
 import RenameDialog from "../components/RenameDialog";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import { exportToJSON, exportToPDF, exportToXLSX } from "../utils/exportUtils";
 import * as favoriteService from "../utils/favoritesService";
-import { exportToJSON, exportToXLSX, exportToPDF } from "../utils/exportUtils";
-import LZString from "lz-string";
 
 const LOCAL_STORAGE_KEY = "favoritesPageSectionsOrder";
 
@@ -51,7 +51,7 @@ const typeNames = [
   "recipe",
 ];
 
-const getFilter = (data) => {
+const getFilter = (data: any) => {
   return [
     {
       key: "partnership",
@@ -98,19 +98,19 @@ const getFilter = (data) => {
   ];
 };
 
-const generateShareText = (favorites, data) => {
+const generateShareText = (favorites: any, data: any) => {
   const sections = getFilter(data);
 
-  return sections.reduce((text, { otherKey, title, nodes }) => {
+  return sections.reduce((text, { otherKey, title, nodes }: any) => {
     if (favorites[otherKey]?.length) {
-      text += `${title}:\n${favorites[otherKey].map((id) => `•⁠  ⁠${nodes.find((p) => p._id === id)?.name}\n`).join("")}\n`;
+      text += `${title}:\n${favorites[otherKey].map((id: string) => `•⁠  ⁠${nodes.find((p: any) => p._id === id)?.name}\n`).join("")}\n`;
     }
     return text;
   }, "Mes Favoris:\n\n");
 };
 
-const createFilteredList = (favorites, filterKey, dataKey) =>
-  filterKey ? favorites.filter((f) => f.targetType === dataKey) : [];
+const createFilteredList = (favorites: any, filterKey: any, dataKey: any) =>
+  filterKey ? favorites.filter((f: any) => f.targetType === dataKey) : [];
 
 const FavoritesList = ({
   title,
@@ -122,7 +122,7 @@ const FavoritesList = ({
   moveSection,
   index,
   totalSections,
-}) =>
+}: any) =>
   !favorites.length ? null : (
     <Grid item xs={12}>
       <Box
@@ -152,8 +152,8 @@ const FavoritesList = ({
         </Box>
       </Box>
       <List>
-        {favorites.map((item) => {
-          const dataNode = dataNodes.find((p) => p._id === item.targetId);
+        {favorites.map((item: any) => {
+          const dataNode = dataNodes.find((p: any) => p._id === item.targetId);
           return (
             <ListItem
               key={item.targetId}
@@ -231,7 +231,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
   const allLists = favoriteService.allLists();
   const [selectedList, setSelectedList] = useState("");
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
-  const [listToRename, setListToRename] = useState(null);
+  const [listToRename, setListToRename] = useState<string>();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [listToRemove, setListToRemove] = useState<string | null>(null);
   const [itemToRemove, setItemToRemove] = useState({ id: "", type: "" });
@@ -331,7 +331,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   const filters = getFilter(data);
 
-  const filteredFavorites = sectionsOrder.map((sectionKey) => {
+  const filteredFavorites = sectionsOrder.map((sectionKey: string) => {
     const filterItem = filters.find((f) => f.key === sectionKey);
     if (!filterItem || !selectedList) {
       return [];
@@ -349,11 +349,11 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
       allLists.find((list) => list.id === selectedList)?.name || "favorites";
 
     const favoritesData = sectionsOrder.reduce(
-      (acc, sectionKey, index) => {
-        const { key, dataKey, dataNodes } = filters.find(
+      (acc: any, sectionKey: any, index: any) => {
+        const { key, dataKey, dataNodes }: any = filters.find(
           (f) => f.key === sectionKey,
         );
-        acc[key] = filteredFavorites[index].map((item) => {
+        acc[key] = filteredFavorites[index].map((item: any) => {
           const node = dataNodes.find((p: any) => p._id === item.targetId);
           return {
             id: node._id,
@@ -542,7 +542,9 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
                     title={`Exporter en ${format.toUpperCase()}`}
                   >
                     <IconButton
-                      onClick={() => exportFavorites(format)}
+                      onClick={() =>
+                        exportFavorites(format as "json" | "xlsx" | "pdf")
+                      }
                       sx={{ backgroundColor: "#FFD700", color: "black" }}
                     >
                       {format === "pdf" ? <PictureAsPdf /> : <GetApp />}
@@ -583,7 +585,7 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
                 alignItems="flex-start"
               >
                 {selectedList &&
-                  sectionsOrder.map((sectionKey, index) => {
+                  sectionsOrder.map((sectionKey: any, index: any) => {
                     const filterItem = filters.find(
                       (f) => f.key === sectionKey,
                     );
@@ -598,8 +600,8 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
                         title={title}
                         favorites={filteredFavorites[index]}
                         handleItemClick={handleItemClick}
-                        handleRemoveFavorite={(id) =>
-                          handleRemoveFavorite(id, dataKey, selectedList)
+                        handleRemoveFavorite={(id: string) =>
+                          handleRemoveFavorite(id, dataKey)
                         }
                         dataKey={dataKey}
                         dataNodes={dataNodes}
