@@ -34,7 +34,7 @@ import {
 import { graphql, navigate, PageProps } from "gatsby";
 import LZString from "lz-string";
 import React, { useEffect, useState } from "react";
-import { BakeryIcon } from "../assets/activity-icons";
+import * as ActivityIcons from "../assets/activity-icons";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import Layout from "../components/layout";
 import RenameDialog from "../components/RenameDialog";
@@ -182,7 +182,7 @@ const FavoritesList = ({
                   <Avatar sx={{ bgcolor: "#FFD700", color: "#fff" }}>
                     {dataNode?.categories?.[0].key ==
                     "logcica.consolidation.activity.boulangerie" ? (
-                      <BakeryIcon style={{ width: "1.3rem" }} />
+                      <ActivityIcons.BakeryIcon style={{ width: "1.3rem" }} />
                     ) : (
                       <Store />
                     )}
