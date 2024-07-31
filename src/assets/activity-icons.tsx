@@ -9,7 +9,7 @@ import ButcherIcon from "../assets/freepick/free-vector/drawing-cooking-color-ic
 // };
 
 export const activityIcons = {
-  boulangerie: <BakeryIcon />,
-  boucherie: <ButcherIcon />,
+  bakery: <BakeryIcon />,
+  butcher_shop: <ButcherIcon />,
   other: <OtherIcon />,
 };
