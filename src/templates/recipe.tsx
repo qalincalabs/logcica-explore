@@ -44,7 +44,7 @@ export default function RecipeTemplate({ data }: any) {
         </Box>
         <Grid container>
           {recipe.description?.short?.markdown && (
-            <Grid item xs={12} sm={8} sx={{ display: "flex" }}>
+            <Grid item xs={12} sm={8} sx={{ display: "flex", flexGrow: 1 }}>
               <DescriptionCard recipe={recipe} />
             </Grid>
           )}
@@ -305,6 +305,23 @@ export function CookTimeListCard({ recipe }: any) {
   );
 }
 
+function getIngredientTitle(ingredient: any) {
+  if (ingredient.title) return ingredient.title;
+
+  if (!ingredient.quantity?.value) return ingredient.name;
+
+  if (!ingredient.quantity?.unit?.name)
+    return ingredient.quantity.value + " " + ingredient.name;
+
+  return (
+    ingredient.name +
+    " - " +
+    ingredient.quantity.value +
+    " " +
+    ingredient.quantity.unit.name
+  );
+}
+
 export function IngredientListCard({ recipe }: any) {
   return (
     <Box
@@ -334,13 +351,7 @@ export function IngredientListCard({ recipe }: any) {
                     <Checkbox edge="start" disableRipple />
                   </ListItemIcon>
                   <ListItemText
-                    primary={
-                      (ingredient.quantity
-                        ? ingredient.quantity.value +
-                          ingredient.quantity.unit +
-                          " "
-                        : "") + ingredient.name
-                    }
+                    primary={getIngredientTitle(ingredient)}
                   ></ListItemText>
                 </ListItemButton>
               </ListItem>
@@ -454,10 +465,13 @@ export const query = graphql`
       prepTime
       totalTime
       ingredientList {
+        title
         name
         quantity {
           value
-          unit
+          unit {
+            name
+          }
         }
       }
       stepStatement {

@@ -116,6 +116,11 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         allergen: mongodbCodes @link(by: "mongodb_id")
         containmentLevel: mongodbCodes @link(by: "mongodb_id")
       }
+
+      type mongodbRecipesIngredientListQuantity implements Node {
+        unit: mongodbUnits @link(by: "mongodb_id")
+      }
+
       type mongodbRecipes implements Node {
         difficulty: mongodbCategories @link(by: "mongodb_id")
         seasonality: mongodbCategories @link(by: "mongodb_id")
