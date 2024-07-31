@@ -39,7 +39,7 @@ const ActivityPage = ({ data }: any) => {
     });
 
     let DefaultIcon = L.divIcon({
-      html: ReactDOMServer.renderToString(activityIcons["butcher"]),
+      html: ReactDOMServer.renderToString(activityIcons["other"]),
       iconSize: [0, 0],
       iconAnchor: [12, 40],
     });
@@ -50,9 +50,28 @@ const ActivityPage = ({ data }: any) => {
 
     data.activities.nodes.forEach((activity: any) => {
       const coordinatesToSwap = activity.place?.center?.coordinates;
+      const activityCategory = activity.categories?.[0]?.key;
+      const activityKeySplit =
+        ReactDOMServer.renderToString(activityCategory).split(".");
+      const activityKeyLastElement =
+        activityKeySplit[activityKeySplit.length - 1];
+      const activityKeyLastElementCondition = activityIcons.hasOwnProperty(
+        activityKeyLastElement,
+      )
+        ? activityIcons[activityKeyLastElement]
+        : activityIcons["other"];
       if (coordinatesToSwap) {
         const marker = L.marker(
           new LatLng(coordinatesToSwap[1], coordinatesToSwap[0]),
+          {
+            icon: L.divIcon({
+              html: ReactDOMServer.renderToString(
+                activityKeyLastElementCondition,
+              ),
+              iconSize: [0, 0],
+              iconAnchor: [12, 40],
+            }),
+          },
         );
         marker.bindPopup(
           ReactDOMServer.renderToString(
@@ -96,6 +115,9 @@ export const query = graphql`
         profiles {
           type
           link
+        }
+        categories {
+          key
         }
       }
     }
