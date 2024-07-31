@@ -10,12 +10,11 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet/dist/images/layers-2x.png";
 import "leaflet/dist/images/layers.png";
 import "leaflet/dist/images/marker-icon-2x.png";
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import * as React from "react";
 import { useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
+import { activityIcons } from "../assets/activity-icons";
 import Layout from "../components/layout";
 
 const ActivityPage = ({ data }: any) => {
@@ -39,9 +38,10 @@ const ActivityPage = ({ data }: any) => {
       layers: [layer],
     });
 
-    let DefaultIcon = L.icon({
-      iconUrl: icon,
-      shadowUrl: iconShadow,
+    let DefaultIcon = L.divIcon({
+      html: ReactDOMServer.renderToString(activityIcons["butcher"]),
+      iconSize: [0, 0],
+      iconAnchor: [12, 40],
     });
 
     L.Marker.prototype.options.icon = DefaultIcon;
