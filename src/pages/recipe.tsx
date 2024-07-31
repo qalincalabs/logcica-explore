@@ -51,7 +51,7 @@ function RecipeListItem(p: any) {
 
             {p.description?.short?.markdown && (
               <>
-                <br />
+                {p.author?.organisation?.name && <br />}
                 <Typography
                   variant="subtitle2"
                   component={"span"}
@@ -63,7 +63,7 @@ function RecipeListItem(p: any) {
             )}
 
             <>
-              <br />
+              {p.description?.short?.markdown && <br />}
               {p.totalTime && (
                 <Typography
                   variant="subtitle2"
@@ -135,7 +135,6 @@ export const query = graphql`
             name
           }
         }
-        yieldStatement
         costCategory {
           name
         }
@@ -153,21 +152,7 @@ export const query = graphql`
         cookTime
         prepTime
         totalTime
-        ingredientList {
-          name
-        }
-        stepStatement {
-          short {
-            markdown
-          }
-        }
         mainImage
-        allergenList {
-          id
-        }
-        nutrientList {
-          id
-        }
       }
     }
   }
