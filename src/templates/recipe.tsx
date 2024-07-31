@@ -44,7 +44,7 @@ export default function RecipeTemplate({ data }: any) {
         </Box>
         <Grid container>
           {recipe.description?.short?.markdown && (
-            <Grid item xs={12} sm={8} sx={{ display: "flex", flexGrow: 1 }}>
+            <Grid item xs={12} sm={8} sx={{ display: "flex" }}>
               <DescriptionCard recipe={recipe} />
             </Grid>
           )}
