@@ -479,7 +479,9 @@ export const query = graphql`
           markdown
         }
       }
-      mainImage
+      mainImage {
+        filename
+      }
       allergenList {
         allergen {
           _id
