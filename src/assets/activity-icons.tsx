@@ -2,24 +2,24 @@ import React from "react";
 import CuredMeatShopIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/bacon.svg";
 import BreweryIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/beer.svg";
 import BakeryIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/bread.svg";
+import CheeseDairyIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/cheese.svg";
 import PoultryBreedingIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/chicken.svg";
 import ChocolateFactoryIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/chocolate.svg";
 import BiscuitFactoryIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/cookie.svg";
 import DairyFarmIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/cow.svg";
+import OtherIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/danger_panel.svg";
 import FarmIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/farm.svg";
+import FishShopIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/fish.svg";
 import BeekeepingIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/honey_pot.svg";
+import IceCreameryIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/ice_cream.svg";
 import ConfectioneryIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/lollipop.svg";
 import ButcherShopIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/meat.svg";
-import WineMerchantIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/wine.svg";
-
-import CheeseDairyIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/cheese.svg";
-import FishShopIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/fish.svg";
-import IceCreameryIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/ice_cream.svg";
 import FlourMillIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/mill.svg";
 import ProducerIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/producer.svg";
 import MarketGardenIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/salad.svg";
 import CerealFarmIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/scarecrow.svg";
 import MarketIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/vegetables_basket.svg";
+import WineMerchantIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/wine.svg";
 
 // export const activityIcons = {
 //   bakery: <BakeryIcon />,
@@ -47,5 +47,5 @@ export const activityIcons = {
   flour_mill: <FlourMillIcon style={{ width: "1.8rem" }} />,
   fish_shop: <FishShopIcon style={{ width: "1.8rem" }} />,
   producer: <ProducerIcon style={{ width: "1.8rem" }} />,
-  other: <ProducerIcon style={{ width: "1.8rem" }} />,
+  other: <OtherIcon style={{ width: "1.8rem" }} />,
 };

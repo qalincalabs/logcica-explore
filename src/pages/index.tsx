@@ -132,9 +132,9 @@ const getProfileLinkAndIcon = (profiles: any) => {
 
   const link = linkProfile.link;
   const icon = link.includes("facebook.com") ? (
-    <FacebookIcon style={{ fontSize: 16, marginRight: 5 }} />
+    <FacebookIcon style={{ width: "2rem", marginRight: 5 }} />
   ) : (
-    <LinkIcon style={{ fontSize: 16, marginRight: 5 }} />
+    <LinkIcon style={{ width: "2rem", marginRight: 5 }} />
   );
 
   return (
