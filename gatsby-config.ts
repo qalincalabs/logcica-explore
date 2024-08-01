@@ -22,6 +22,15 @@ module.exports = {
      * MongoDB instance
      */
     {
+      resolve: `gatsby-source-payload-cms`,
+      options: {
+        endpoint: "http://localhost:3011/api/", //`https://cms.logcica.org/api/`,
+        //accessToken: `<your-payload-cms-api-key>`,
+        collectionTypes: ["classifications", "categories", "places", `units`],
+        fallbackLocale: `en`,
+      },
+    },
+    {
       resolve: `gatsby-plugin-algolia`,
       options: {
         appId: process.env.GATSBY_ALGOLIA_APP_ID,

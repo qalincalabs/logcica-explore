@@ -34,6 +34,7 @@
     "gatsby-plugin-react-leaflet": "^4.0.3",
     "gatsby-plugin-styled-components": "^6.13.1",
     "gatsby-source-mongodb": "^5.13.1",
+    "gatsby-source-payload-cms": "^1.0.0",
     "jspdf": "^2.5.1",
     "leaflet": "^1.9.3",
     "leaflet-defaulticon-compatibility": "^0.1.2",
