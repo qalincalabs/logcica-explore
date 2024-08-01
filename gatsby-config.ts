@@ -12,15 +12,22 @@ require("dotenv").config({
   path: `.env`, // ${process.env.NODE_ENV}
 });
 
+console.log(process.env.PAYLOAD_CLOUD_BUCKET_REGION);
+
 module.exports = {
   adapter: noOpAdapter(),
   plugins: [
     `gatsby-plugin-styled-components`,
-    /*
-     * Gatsby's data processing layer begins with “source” plugins. Here we
-     * setup the site to pull data from the "documents" collection in a local
-     * MongoDB instance
-     */
+    {
+      resolve: `gatsby-source-s3`,
+      options: {
+        aws: {
+          region: process.env.PAYLOAD_CLOUD_BUCKET_REGION,
+        },
+        buckets: [process.env.PAYLOAD_CLOUD_BUCKET],
+        expiration: 120,
+      },
+    },
     {
       resolve: `gatsby-plugin-algolia`,
       options: {

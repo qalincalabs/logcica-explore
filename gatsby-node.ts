@@ -1,9 +1,81 @@
+import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
+import * as AWS from "@aws-sdk/client-s3";
+import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers"; // ES6 import
+
+import { authAsCognitoUser } from "./authAsCognitoUser";
+import { createKey } from "./createKey";
+
 const path = require("path");
 const { collections } = require("./collections");
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+async function getCredentials() {
+  const session = await authAsCognitoUser(
+    process.env.PAYLOAD_CLOUD_PROJECT_ID as string,
+    process.env.PAYLOAD_CLOUD_COGNITO_PASSWORD as string
+  );
+
+  const cognitoIdentity = new CognitoIdentityClient({
+    credentials: fromCognitoIdentityPool({
+      clientConfig: {
+        region: "us-east-1",
+      },
+      identityPoolId: process.env
+        .PAYLOAD_CLOUD_COGNITO_IDENTITY_POOL_ID as string,
+      logins: {
+        [`cognito-idp.us-east-1.amazonaws.com/${process.env.PAYLOAD_CLOUD_COGNITO_USER_POOL_ID}`]:
+          session.getIdToken().getJwtToken(),
+      },
+    }),
+  });
+
+  const c = await cognitoIdentity.config.credentials();
+
+  console.log(c);
+
+  const s3 = new AWS.S3({
+    credentials: c,
+    region: process.env.PAYLOAD_CLOUD_BUCKET_REGION,
+  });
+
+  const key = createKey({
+    collection: "media",
+    filename: "WhatsApp Image 2024-07-03 at 14.51.40.jpg",
+    // @ts-expect-error
+    identityID: c.identityId,
+  });
+
+  console.log(key);
+
+  const object = await s3.getObject({
+    Bucket: process.env.PAYLOAD_CLOUD_BUCKET,
+    Key: key,
+  });
+
+  console.log(object);
+
+  return c;
+}
+
+exports.onPreInit = async ({ actions, store }: any) => {
+  const { setPluginStatus } = actions;
+  const state = store.getState();
+
+  const plugin = state.flattenedPlugins.find(
+    (plugin: any) => plugin.name === "gatsby-source-s3"
+  );
+  if (plugin) {
+    const credentials = await getCredentials();
+    plugin.pluginOptions = {
+      ...plugin.pluginOptions,
+      ...{ aws: { credentials: credentials } },
+    };
+    setPluginStatus({ pluginOptions: plugin.pluginOptions }, plugin);
+  }
+};
 
 exports.createSchemaCustomization = ({ actions }: any) => {
   const { createTypes } = actions;
