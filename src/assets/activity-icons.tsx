@@ -21,6 +21,14 @@ import CerealFarmIcon from "../assets/freepick/free-vector/drawing-cooking-color
 import MarketIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/vegetables_basket.svg";
 import WineMerchantIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/wine.svg";
 
+import OrchardIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/bucket_apples.svg";
+import CatererIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/caterer.svg";
+import FloristIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/flower.svg";
+import VineyardIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/grape.svg";
+import FruitProducerIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/producer_apple.svg";
+import BeverageProducerIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/producer_beverage.svg";
+import AnimalProducerIcon from "../assets/freepick/free-vector/drawing-cooking-color-icons_730579/producer_chicken.svg";
+
 // export const activityIcons = {
 //   bakery: <BakeryIcon />,
 //   butcher: <ButcherIcon />,
@@ -47,5 +55,12 @@ export const activityIcons = {
   flour_mill: <FlourMillIcon style={{ width: "1.8rem" }} />,
   fish_shop: <FishShopIcon style={{ width: "1.8rem" }} />,
   producer: <ProducerIcon style={{ width: "1.8rem" }} />,
+  florist: <FloristIcon style={{ width: "1.8rem" }} />,
+  animal_producer: <AnimalProducerIcon style={{ width: "1.8rem" }} />,
+  beverage_producer: <BeverageProducerIcon style={{ width: "1.8rem" }} />,
+  fruit_producer: <FruitProducerIcon style={{ width: "1.8rem" }} />,
+  caterer: <CatererIcon style={{ width: "1.8rem" }} />,
+  orchard: <OrchardIcon style={{ width: "1.8rem" }} />,
+  vineyard: <VineyardIcon style={{ width: "1.8rem" }} />,
   other: <OtherIcon style={{ width: "1.8rem" }} />,
 };
