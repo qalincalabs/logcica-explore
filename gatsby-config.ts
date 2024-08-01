@@ -24,10 +24,12 @@ module.exports = {
     {
       resolve: `gatsby-source-payload-cms`,
       options: {
-        endpoint: "http://localhost:3011/api/", //`https://cms.logcica.org/api/`,
-        //accessToken: `<your-payload-cms-api-key>`,
-        collectionTypes: ["classifications", "categories", "places", `units`],
+        endpoint: `http://localhost:3011/api/`,
+        accessToken: `38e56a18-c9fb-42d7-b0a7-0b78e1bcb8ce`,
+        collectionTypes: ["media"],
         fallbackLocale: `en`,
+        imageCdn: true,
+        uploadTypes: [`media`],
       },
     },
     {
