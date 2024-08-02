@@ -1,9 +1,11 @@
 import { HeadFC, type PageProps } from "gatsby";
 import React from "react";
 
+import { OpenInNew } from "@mui/icons-material";
 import {
   Box,
   Grid,
+  Link,
   List,
   ListItem,
   ListItemIcon,
@@ -11,7 +13,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { activityIcons } from "../assets/activity-icons";
+import { activityIcons, activityIconsLink } from "../assets/activity-icons";
 import Layout from "../components/layout";
 
 const CreditPage: React.FC<PageProps> = ({ data }: any) => {
@@ -37,7 +39,8 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      padding: "0.5rem",
+                      p: 0,
+                      m: 0,
                     }}
                   >
                     <ListItemIcon
@@ -52,8 +55,33 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
                       primary={key
                         .replace(/_/g, " ")
                         .replace(/\b\w/g, (char) => char.toUpperCase())}
+                      sx={{
+                        flex: "0 1 auto",
+                        textAlign: "center",
+                        marginRight: 1,
+                        marginLeft: 1,
+                      }}
                     />
-                    <ListItemText primary={"nom des créditeurs"} />
+                    <ListItemText
+                      primary={"nom des créditeurs"}
+                      sx={{
+                        flex: "0 1 auto",
+                        textAlign: "center",
+                        marginRight: 1,
+                        marginLeft: 1,
+                      }}
+                    />
+                    <Link
+                      href={activityIconsLink[key] || "#"}
+                      sx={{
+                        color: "primary.main",
+                        textDecoration: "underline",
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <OpenInNew sx={{ ml: 0.5 }} />
+                    </Link>
                   </ListItem>
                 ))}
               </List>
