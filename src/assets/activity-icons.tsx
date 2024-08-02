@@ -82,7 +82,7 @@ export const activityIcons = {
   ),
   meat_farm: <MeatFarmIcon style={{ width: "1.8rem" }} />,
   wholesaler: <WholeSalerIcon style={{ width: "1.8rem" }} />,
-  heliculture: <HelicicultureIcon style={{ width: "1.8rem" }} />,
+  heliciculture: <HelicicultureIcon style={{ width: "1.8rem" }} />,
   non_edible_horticulture: (
     <NonEdibleHorticultureIcon style={{ width: "1.8rem" }} />
   ),
