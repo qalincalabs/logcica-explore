@@ -14,7 +14,7 @@ import "leaflet/dist/leaflet.css";
 import * as React from "react";
 import { useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
-import { activityIcons } from "../assets/activity-icons";
+import { activityIconsWithLinks } from "../assets/activity-icons";
 import Layout from "../components/layout";
 
 const ActivityPage = ({ data }: any) => {
@@ -39,7 +39,7 @@ const ActivityPage = ({ data }: any) => {
     });
 
     let DefaultIcon = L.divIcon({
-      html: ReactDOMServer.renderToString(activityIcons["other"]),
+      html: ReactDOMServer.renderToString(activityIconsWithLinks["other"]?.[0]),
       iconSize: [0, 0],
       iconAnchor: [12, 40],
     });
@@ -55,11 +55,11 @@ const ActivityPage = ({ data }: any) => {
         ReactDOMServer.renderToString(activityCategory).split(".");
       const activityKeyLastElement =
         activityKeySplit[activityKeySplit.length - 1];
-      const activityKeyLastElementCondition = activityIcons.hasOwnProperty(
-        activityKeyLastElement,
-      )
-        ? activityIcons[activityKeyLastElement]
-        : activityIcons["other"];
+      const activityKeyLastElementCondition =
+        activityIconsWithLinks.hasOwnProperty(activityKeyLastElement)
+          ? activityIconsWithLinks[activityKeyLastElement]?.[0]
+          : activityIconsWithLinks["other"]?.[0];
+
       if (coordinatesToSwap) {
         const marker = L.marker(
           new LatLng(coordinatesToSwap[1], coordinatesToSwap[0]),

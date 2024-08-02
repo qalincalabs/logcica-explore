@@ -13,7 +13,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { activityIcons, activityIconsLink } from "../assets/activity-icons";
+import { activityIconsWithLinks } from "../assets/activity-icons";
 import Layout from "../components/layout";
 
 const CreditPage: React.FC<PageProps> = ({ data }: any) => {
@@ -33,57 +33,59 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
           <Paper elevation={7} square={false}>
             <Grid item xs={12} md={3}>
               <List sx={{ display: "flex", flexDirection: "column" }}>
-                {Object.entries(activityIcons).map(([key, IconComponent]) => (
-                  <ListItem
-                    key={key}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      p: 0,
-                      m: 0,
-                    }}
-                  >
-                    <ListItemIcon
+                {Object.entries(activityIconsWithLinks).map(
+                  ([key, IconComponent]) => (
+                    <ListItem
+                      key={key}
                       sx={{
                         display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {IconComponent}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={key
-                        .replace(/_/g, " ")
-                        .replace(/\b\w/g, (char) => char.toUpperCase())}
-                      sx={{
-                        flex: "0 1 auto",
-                        textAlign: "center",
-                        marginRight: 1,
-                        marginLeft: 1,
-                      }}
-                    />
-                    <ListItemText
-                      primary={"nom des créditeurs"}
-                      sx={{
-                        flex: "0 1 auto",
-                        textAlign: "center",
-                        marginRight: 1,
-                        marginLeft: 1,
-                      }}
-                    />
-                    <Link
-                      href={activityIconsLink[key] || "#"}
-                      sx={{
-                        color: "primary.main",
-                        textDecoration: "underline",
-                        display: "inline-flex",
                         alignItems: "center",
+                        p: 0,
+                        m: 0,
                       }}
                     >
-                      <OpenInNew sx={{ ml: 0.5 }} />
-                    </Link>
-                  </ListItem>
-                ))}
+                      <ListItemIcon
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {IconComponent?.[0]}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={key
+                          .replace(/_/g, " ")
+                          .replace(/\b\w/g, (char) => char.toUpperCase())}
+                        sx={{
+                          flex: "0 1 auto",
+                          textAlign: "center",
+                          marginRight: 1,
+                          marginLeft: 1,
+                        }}
+                      />
+                      <ListItemText
+                        primary={"nom des créditeurs"}
+                        sx={{
+                          flex: "0 1 auto",
+                          textAlign: "center",
+                          marginRight: 1,
+                          marginLeft: 1,
+                        }}
+                      />
+                      <Link
+                        href={IconComponent?.[1] || "#"}
+                        sx={{
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <OpenInNew sx={{ ml: 0.5 }} />
+                      </Link>
+                    </ListItem>
+                  ),
+                )}
               </List>
             </Grid>
           </Paper>
