@@ -63,15 +63,6 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
                           marginLeft: 1,
                         }}
                       />
-                      <ListItemText
-                        primary={"nom des créditeurs"}
-                        sx={{
-                          flex: "0 1 auto",
-                          textAlign: "center",
-                          marginRight: 1,
-                          marginLeft: 1,
-                        }}
-                      />
                       <Link
                         href={IconComponent?.[1] || "#"}
                         sx={{
@@ -83,6 +74,15 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
                       >
                         <OpenInNew sx={{ ml: 0.5 }} />
                       </Link>
+                      <ListItemText
+                        primary={`Designé par ${IconComponent?.[2]}`}
+                        sx={{
+                          flex: "0 1 auto",
+                          textAlign: "center",
+                          marginRight: 1,
+                          marginLeft: 1,
+                        }}
+                      />
                     </ListItem>
                   ),
                 )}
