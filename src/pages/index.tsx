@@ -38,8 +38,10 @@ const ActivityPage = ({ data }: any) => {
       layers: [layer],
     });
 
+    const iconsWithLinks = activityIconsWithLinks("1.8rem");
+
     let DefaultIcon = L.divIcon({
-      html: ReactDOMServer.renderToString(activityIconsWithLinks["other"]?.[0]),
+      html: ReactDOMServer.renderToString(iconsWithLinks["other"]?.[0]),
       iconSize: [0, 0],
       iconAnchor: [12, 40],
     });
@@ -55,10 +57,11 @@ const ActivityPage = ({ data }: any) => {
         ReactDOMServer.renderToString(activityCategory).split(".");
       const activityKeyLastElement =
         activityKeySplit[activityKeySplit.length - 1];
-      const activityKeyLastElementCondition =
-        activityIconsWithLinks.hasOwnProperty(activityKeyLastElement)
-          ? activityIconsWithLinks[activityKeyLastElement]?.[0]
-          : activityIconsWithLinks["other"]?.[0];
+      const activityKeyLastElementCondition = iconsWithLinks.hasOwnProperty(
+        activityKeyLastElement,
+      )
+        ? iconsWithLinks[activityKeyLastElement]?.[0]
+        : iconsWithLinks["other"]?.[0];
 
       if (coordinatesToSwap) {
         const marker = L.marker(
