@@ -64,6 +64,7 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
                         }}
                       />
                       <Link
+                        target="_blank"
                         href={IconComponent?.[1] || "#"}
                         sx={{
                           color: "primary.main",

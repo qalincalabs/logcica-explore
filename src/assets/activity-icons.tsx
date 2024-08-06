@@ -19,7 +19,6 @@ import RoasterIcon from "../assets/freepick/other/coffee_bean.svg"; //https://fr
 import CooperativeIcon from "../assets/freepick/other/cooperative.svg"; //https://www.freepik.com/free-vector/user-group-circles-multiple-colours_145857011.htm#fromView=search&page=3&position=21&uuid=33826e37-c14b-4fec-865f-6b7676ed86c9
 import DairyFarmIcon from "../assets/freepick/other/cow.svg"; //https://fr.freepik.com/vecteurs-libre/collection-icones-plat-menage-paysan-ferme-animaux-domestiques_3910295.htm#fromView=search&page=1&position=12&uuid=70c42894-1669-495a-8220-e5702fba3c57
 import CreameryIcon from "../assets/freepick/other/cream.svg"; //https://fr.freepik.com/vecteurs-libre/collection-desserts-sucres-dans-style-plat_1906063.htm#fromView=search&page=1&position=52&uuid=ed1e716d-9a89-48e1-8b59-3f52843edc52
-import OtherIcon from "../assets/freepick/other/danger_panel.svg"; //https://fr.freepik.com/vecteurs-libre/aucun-signe-n-est-indique_207467017.htm#fromView=search&page=1&position=34&uuid=07c25340-e7c1-454b-a961-eaf963dd9698
 import PoultryBreedingEggsIcon from "../assets/freepick/other/egg.svg"; //https://thenounproject.com/icon/egg-6442395/
 import FarmIcon from "../assets/freepick/other/farm.svg"; //https://fr.freepik.com/vecteurs-libre/collection-icones-plat-menage-paysan-ferme-animaux-domestiques_3910295.htm#fromView=search&page=1&position=12&uuid=70c42894-1669-495a-8220-e5702fba3c57
 import MeatFarmIcon from "../assets/freepick/other/farm_meat.svg"; //https://fr.freepik.com/vecteurs-libre/collection-icones-plat-menage-paysan-ferme-animaux-domestiques_3910295.htm#fromView=search&page=1&position=12&uuid=70c42894-1669-495a-8220-e5702fba3c57
@@ -34,6 +33,7 @@ import PressIcon from "../assets/freepick/other/juice_pitcher.svg"; //https://fr
 import ConfectioneryIcon from "../assets/freepick/other/lollipop.svg"; //https://fr.freepik.com/vecteurs-libre/icones-nourriture_959688.htm#fromView=search&page=1&position=34&uuid=d939a2b9-cbc5-4a60-8b6d-e053da9e860d
 import FlourMillIcon from "../assets/freepick/other/mill.svg"; //https://fr.freepik.com/vecteurs-libre/collection-icones-plat-menage-paysan-ferme-animaux-domestiques_3910295.htm#fromView=search&page=1&position=12&uuid=70c42894-1669-495a-8220-e5702fba3c57
 import OilMillIcon from "../assets/freepick/other/oil_bottle.svg"; //https://www.freepik.com/free-vector/condiments-icon-set_1294531.htm#fromView=search&page=1&position=0&uuid=78d47865-8ef9-4a3b-883b-5a92da7801c5
+import OtherIcon from "../assets/freepick/other/pointer.svg"; //https://fr.freepik.com/vecteurs-libre/aucun-signe-n-est-indique_207467017.htm#fromView=search&page=1&position=34&uuid=07c25340-e7c1-454b-a961-eaf963dd9698
 import ProducerIcon from "../assets/freepick/other/producer.svg"; //https://fr.freepik.com/vecteurs-libre/collection-icones-plat-menage-paysan-ferme-animaux-domestiques_3910295.htm#fromView=search&page=1&position=12&uuid=70c42894-1669-495a-8220-e5702fba3c57
 import FruitProducerIcon from "../assets/freepick/other/producer_apple.svg"; //https://fr.freepik.com/vecteurs-libre/collection-icones-plat-menage-paysan-ferme-animaux-domestiques_3910295.htm#fromView=search&page=1&position=12&uuid=70c42894-1669-495a-8220-e5702fba3c57 & basics icons
 import BeverageProducerIcon from "../assets/freepick/other/producer_beverage.svg"; //https://fr.freepik.com/vecteurs-libre/collection-icones-plat-menage-paysan-ferme-animaux-domestiques_3910295.htm#fromView=search&page=1&position=12&uuid=70c42894-1669-495a-8220-e5702fba3c57 & basics icons
@@ -205,7 +205,7 @@ type ActivityIconsWithLinks = (width: string) => {
 export const activityIconsWithLinks: ActivityIconsWithLinks = (width: any) => ({
   bakery: [
     <BakeryIcon style={{ width: width }} />,
-    "https://fr.freepik.com/vecteurs-libre/dessin-couleur-cuisine-icones_730579.htm#query=food%20icon&position=4&from_view=search&track=ais_hybrid&uuid=81822459-9ba4-42fa-9355-63346621d50c",
+    "https://fr.freepik.com/vecteurs-libre/dessin-couleur-cuisine-icones_730579.htm",
     "Freepik",
   ],
   butcher_shop: [
@@ -425,7 +425,7 @@ export const activityIconsWithLinks: ActivityIconsWithLinks = (width: any) => ({
   ],
   other: [
     <OtherIcon style={{ width: width }} />,
-    "https://fr.freepik.com/vecteurs-libre/aucun-signe-n-est-indique_207467017.htm#fromView=search&page=1&position=34&uuid=07c25340-e7c1-454b-a961-eaf963dd9698",
+    "https://www.freepik.com/free-vector/location-pins-flat-style_72835547.htm#fromView=search&page=1&position=21&uuid=12410c6a-a54e-4e6d-9252-ba386e9000b5",
     "Juicy_fish",
   ],
 });
