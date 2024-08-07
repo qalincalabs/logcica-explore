@@ -36,11 +36,57 @@ export default function RecipeTemplate({ data }: any) {
           p: 2,
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
-          <Typography align="center" variant="h3" component="h3" mr={2}>
-            {recipe.name}
-          </Typography>
-          <FavoriteIcons type="recipe" targetId={recipe._id} />
+        <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
+          <Grid container>
+            <Grid
+              item
+              xs={12}
+              sm={5}
+              sx={{
+                display: "flex",
+                textAlign: { xs: "center", sm: "center" },
+                justifyContent: { xs: "center", sm: "flex-end" },
+              }}
+            >
+              {recipe.mainImage?.filename && <ImageCard recipe={recipe} />}
+            </Grid>
+            <Grid
+              item
+              xs={8}
+              sm={3}
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                mt: { xs: 2, sm: 0 },
+              }}
+            >
+              <Typography
+                align="center"
+                variant="h3"
+                component="h3"
+                sx={{
+                  textAlign: "center",
+                }}
+              >
+                {recipe.name}
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={4}
+              sm={4}
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                justifyContent: "left",
+                mt: { xs: 2, sm: 0 },
+              }}
+            >
+              <FavoriteIcons type="recipe" targetId={recipe._id} />
+            </Grid>
+          </Grid>
         </Box>
         <Grid container>
           {recipe.description?.short?.markdown && (
@@ -93,6 +139,21 @@ export default function RecipeTemplate({ data }: any) {
         </Grid>
       </Box>
     </Layout>
+  );
+}
+
+export function ImageCard({ recipe }: any) {
+  return (
+    <Box
+      component="img"
+      src={"https://cms.logcica.org/media/" + recipe.mainImage?.filename}
+      alt="image"
+      loading="lazy"
+      sx={{
+        width: "18rem",
+        height: "9rem",
+      }}
+    />
   );
 }
 
@@ -501,6 +562,9 @@ export const query = graphql`
           value
           unit
         }
+      }
+      mainImage {
+        filename
       }
     }
   }
