@@ -39,7 +39,7 @@ const ActivityPage = ({ data }: any) => {
       layers: [layer],
     });
 
-    const iconsWithLinks = activityIconsWithLinks("1.8rem");
+    const iconsWithLinks = activityIconsWithLinks;
 
     let DefaultIcon = L.divIcon({
       html: ReactDOMServer.renderToString(iconsWithLinks["other"]?.[0]),

@@ -33,7 +33,7 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
           <Paper elevation={7} square={false}>
             <Grid item xs={12} md={3}>
               <List sx={{ display: "flex", flexDirection: "column" }}>
-                {Object.entries(activityIconsWithLinks("2.5rem")).map(
+                {Object.entries(activityIconsWithLinks).map(
                   ([key, IconComponent]) => (
                     <ListItem
                       key={key}

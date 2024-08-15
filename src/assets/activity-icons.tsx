@@ -143,11 +143,15 @@ export const activityIconsLink: ActivityIconsLinks = {
     "https://fr.freepik.com/vecteurs-libre/aucun-signe-n-est-indique_207467017.htm#fromView=search&page=1&position=34&uuid=07c25340-e7c1-454b-a961-eaf963dd9698",
 };
 
-type ActivityIconsWithLinks = (width: string) => {
+type ActivityIconsWithLinks = {
   [key: string]: [JSX.Element, string, string];
 };
 
-export const activityIconsWithLinks: ActivityIconsWithLinks = () => ({
+export const getIcon = (name: string) => {
+  return activityIconsWithLinks[name];
+};
+
+export const activityIconsWithLinks: ActivityIconsWithLinks = {
   bakery: [
     <BakeryIcon />,
     "https://fr.freepik.com/vecteurs-libre/dessin-couleur-cuisine-icones_730579.htm",
@@ -373,4 +377,4 @@ export const activityIconsWithLinks: ActivityIconsWithLinks = () => ({
     "https://www.freepik.com/free-vector/location-pins-flat-style_72835547.htm#fromView=search&page=1&position=21&uuid=12410c6a-a54e-4e6d-9252-ba386e9000b5",
     "Juicy_fish",
   ],
-});
+};
