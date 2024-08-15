@@ -1,4 +1,3 @@
-import { OpenInNew } from "@mui/icons-material";
 import AccessAlarmsIcon from "@mui/icons-material/AccessAlarms";
 import ContrastIcon from "@mui/icons-material/Contrast";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
@@ -9,7 +8,6 @@ import {
   CardContent,
   Checkbox,
   Grid,
-  Link,
   List,
   ListItem,
   ListItemButton,
@@ -24,9 +22,11 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AllergenList from "../components/allergen-list";
+import ProfilesCard from "../components/cards/profiles-card";
 import FavoriteIcons from "../components/FavoriteIcons";
 import Layout from "../components/layout";
 import NutrientListTable from "../components/nutrient-list-table";
+import SubtitleTemplate from "../components/subtitle-template";
 
 export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
@@ -94,7 +94,7 @@ export default function RecipeTemplate({ data }: any) {
           )}
           {recipe.profiles && recipe.profiles.length > 0 && (
             <Grid item xs={12} sm={7} md={4}>
-              <ProfileCard recipe={recipe} />
+              <ProfilesCard profiles={recipe.profiles} />
             </Grid>
           )}
         </Grid>
@@ -417,70 +417,6 @@ export function NutrientListCard({ recipe }: any) {
         </Box>
       </Paper>
     </Box>
-  );
-}
-
-export function ProfileCard({ recipe }: any) {
-  const profiles = recipe.profiles;
-  return (
-    <Box sx={{ m: 1, flexGrow: 1 }}>
-      <Paper elevation={7} square={false}>
-        <SubtitleTemplate text={"Profiles"} />
-        <Stack direction="column" spacing={1}>
-          {profiles.map((profile: any) => (
-            <Stack
-              direction="row"
-              gap={1}
-              key={profile.key}
-              sx={{
-                display: "flex",
-                alignItens: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography sx={{ fontWeight: "bold" }}>
-                {profile.type}
-              </Typography>
-              {profile.link ? (
-                <Link
-                  href={profile.link}
-                  target="_blank"
-                  sx={{
-                    color: "primary.main",
-                    textDecoration: "underline",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {profile.localKey ?? profile.key}{" "}
-                  <OpenInNew sx={{ ml: 0.5 }} />
-                </Link>
-              ) : (
-                <Typography>{profile.localKey ?? profile.key}</Typography>
-              )}
-            </Stack>
-          ))}
-        </Stack>
-      </Paper>
-    </Box>
-  );
-}
-
-export function SubtitleTemplate({ text }: any) {
-  return (
-    <Typography
-      sx={{
-        textAlign: "center",
-        color: "#ffcb01",
-        fontFamily: "-apple-system, Roboto, sans-serif, serif",
-        fontStyle: "bold",
-      }}
-      variant={"h6"}
-    >
-      {text}
-    </Typography>
   );
 }
 
