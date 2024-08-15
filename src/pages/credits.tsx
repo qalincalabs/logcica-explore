@@ -48,6 +48,8 @@ const CreditPage: React.FC<PageProps> = ({ data }: any) => {
                         sx={{
                           display: "flex",
                           justifyContent: "center",
+                          width: "1.8rem",
+                          padding: 1,
                         }}
                       >
                         {IconComponent?.[0]}

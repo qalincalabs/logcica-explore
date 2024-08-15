@@ -73,7 +73,7 @@ const ActivityPage = ({ data }: any) => {
               ),
               iconSize: [0, 0],
               iconAnchor: [18, 3],
-              className: hasCategory ? "mapIcon" : undefined,
+              className: hasCategory ? "mapIcon" : "defaultMapIcon",
             }),
           },
         );
@@ -97,9 +97,13 @@ const ActivityPage = ({ data }: any) => {
   return (
     <Layout>
       <GlobalStyles
-        styles={(theme) => ({
+        styles={() => ({
+          ".defaultMapIcon svg": {
+            width: "2.5rem",
+            height: "2.5rem",
+          },
           ".mapIcon svg": {
-            color: "primary.main",
+            color: "white",
             width: "1.8rem",
             height: "1.8rem",
             background: "white",
