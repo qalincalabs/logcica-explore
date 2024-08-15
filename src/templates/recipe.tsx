@@ -22,9 +22,11 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AllergenList from "../components/allergen-list";
+import ProfilesCard from "../components/cards/profiles-card";
 import FavoriteIcons from "../components/FavoriteIcons";
 import Layout from "../components/layout";
 import NutrientListTable from "../components/nutrient-list-table";
+import SubtitleTemplate from "../components/subtitle-template";
 
 export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
@@ -81,13 +83,18 @@ export default function RecipeTemplate({ data }: any) {
         </Grid>
         <Grid container>
           {recipe.allergenList && recipe.allergenList.length > 0 && (
-            <Grid item xs={12} sm={5} md={4} lg={3}>
+            <Grid item xs={12} sm={4} md={4} lg={3}>
               <AllergenListCard recipe={recipe} />
             </Grid>
           )}
           {recipe.nutrientList && recipe.nutrientList.length > 0 && (
-            <Grid item xs={12} sm={7} md={5}>
+            <Grid item xs={12} sm={5} md={5}>
               <NutrientListCard recipe={recipe} />
+            </Grid>
+          )}
+          {recipe.profiles && recipe.profiles.length > 0 && (
+            <Grid item xs={12} sm={7} md={4}>
+              <ProfilesCard profiles={recipe.profiles} />
             </Grid>
           )}
         </Grid>
@@ -413,22 +420,6 @@ export function NutrientListCard({ recipe }: any) {
   );
 }
 
-export function SubtitleTemplate({ text }: any) {
-  return (
-    <Typography
-      sx={{
-        textAlign: "center",
-        color: "#ffcb01",
-        fontFamily: "-apple-system, Roboto, sans-serif, serif",
-        fontStyle: "bold",
-      }}
-      variant={"h6"}
-    >
-      {text}
-    </Typography>
-  );
-}
-
 export const query = graphql`
   query ($id: String!) {
     recipe: mongodbRecipes(_id: { eq: $id }) {
@@ -501,6 +492,12 @@ export const query = graphql`
           value
           unit
         }
+      }
+      profiles {
+        link
+        type
+        key
+        localKey
       }
     }
   }
