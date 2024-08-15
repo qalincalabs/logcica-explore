@@ -2,6 +2,7 @@ import {
   Facebook as FacebookIcon,
   Link as LinkIcon,
 } from "@mui/icons-material";
+import { GlobalStyles } from "@mui/material";
 import { graphql, Link, type HeadFC } from "gatsby";
 import L, { LatLng } from "leaflet";
 import "leaflet.markercluster";
@@ -43,7 +44,6 @@ const ActivityPage = ({ data }: any) => {
     let DefaultIcon = L.divIcon({
       html: ReactDOMServer.renderToString(iconsWithLinks["other"]?.[0]),
       iconSize: [0, 0],
-      iconAnchor: [12, 40],
     });
 
     L.Marker.prototype.options.icon = DefaultIcon;
@@ -57,9 +57,9 @@ const ActivityPage = ({ data }: any) => {
         ReactDOMServer.renderToString(activityCategory).split(".");
       const activityKeyLastElement =
         activityKeySplit[activityKeySplit.length - 1];
-      const activityKeyLastElementCondition = iconsWithLinks.hasOwnProperty(
-        activityKeyLastElement,
-      )
+
+      const hasCategory = iconsWithLinks.hasOwnProperty(activityKeyLastElement);
+      const activityKeyLastElementCondition = hasCategory
         ? iconsWithLinks[activityKeyLastElement]?.[0]
         : iconsWithLinks["other"]?.[0];
 
@@ -72,7 +72,8 @@ const ActivityPage = ({ data }: any) => {
                 activityKeyLastElementCondition,
               ),
               iconSize: [0, 0],
-              iconAnchor: [12, 40],
+              iconAnchor: [18, 3],
+              className: hasCategory ? "mapIcon" : undefined,
             }),
           },
         );
@@ -95,6 +96,18 @@ const ActivityPage = ({ data }: any) => {
 
   return (
     <Layout>
+      <GlobalStyles
+        styles={(theme) => ({
+          ".mapIcon svg": {
+            color: "primary.main",
+            width: "1.8rem",
+            height: "1.8rem",
+            background: "white",
+            padding: "3px",
+            borderRadius: "10px",
+          },
+        })}
+      />
       <div id="map" style={mapStyles} />
     </Layout>
   );
