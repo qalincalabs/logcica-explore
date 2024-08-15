@@ -671,6 +671,9 @@ export const query = graphql`
       nodes {
         _id
         name
+        categories {
+          key
+        }
       }
     }
     events: allMongodbSessions {

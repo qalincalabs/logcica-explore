@@ -2,6 +2,7 @@ import {
   Facebook as FacebookIcon,
   Link as LinkIcon,
 } from "@mui/icons-material";
+import { GlobalStyles } from "@mui/material";
 import { graphql, Link, type HeadFC } from "gatsby";
 import L, { LatLng } from "leaflet";
 import "leaflet.markercluster";
@@ -10,12 +11,11 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet/dist/images/layers-2x.png";
 import "leaflet/dist/images/layers.png";
 import "leaflet/dist/images/marker-icon-2x.png";
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import * as React from "react";
 import { useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
+import { activityIconsWithLinks } from "../assets/activity-icons";
 import Layout from "../components/layout";
 
 const ActivityPage = ({ data }: any) => {
@@ -39,9 +39,11 @@ const ActivityPage = ({ data }: any) => {
       layers: [layer],
     });
 
-    let DefaultIcon = L.icon({
-      iconUrl: icon,
-      shadowUrl: iconShadow,
+    const iconsWithLinks = activityIconsWithLinks("1.8rem");
+
+    let DefaultIcon = L.divIcon({
+      html: ReactDOMServer.renderToString(iconsWithLinks["other"]?.[0]),
+      iconSize: [0, 0],
     });
 
     L.Marker.prototype.options.icon = DefaultIcon;
@@ -50,9 +52,30 @@ const ActivityPage = ({ data }: any) => {
 
     data.activities.nodes.forEach((activity: any) => {
       const coordinatesToSwap = activity.place?.center?.coordinates;
+      const activityCategory = activity.categories?.[0]?.key;
+      const activityKeySplit =
+        ReactDOMServer.renderToString(activityCategory).split(".");
+      const activityKeyLastElement =
+        activityKeySplit[activityKeySplit.length - 1];
+
+      const hasCategory = iconsWithLinks.hasOwnProperty(activityKeyLastElement);
+      const activityKeyLastElementCondition = hasCategory
+        ? iconsWithLinks[activityKeyLastElement]?.[0]
+        : iconsWithLinks["other"]?.[0];
+
       if (coordinatesToSwap) {
         const marker = L.marker(
           new LatLng(coordinatesToSwap[1], coordinatesToSwap[0]),
+          {
+            icon: L.divIcon({
+              html: ReactDOMServer.renderToString(
+                activityKeyLastElementCondition,
+              ),
+              iconSize: [0, 0],
+              iconAnchor: [18, 3],
+              className: hasCategory ? "mapIcon" : "defaultMapIcon",
+            }),
+          },
         );
         marker.bindPopup(
           ReactDOMServer.renderToString(
@@ -73,6 +96,22 @@ const ActivityPage = ({ data }: any) => {
 
   return (
     <Layout>
+      <GlobalStyles
+        styles={() => ({
+          ".defaultMapIcon svg": {
+            width: "2.5rem",
+            height: "2.5rem",
+          },
+          ".mapIcon svg": {
+            color: "white",
+            width: "1.8rem",
+            height: "1.8rem",
+            background: "white",
+            padding: "3px",
+            borderRadius: "10px",
+          },
+        })}
+      />
       <div id="map" style={mapStyles} />
     </Layout>
   );
@@ -97,6 +136,9 @@ export const query = graphql`
           type
           link
         }
+        categories {
+          key
+        }
       }
     }
   }
@@ -110,9 +152,9 @@ const getProfileLinkAndIcon = (profiles: any) => {
 
   const link = linkProfile.link;
   const icon = link.includes("facebook.com") ? (
-    <FacebookIcon style={{ fontSize: 16, marginRight: 5 }} />
+    <FacebookIcon style={{ width: "2rem", marginRight: 5 }} />
   ) : (
-    <LinkIcon style={{ fontSize: 16, marginRight: 5 }} />
+    <LinkIcon style={{ width: "2rem", marginRight: 5 }} />
   );
 
   return (

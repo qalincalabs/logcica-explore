@@ -47,6 +47,14 @@ module.exports = {
       //query: { documents: { as_of: { $gte: 1604397088013 } } },
     },
     {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        rule: {
+          include: /assets/, // See below to configure properly
+        },
+      },
+    },
+    {
       resolve: "gatsby-plugin-react-leaflet",
       options: {
         linkStyles: false, // (default: true) Enable/disable loading stylesheets via CDN
