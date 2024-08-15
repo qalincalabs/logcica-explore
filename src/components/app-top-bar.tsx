@@ -32,6 +32,7 @@ export default function AppTopBar() {
     { label: "ÉVÉNEMENTS", path: "/event" },
     { label: "RECETTES", path: "/recipe" },
     { label: "FAVORIS", path: "/favorites" },
+    { label: "CREDITS", path: "/credits" },
   ];
 
   const handleMenuDrawerOpen = () => {

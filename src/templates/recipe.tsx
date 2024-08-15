@@ -22,9 +22,12 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AllergenList from "../components/allergen-list";
+import ImageCard from "../components/cards/image-card";
+import ProfilesCard from "../components/cards/profiles-card";
 import FavoriteIcons from "../components/FavoriteIcons";
 import Layout from "../components/layout";
 import NutrientListTable from "../components/nutrient-list-table";
+import SubtitleTemplate from "../components/subtitle-template";
 
 export default function RecipeTemplate({ data }: any) {
   const recipe = data.recipe;
@@ -36,11 +39,59 @@ export default function RecipeTemplate({ data }: any) {
           p: 2,
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
-          <Typography align="center" variant="h3" component="h3" mr={2}>
-            {recipe.name}
-          </Typography>
-          <FavoriteIcons type="recipe" targetId={recipe._id} />
+        <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
+          <Grid container>
+            <Grid
+              item
+              xs={12}
+              sm={5}
+              sx={{
+                display: "flex",
+                textAlign: { xs: "center", sm: "center" },
+                justifyContent: { xs: "center", sm: "flex-end" },
+              }}
+            >
+              {recipe.mainImage?.filename && (
+                <ImageCard media={recipe.mainImage} />
+              )}
+            </Grid>
+            <Grid
+              item
+              xs={8}
+              sm={3}
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                mt: { xs: 2, sm: 0 },
+              }}
+            >
+              <Typography
+                align="center"
+                variant="h3"
+                component="h3"
+                sx={{
+                  textAlign: "center",
+                }}
+              >
+                {recipe.name}
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={4}
+              sm={4}
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                justifyContent: "left",
+                mt: { xs: 2, sm: 0 },
+              }}
+            >
+              <FavoriteIcons type="recipe" targetId={recipe._id} />
+            </Grid>
+          </Grid>
         </Box>
         <Grid container>
           {recipe.description?.short?.markdown && (
@@ -81,13 +132,18 @@ export default function RecipeTemplate({ data }: any) {
         </Grid>
         <Grid container>
           {recipe.allergenList && recipe.allergenList.length > 0 && (
-            <Grid item xs={12} sm={5} md={4} lg={3}>
+            <Grid item xs={12} sm={4} md={4} lg={3}>
               <AllergenListCard recipe={recipe} />
             </Grid>
           )}
           {recipe.nutrientList && recipe.nutrientList.length > 0 && (
-            <Grid item xs={12} sm={7} md={5}>
+            <Grid item xs={12} sm={5} md={5}>
               <NutrientListCard recipe={recipe} />
+            </Grid>
+          )}
+          {recipe.profiles && recipe.profiles.length > 0 && (
+            <Grid item xs={12} sm={7} md={4}>
+              <ProfilesCard profiles={recipe.profiles} />
             </Grid>
           )}
         </Grid>
@@ -413,22 +469,6 @@ export function NutrientListCard({ recipe }: any) {
   );
 }
 
-export function SubtitleTemplate({ text }: any) {
-  return (
-    <Typography
-      sx={{
-        textAlign: "center",
-        color: "#ffcb01",
-        fontFamily: "-apple-system, Roboto, sans-serif, serif",
-        fontStyle: "bold",
-      }}
-      variant={"h6"}
-    >
-      {text}
-    </Typography>
-  );
-}
-
 export const query = graphql`
   query ($id: String!) {
     recipe: mongodbRecipes(_id: { eq: $id }) {
@@ -479,7 +519,9 @@ export const query = graphql`
           markdown
         }
       }
-      mainImage
+      mainImage {
+        filename
+      }
       allergenList {
         allergen {
           _id
@@ -499,6 +541,15 @@ export const query = graphql`
           value
           unit
         }
+      }
+      mainImage {
+        filename
+      }
+      profiles {
+        link
+        type
+        key
+        localKey
       }
     }
   }

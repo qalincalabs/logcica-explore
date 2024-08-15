@@ -17,12 +17,12 @@ import {
   ButtonGroup,
   CssBaseline,
   Drawer,
+  GlobalStyles,
   Grid,
   Hidden,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -34,6 +34,7 @@ import {
 import { graphql, navigate, PageProps } from "gatsby";
 import LZString from "lz-string";
 import React, { useEffect, useState } from "react";
+import { activityIconsWithLinks } from "../assets/activity-icons";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import Layout from "../components/layout";
 import RenameDialog from "../components/RenameDialog";
@@ -177,11 +178,20 @@ const FavoritesList = ({
               }}
             >
               <ListItemButton>
-                <ListItemAvatar>
-                  <Avatar sx={{ bgcolor: "#FFD700", color: "#fff" }}>
-                    <Store />
-                  </Avatar>
-                </ListItemAvatar>
+                <ListItemIcon>
+                  {dataNode?.categories?.[0]?.key ? (
+                    activityIconsWithLinks[
+                      dataNode?.categories?.[0]?.key?.replace(
+                        "logcica.consolidation.activity.",
+                        "",
+                      )
+                    ]?.[0]
+                  ) : (
+                    <Avatar>
+                      <Store></Store>
+                    </Avatar>
+                  )}
+                </ListItemIcon>
                 <ListItemText
                   primary={dataNode?.name || `${title} inconnu`}
                   sx={{ color: "#555" }}
@@ -465,6 +475,14 @@ const FavoritesPage: React.FC<PageProps> = ({ data, location }) => {
 
   return (
     <Layout>
+      <GlobalStyles
+        styles={() => ({
+          ".logcicaSvgIcon": {
+            width: "2.5rem",
+            height: "2.5rem",
+          },
+        })}
+      />
       <CssBaseline />
       <Grid container sx={{ height: "100vh" }}>
         <Hidden smDown>
@@ -671,6 +689,9 @@ export const query = graphql`
       nodes {
         _id
         name
+        categories {
+          key
+        }
       }
     }
     events: allMongodbSessions {

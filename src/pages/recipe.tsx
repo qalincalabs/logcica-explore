@@ -31,9 +31,15 @@ function RecipeListItem(p: any) {
   return (
     <ListItemButton onClick={() => navigate("/recipe/" + p._id)}>
       <ListItemAvatar>
-        <Avatar>
-          <RestaurantIcon />
-        </Avatar>
+        {p.mainImage?.filename ? (
+          <Avatar
+            src={"https://cms.logcica.org/media/" + p.mainImage?.filename}
+          ></Avatar>
+        ) : (
+          <Avatar>
+            <RestaurantIcon />
+          </Avatar>
+        )}
       </ListItemAvatar>
       <ListItemText
         primary={p.name}
@@ -152,7 +158,9 @@ export const query = graphql`
         cookTime
         prepTime
         totalTime
-        mainImage
+        mainImage {
+          filename
+        }
       }
     }
   }
