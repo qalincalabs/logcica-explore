@@ -22,6 +22,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AllergenList from "../components/allergen-list";
+import ImageCard from "../components/cards/image-card";
 import FavoriteIcons from "../components/FavoriteIcons";
 import Layout from "../components/layout";
 import NutrientListTable from "../components/nutrient-list-table";
@@ -48,7 +49,9 @@ export default function RecipeTemplate({ data }: any) {
                 justifyContent: { xs: "center", sm: "flex-end" },
               }}
             >
-              {recipe.mainImage?.filename && <ImageCard recipe={recipe} />}
+              {recipe.mainImage?.filename && (
+                <ImageCard media={recipe.mainImage} />
+              )}
             </Grid>
             <Grid
               item
@@ -139,21 +142,6 @@ export default function RecipeTemplate({ data }: any) {
         </Grid>
       </Box>
     </Layout>
-  );
-}
-
-export function ImageCard({ recipe }: any) {
-  return (
-    <Box
-      component="img"
-      src={"https://cms.logcica.org/media/" + recipe.mainImage?.filename}
-      alt="image"
-      loading="lazy"
-      sx={{
-        width: "18rem",
-        height: "9rem",
-      }}
-    />
   );
 }
 
