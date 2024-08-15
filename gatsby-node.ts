@@ -127,6 +127,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         costCategory: mongodbCategories @link(by: "mongodb_id")
         categories: [mongodbCategories] @link(by: "mongodb_id")
         mainImage: mongodbMedia @link(by: "mongodb_id")
+        profiles: [mongodbProfiles] @link(by: "mongodb_id")
       }
 
       type mongodbContributionsSubject{
