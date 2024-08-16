@@ -23,8 +23,7 @@ import Markdown from "markdown-to-jsx";
 import React from "react";
 import Layout from "../components/layout";
 
-import FavoriteIcons from "../components/FavoriteIcons";
-
+import { HeaderWithImage } from "../components/header-with-image";
 export default function PartnershipTemplate({ data }: any) {
   const partnership = data.partnership;
 
@@ -46,12 +45,7 @@ export default function PartnershipTemplate({ data }: any) {
   return (
     <Layout>
       <Box sx={{ p: 2 }}>
-        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
-          <Typography align="center" variant="h3" component="h3" mr={2}>
-            {partnership.name}
-          </Typography>
-          <FavoriteIcons type="partnership" targetId={partnership._id} />
-        </Box>
+        <HeaderWithImage data={partnership} type={"partnership"} />
         {partnership.profiles.find(
           (p: any) => p.description?.short && p.type == "web_element",
         ) && (
