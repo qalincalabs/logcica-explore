@@ -5,7 +5,7 @@ import { fr } from "date-fns/locale";
 import { graphql, PageProps } from "gatsby";
 import Markdown from "markdown-to-jsx";
 import React from "react";
-import FavoriteIcons from "../components/FavoriteIcons";
+import { HeaderWithImage } from "../components/header-with-image";
 import Layout from "../components/layout";
 
 export default function EventTemplate({ data }: PageProps<any>) {
@@ -28,13 +28,7 @@ export default function EventTemplate({ data }: PageProps<any>) {
   return (
     <Layout>
       <Box>
-        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
-          <Typography align="center" variant="h3" component="h3" mr={2}>
-            {event.name}
-          </Typography>
-          <FavoriteIcons type="session" targetId={event._id} />
-        </Box>
-
+        <HeaderWithImage data={event} type={"session"} />
         <Grid container>
           {formattedFrom && formattedTo && (
             <Grid item xs={12} sm={6} md={4} xl={3}>
@@ -209,6 +203,9 @@ export const query = graphql`
         long {
           markdown
         }
+      }
+      mainImage {
+        filename
       }
       timeRange {
         from

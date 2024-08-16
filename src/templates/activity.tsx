@@ -4,7 +4,7 @@ import { compareAsc, parseISO, startOfDay, subDays } from "date-fns";
 import { graphql, navigate, PageProps } from "gatsby";
 import Markdown from "markdown-to-jsx";
 import React from "react";
-import FavoriteIcons from "../components/FavoriteIcons";
+import { HeaderWithImage } from "../components/header-with-image";
 import Layout from "../components/layout";
 import { ProductCard } from "../components/product-card";
 
@@ -25,12 +25,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
   return (
     <Layout>
       <Box>
-        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
-          <Typography align="center" variant="h3" component="h3" mr={2}>
-            {activity.name}
-          </Typography>
-          <FavoriteIcons type="activity" targetId={activity._id} />
-        </Box>
+        <HeaderWithImage data={activity} type={"activity"} />
 
         {activity.description?.short?.markdown && (
           <Paper sx={{ p: 1, m: 2 }}>
@@ -315,6 +310,9 @@ export const query = graphql`
           number
           legalFormShort
         }
+      }
+      mainImage {
+        filename
       }
       description {
         short {

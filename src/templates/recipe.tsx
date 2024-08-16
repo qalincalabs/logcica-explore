@@ -22,9 +22,8 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AllergenList from "../components/allergen-list";
-import ImageCard from "../components/cards/image-card";
 import ProfilesCard from "../components/cards/profiles-card";
-import FavoriteIcons from "../components/FavoriteIcons";
+import HeaderWithImage from "../components/header-with-image";
 import Layout from "../components/layout";
 import NutrientListTable from "../components/nutrient-list-table";
 import SubtitleTemplate from "../components/subtitle-template";
@@ -39,60 +38,7 @@ export default function RecipeTemplate({ data }: any) {
           p: 2,
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
-          <Grid container>
-            <Grid
-              item
-              xs={12}
-              sm={5}
-              sx={{
-                display: "flex",
-                textAlign: { xs: "center", sm: "center" },
-                justifyContent: { xs: "center", sm: "flex-end" },
-              }}
-            >
-              {recipe.mainImage?.filename && (
-                <ImageCard media={recipe.mainImage} />
-              )}
-            </Grid>
-            <Grid
-              item
-              xs={8}
-              sm={3}
-              sx={{
-                display: "flex",
-                textAlign: "center",
-                justifyContent: "center",
-                alignItems: "center",
-                mt: { xs: 2, sm: 0 },
-              }}
-            >
-              <Typography
-                align="center"
-                variant="h3"
-                component="h3"
-                sx={{
-                  textAlign: "center",
-                }}
-              >
-                {recipe.name}
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={4}
-              sm={4}
-              sx={{
-                display: "flex",
-                textAlign: "center",
-                justifyContent: "left",
-                mt: { xs: 2, sm: 0 },
-              }}
-            >
-              <FavoriteIcons type="recipe" targetId={recipe._id} />
-            </Grid>
-          </Grid>
-        </Box>
+        <HeaderWithImage data={recipe} type={"recipe"} />
         <Grid container>
           {recipe.description?.short?.markdown && (
             <Grid item xs={12} sm={8} sx={{ display: "flex" }}>

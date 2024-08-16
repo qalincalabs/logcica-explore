@@ -48,7 +48,9 @@ const ActivityPage = ({ data }: any) => {
 
     L.Marker.prototype.options.icon = DefaultIcon;
 
-    var markers = L.markerClusterGroup();
+    var markers = L.markerClusterGroup({
+      disableClusteringAtZoom: 13,
+    });
 
     data.activities.nodes.forEach((activity: any) => {
       const coordinatesToSwap = activity.place?.center?.coordinates;

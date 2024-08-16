@@ -16,8 +16,8 @@ import {
 } from "@mui/material";
 import { graphql, navigate } from "gatsby";
 import React from "react";
+import { HeaderWithImage } from "../components/header-with-image";
 import Layout from "../components/layout";
-import FavoriteIcons from "../components/FavoriteIcons";
 
 export function ProfileExternalLink({ profile }: any) {
   return (
@@ -39,12 +39,7 @@ export default function MarketplaceTemplate({ data }: any) {
   return (
     <Layout>
       <Box>
-        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
-          <Typography align="center" variant="h3" component="h3" mr={2}>
-            {marketplace.name}
-          </Typography>
-          <FavoriteIcons type="counter" targetId={marketplace._id} />
-        </Box>
+        <HeaderWithImage data={marketplace} type={"counter"} />
         <Paper variant="outlined" sx={{ p: 1, m: 1 }}>
           {marketplace.availabilityStatement?.short?.markdown && (
             <Stack direction="row" gap={1} flexGrow={1}>
@@ -160,6 +155,9 @@ export const query = graphql`
         localKey
         type
         link
+      }
+      mainImage {
+        filename
       }
     }
     stalls: allMongodbCounters(filter: { marketplace: { _id: { eq: $id } } }) {
