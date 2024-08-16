@@ -4,6 +4,7 @@ import { compareAsc, parseISO, startOfDay, subDays } from "date-fns";
 import { graphql, navigate, PageProps } from "gatsby";
 import Markdown from "markdown-to-jsx";
 import React from "react";
+import ImageCard from "../components/cards/image-card";
 import FavoriteIcons from "../components/FavoriteIcons";
 import Layout from "../components/layout";
 import { ProductCard } from "../components/product-card";
@@ -25,11 +26,40 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
   return (
     <Layout>
       <Box>
-        <Box display="flex" alignItems="center" justifyContent="center" my={4}>
-          <Typography align="center" variant="h3" component="h3" mr={2}>
-            {activity.name}
-          </Typography>
-          <FavoriteIcons type="activity" targetId={activity._id} />
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          alignItems="center"
+          justifyContent="center"
+          gap={2}
+          my={4}
+          mx={2}
+        >
+          {activity.mainImage?.filename && (
+            <ImageCard media={activity.mainImage} />
+          )}
+          <Box
+            sx={{
+              display: "flex",
+              textAlign: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              mt: 2,
+              flex: "1 1 60%",
+            }}
+          >
+            <Typography
+              align="center"
+              variant="h3"
+              component="span"
+              sx={{
+                textAlign: "center",
+              }}
+            >
+              {activity.name}
+              <FavoriteIcons type="activity" targetId={activity._id} />
+            </Typography>
+          </Box>
         </Box>
 
         {activity.description?.short?.markdown && (
@@ -315,6 +345,9 @@ export const query = graphql`
           number
           legalFormShort
         }
+      }
+      mainImage {
+        filename
       }
       description {
         short {

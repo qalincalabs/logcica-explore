@@ -27,6 +27,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         categories: [mongodbCategories] @link(by: "mongodb_id")
         distributionsCategories: [mongodbCategories] @link(by: "mongodb_id")
         catalogs: [mongodbCatalogs] @link(by:"seller.activity", from: "mongodb_id")
+        mainImage: mongodbMedia @link(by: "mongodb_id")
       }
       type mongodbActivitiesManager implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
