@@ -204,6 +204,9 @@ export const query = graphql`
           markdown
         }
       }
+      mainImage {
+        filename
+      }
       timeRange {
         from
         to

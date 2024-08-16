@@ -325,6 +325,9 @@ export const query = graphql`
         legalName
         bankAccountNumber
       }
+      mainImage {
+        filename
+      }
       profiles {
         type
         link

@@ -156,6 +156,9 @@ export const query = graphql`
         type
         link
       }
+      mainImage {
+        filename
+      }
     }
     stalls: allMongodbCounters(filter: { marketplace: { _id: { eq: $id } } }) {
       nodes {
