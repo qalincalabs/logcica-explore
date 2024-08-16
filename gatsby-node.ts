@@ -27,6 +27,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         categories: [mongodbCategories] @link(by: "mongodb_id")
         distributionsCategories: [mongodbCategories] @link(by: "mongodb_id")
         catalogs: [mongodbCatalogs] @link(by:"seller.activity", from: "mongodb_id")
+        mainImage: mongodbMedia @link(by: "mongodb_id")
       }
       type mongodbActivitiesManager implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -37,6 +38,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         place: mongodbPlaces @link(by: "mongodb_id")
         categories: [mongodbCategories] @link(by: "mongodb_id")
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
+        mainImage: mongodbMedia @link(by: "mongodb_id")
       }
       type mongodbSessionsManager implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -52,6 +54,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         place: mongodbPlaces @link(by: "mongodb_id")
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
         actions: [mongodbActions] @link(by:"subject.counter", from: "mongodb_id")
+        mainImage: mongodbMedia @link(by: "mongodb_id")
       }
       type mongodbProductsOwner implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -104,6 +107,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         workspaces: [mongodbWorkspaces] @link(by:"manager.partnership", from: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
         counters: [mongodbCounters] @link(by:"manager.partnership", from: "mongodb_id")
+        mainImage: mongodbMedia @link(by: "mongodb_id")
       }
       type mongodbRecipesAuthor implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
