@@ -91,6 +91,20 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
           </Paper>
         )}
 
+        {activity.mainVideo && (
+          <Box display="flex" justifyContent="center">
+            <video width="320" height="240" controls>
+              <source
+                src={
+                  "https://cms.logcica.org/media/" + activity.mainVideo.filename
+                }
+                type="video/mp4"
+              />
+              Your browser does not support the video tag.
+            </video>
+          </Box>
+        )}
+
         <Grid container>
           {place && (
             <Grid item xs={12} sm={12} md={6} xl={4}>
@@ -312,6 +326,9 @@ export const query = graphql`
         }
       }
       mainImage {
+        filename
+      }
+      mainVideo {
         filename
       }
       description {
