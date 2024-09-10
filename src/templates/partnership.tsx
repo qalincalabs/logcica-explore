@@ -1,18 +1,10 @@
-import {
-  Email,
-  Facebook,
-  Language,
-  OpenInNew,
-  Phone,
-} from "@mui/icons-material";
+import { Email, OpenInNew, Phone } from "@mui/icons-material";
 import {
   Box,
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
   Grid,
-  IconButton,
   Link as MuiLink,
   Paper,
   Stack,
@@ -23,13 +15,11 @@ import Markdown from "markdown-to-jsx";
 import React from "react";
 import Layout from "../components/layout";
 
+import Counters from "../components/counters";
 import { HeaderWithImage } from "../components/header-with-image";
+import Producers from "../components/producers";
 export default function PartnershipTemplate({ data }: any) {
   const partnership = data.partnership;
-
-  const producers = data.contributions.nodes
-    .map((c: any) => c.contributor.activity)
-    .filter((p: any) => p != null);
 
   const workspaces = partnership.workspaces;
   const counters = partnership.counters;
@@ -151,40 +141,7 @@ export default function PartnershipTemplate({ data }: any) {
               </Box>
             </Grid>
           )}
-          {counters.length > 0 && (
-            <Grid item xs={12} sm={6}>
-              <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
-                  Comptoirs
-                </Typography>
-                <Paper sx={{ p: 2 }}>
-                  <Stack spacing={2}>
-                    {counters.map((counter: any, index: number) => (
-                      <Box key={index}>
-                        {counter.link && (
-                          <MuiLink
-                            href={counter.link}
-                            target="_blank"
-                            sx={{ display: "block", mb: 1 }}
-                          >
-                            {counter.link}
-                          </MuiLink>
-                        )}
-                        <Typography sx={{ fontWeight: "bold" }}>
-                          {counter.purpose}
-                        </Typography>
-                        <Typography>
-                          {counter.place?.address?.street}{" "}
-                          {counter.place?.address?.postalCode}{" "}
-                          {counter.place?.address?.locality}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Stack>
-                </Paper>
-              </Box>
-            </Grid>
-          )}
+          <Counters counters={counters}></Counters>
           {contacts && contacts.length > 0 && (
             <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
@@ -249,65 +206,7 @@ export default function PartnershipTemplate({ data }: any) {
             </Grid>
           </Box>
         )}
-        {producers.length > 0 && (
-          <Box sx={{ m: 2 }}>
-            <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
-              Producteurs
-            </Typography>
-            <Grid container spacing={2}>
-              {producers.map((activity: any, index: number) => (
-                <Grid item xs={12} sm={6} md={4} xl={3} key={index}>
-                  <Card>
-                    <CardActionArea
-                      onClick={() => navigate("/activity/" + activity._id)}
-                    >
-                      <CardContent>
-                        <Typography variant="h6">{activity.name}</Typography>
-                        {activity.place && (
-                          <Typography variant="subtitle1">
-                            {activity.place.name}
-                          </Typography>
-                        )}
-                      </CardContent>
-                    </CardActionArea>
-                    <CardActions>
-                      {activity.profiles?.find(
-                        (p: any) => p.type === "facebook",
-                      ) && (
-                        <a
-                          href={`https://www.facebook.com/${activity.profiles.find((p: any) => p.type === "facebook").key}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <IconButton size="small">
-                            <Facebook />
-                          </IconButton>
-                        </a>
-                      )}
-                      {activity.profiles?.find(
-                        (p: any) => p.type === "website",
-                      ) && (
-                        <a
-                          href={
-                            activity.profiles.find(
-                              (p: any) => p.type === "website",
-                            ).link
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <IconButton size="small">
-                            <Language />
-                          </IconButton>
-                        </a>
-                      )}
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        )}
+        <Producers contributions={data.contributions.nodes} />
       </Box>
     </Layout>
   );
@@ -366,11 +265,7 @@ export const query = graphql`
           }
         }
         place {
-          address {
-            street
-            locality
-            postalCode
-          }
+          title
         }
       }
     }

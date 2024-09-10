@@ -1,11 +1,15 @@
-import { Email, OpenInNew, Phone } from "@mui/icons-material";
+import { OpenInNew } from "@mui/icons-material";
 import { Box, Grid, Link, Paper, Stack, Typography } from "@mui/material";
 import { compareAsc, parseISO, startOfDay, subDays } from "date-fns";
 import { graphql, navigate, PageProps } from "gatsby";
 import Markdown from "markdown-to-jsx";
 import React from "react";
+import Contact from "../components/contact";
+import Counters from "../components/counters";
 import { HeaderWithImage } from "../components/header-with-image";
 import Layout from "../components/layout";
+import PlaceNameAndRedirect from "../components/placeNameAndRedirect";
+import Producers from "../components/producers";
 import { ProductCard } from "../components/product-card";
 
 const ActivityTemplate = ({ data }: PageProps<any>) => {
@@ -113,25 +117,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                   Adresse
                 </Typography>
                 <Paper sx={{ p: 2 }}>
-                  <Stack direction="row">
-                    <Typography key={place._id}>{place.title}</Typography>
-
-                    {place.center?.coordinates && (
-                      <Link
-                        href={`https://www.google.com/maps/search/?api=1&query=${place.center.coordinates[1]}%2C${place.center.coordinates[0]}&query_place_id=${place.gmaps?.id}`}
-                        target="_blank"
-                        sx={{
-                          color: "primary.main",
-                          textDecoration: "underline",
-                          display: "inline-flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        {place.localKey ?? place.key}{" "}
-                        <OpenInNew sx={{ ml: 0.5 }} />
-                      </Link>
-                    )}
-                  </Stack>
+                  <PlaceNameAndRedirect place={place} />
                 </Paper>
               </Box>
             </Grid>
@@ -146,30 +132,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                 <Stack spacing={2}>
                   {contacts.map((contact: any) => (
                     <Paper key={contact.mainEmail} sx={{ p: 2 }}>
-                      {contact.name && (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                        >
-                          <Typography>{contact.name}</Typography>
-                        </Box>
-                      )}
-                      {contact.mainEmail && (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                        >
-                          <Email sx={{ mr: 1 }} />
-                          <Typography>{contact.mainEmail}</Typography>
-                        </Box>
-                      )}
-                      {contact.mainPhoneNumber && (
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <Phone sx={{ mr: 1 }} />
-                          <Typography>
-                            {contact.mainPhoneNumberFormatted ??
-                              contact.mainPhoneNumber}
-                          </Typography>
-                        </Box>
-                      )}
+                      <Contact contact={contact} />
                     </Paper>
                   ))}
                 </Stack>
@@ -256,22 +219,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
             </Grid>
           )}
 
-          {products && products.length > 0 && (
-            <Grid item xs={12}>
-              <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4">
-                  Products
-                </Typography>
-                <Grid container spacing={2}>
-                  {products.map((item: any): any => (
-                    <Grid item xs={12} md={6} xl={4} key={item._id}>
-                      <ProductCard item={item} />
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            </Grid>
-          )}
+          <Counters counters={data.counters.nodes}></Counters>
 
           {sessions && sessions.length > 0 && (
             <Grid item xs={12}>
@@ -301,6 +249,27 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
                           </Typography>
                         )}
                       </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </Grid>
+          )}
+
+          <Grid item xs={12}>
+            <Producers contributions={contributions} />
+          </Grid>
+
+          {products && products.length > 0 && (
+            <Grid item xs={12}>
+              <Box sx={{ m: 2 }}>
+                <Typography variant="h4" component="h4">
+                  Produits
+                </Typography>
+                <Grid container spacing={2}>
+                  {products.map((item: any): any => (
+                    <Grid item xs={12} md={6} xl={4} key={item._id}>
+                      <ProductCard item={item} />
                     </Grid>
                   ))}
                 </Grid>
@@ -365,18 +334,6 @@ export const query = graphql`
         }
         center {
           coordinates
-        }
-      }
-    }
-    contributions: allMongodbContributions(
-      filter: { contributor: { activity: { _id: { eq: $id } } } }
-    ) {
-      nodes {
-        subject {
-          partnership {
-            _id
-            name
-          }
         }
       }
     }
@@ -480,6 +437,38 @@ export const query = graphql`
         }
       }
     }
+    counters: allMongodbCounters(
+      filter: { manager: { activity: { _id: { eq: $id } } } }
+    ) {
+      nodes {
+        name
+        online
+        link
+        purpose
+        availabilityStatement {
+          short {
+            markdown
+          }
+        }
+        place {
+          title
+          gmaps {
+            id
+            title
+          }
+          center {
+            coordinates
+          }
+        }
+        contacts {
+          purpose
+          name
+          mainEmail
+          mainPhoneNumber
+          mainPhoneNumberFormatted
+        }
+      }
+    }
     sessions: allMongodbSessions(
       filter: { manager: { activity: { _id: { eq: $id } } } }
     ) {
@@ -497,6 +486,34 @@ export const query = graphql`
         }
         place {
           title
+        }
+      }
+    }
+    contributions: allMongodbContributions(
+      filter: { subject: { activity: { _id: { eq: $id } } } }
+    ) {
+      nodes {
+        contributor {
+          activity {
+            _id
+            name
+            place {
+              _id
+              name
+              address {
+                locality
+              }
+            }
+            profiles {
+              key
+              type
+              link
+            }
+          }
+          partnership {
+            _id
+            name
+          }
         }
       }
     }
