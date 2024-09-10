@@ -23,6 +23,7 @@ import Markdown from "markdown-to-jsx";
 import React from "react";
 import Layout from "../components/layout";
 
+import Counters from "../components/counters";
 import { HeaderWithImage } from "../components/header-with-image";
 export default function PartnershipTemplate({ data }: any) {
   const partnership = data.partnership;
@@ -151,40 +152,7 @@ export default function PartnershipTemplate({ data }: any) {
               </Box>
             </Grid>
           )}
-          {counters.length > 0 && (
-            <Grid item xs={12} sm={6}>
-              <Box sx={{ m: 2 }}>
-                <Typography variant="h4" component="h4" sx={{ mb: 2 }}>
-                  Comptoirs
-                </Typography>
-                <Paper sx={{ p: 2 }}>
-                  <Stack spacing={2}>
-                    {counters.map((counter: any, index: number) => (
-                      <Box key={index}>
-                        {counter.link && (
-                          <MuiLink
-                            href={counter.link}
-                            target="_blank"
-                            sx={{ display: "block", mb: 1 }}
-                          >
-                            {counter.link}
-                          </MuiLink>
-                        )}
-                        <Typography sx={{ fontWeight: "bold" }}>
-                          {counter.purpose}
-                        </Typography>
-                        <Typography>
-                          {counter.place?.address?.street}{" "}
-                          {counter.place?.address?.postalCode}{" "}
-                          {counter.place?.address?.locality}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Stack>
-                </Paper>
-              </Box>
-            </Grid>
-          )}
+          <Counters counters={counters}></Counters>
           {contacts && contacts.length > 0 && (
             <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
@@ -366,11 +334,7 @@ export const query = graphql`
           }
         }
         place {
-          address {
-            street
-            locality
-            postalCode
-          }
+          title
         }
       }
     }
