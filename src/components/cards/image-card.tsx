@@ -9,7 +9,7 @@ export function ImageCard({ media }: any) {
       alt="image"
       loading="lazy"
       sx={{
-        width: "18rem",
+        height: "10rem",
       }}
     />
   );
