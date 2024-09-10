@@ -260,7 +260,7 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
             <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
                 <Typography variant="h4" component="h4">
-                  Products
+                  Produits
                 </Typography>
                 <Grid container spacing={2}>
                   {products.map((item: any): any => (
