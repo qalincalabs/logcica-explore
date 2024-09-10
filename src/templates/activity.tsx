@@ -9,6 +9,7 @@ import Counters from "../components/counters";
 import { HeaderWithImage } from "../components/header-with-image";
 import Layout from "../components/layout";
 import PlaceNameAndRedirect from "../components/placeNameAndRedirect";
+import Producers from "../components/producers";
 import { ProductCard } from "../components/product-card";
 
 const ActivityTemplate = ({ data }: PageProps<any>) => {
@@ -255,6 +256,10 @@ const ActivityTemplate = ({ data }: PageProps<any>) => {
             </Grid>
           )}
 
+          <Grid item xs={12}>
+            <Producers contributions={contributions} />
+          </Grid>
+
           {products && products.length > 0 && (
             <Grid item xs={12}>
               <Box sx={{ m: 2 }}>
@@ -329,18 +334,6 @@ export const query = graphql`
         }
         center {
           coordinates
-        }
-      }
-    }
-    contributions: allMongodbContributions(
-      filter: { contributor: { activity: { _id: { eq: $id } } } }
-    ) {
-      nodes {
-        subject {
-          partnership {
-            _id
-            name
-          }
         }
       }
     }
@@ -493,6 +486,34 @@ export const query = graphql`
         }
         place {
           title
+        }
+      }
+    }
+    contributions: allMongodbContributions(
+      filter: { subject: { activity: { _id: { eq: $id } } } }
+    ) {
+      nodes {
+        contributor {
+          activity {
+            _id
+            name
+            place {
+              _id
+              name
+              address {
+                locality
+              }
+            }
+            profiles {
+              key
+              type
+              link
+            }
+          }
+          partnership {
+            _id
+            name
+          }
         }
       }
     }

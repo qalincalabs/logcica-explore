@@ -138,6 +138,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
 
       type mongodbContributionsSubject{
         partnership: mongodbPartnerships @link(by: "mongodb_id")
+        activity: mongodbActivities @link(by: "mongodb_id")
       }
       type mongodbWorkspaces {
         place: mongodbPlaces @link(by: "mongodb_id")
