@@ -3,7 +3,6 @@ import {
   Add,
   ArrowDropDown,
   ArrowDropUp,
-  BeachAccess,
   Event,
   Facebook,
   FilterAlt,
@@ -13,7 +12,6 @@ import {
   MyLocation,
   Place,
   Settings,
-  Shop,
   Sort,
   Star,
   Storefront,
@@ -35,6 +33,7 @@ import {
   CardHeader,
   Chip,
   Drawer,
+  GlobalStyles,
   Grid,
   IconButton,
   InputBase,
@@ -55,9 +54,13 @@ import {
   createTheme,
 } from "@mui/material";
 import { HeadFC, PageProps, graphql } from "gatsby";
+import L, { divIcon } from "leaflet";
 import * as React from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-
+import { useState } from "react";
+import ReactDOMServer from "react-dom/server";
+import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import { activityIconsWithLinks } from "../assets/activity-icons";
+import places from "../data/map_counters.json";
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
 };
@@ -106,10 +109,12 @@ const theme = createTheme({
 const Map: React.FC<PageProps> = () => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
+  const [visibleMarkers, setVisibleMarkers] = useState(places);
+
   const opportunitiesView = () => (
     <Stack alignItems="center" overflow="auto">
       <OpportunitiesListMenu />
-      <ListGrid />
+      <ListGrid data={visibleMarkers} />
     </Stack>
   );
 
@@ -133,6 +138,16 @@ const Map: React.FC<PageProps> = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const customMarkerIcon = (name: string) =>
+    divIcon({
+      html: ReactDOMServer.renderToString(activityIconsWithLinks[name]?.[0]),
+      className: "icon",
+    });
+
+  const setIcon = ({ properties }: any, latlng: any) => {
+    return L.marker(latlng, { icon: customMarkerIcon(properties.icon) });
   };
 
   return (
@@ -209,6 +224,18 @@ const Map: React.FC<PageProps> = () => {
             {opportunitiesView()}
           </Grid>
           <Grid md={7} lg={8}>
+            <GlobalStyles
+              styles={() => ({
+                ".logcicaSvgIcon": {
+                  color: "white",
+                  width: "1.8rem",
+                  height: "1.8rem",
+                  background: "white",
+                  padding: "3px",
+                  borderRadius: "10px",
+                },
+              })}
+            />
             <MapContainer
               style={{ height: "100vh" }}
               center={[53.2, -8.2]}
@@ -218,11 +245,26 @@ const Map: React.FC<PageProps> = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <Marker position={[51.505, -0.09]}>
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-              </Marker>
+              <GeoJSON
+                data={visibleMarkers}
+                pointToLayer={setIcon}
+                onEachFeature={(feature, leafletLayer) => {
+                  const popupOptions = {
+                    minWidth: 100,
+                    maxWidth: 250,
+                    className: "popup-classname",
+                  };
+
+                  leafletLayer.bindPopup(() => {
+                    return `<b>${feature.properties.name}</b>`;
+                  }, popupOptions);
+                }}
+                style={(reference) => {
+                  return {
+                    color: "blue",
+                  };
+                }}
+              ></GeoJSON>
             </MapContainer>
           </Grid>
         </Grid>
@@ -302,13 +344,17 @@ function MainBottomListDrawer(
   );
 }
 
-function ListGrid() {
+function ListGrid({ data }: any) {
   const [alignement, setAlignment] = React.useState("list");
 
   return (
     <Box sx={{ width: "100%" }}>
       <ListSortMenu alignement={alignement} onAlignementChange={setAlignment} />
-      {alignement == "list" ? <FolderList /> : <FolderGrid />}
+      {alignement == "list" ? (
+        <FolderList data={data} />
+      ) : (
+        <FolderGrid data={data} />
+      )}
     </Box>
   );
 }
@@ -423,8 +469,9 @@ const list = [
   },
 ];
 
-export function FolderGrid() {
+export function FolderGrid({ data }: any) {
   // add dummy data
+  /*
   list.push(
     ...[...Array(10)].map((_, i) => {
       return {
@@ -434,10 +481,16 @@ export function FolderGrid() {
       };
     }),
   );
+  */
+
+  const profileIcons = {
+    website: <Web />,
+    facebook: <Facebook />,
+  };
 
   return (
     <Box display="flex" flex={1} gap={2} flexWrap="wrap">
-      {list.map((e) => (
+      {data.map((e) => (
         <Box flex={1}>
           <Card sx={{ minWidth: "300px" }}>
             <CardHeader
@@ -452,24 +505,18 @@ export function FolderGrid() {
                   </IconButton>
                 </>
               }
-              title={e.title}
-              subheader={e.subtitle}
+              title={e.properties.name}
+              subheader={e.properties.place?.address?.locality}
             />
             <CardContent>
-              In our quirky, rustic barn we have a selection of homegrown
-              Swainstown veg, flowers, 100% pasture fed lamb and a lovely
-              selection of delicious local produce.
+              {e.properties.description?.short?.markdown}
             </CardContent>
             <CardActions>
-              <IconButton>
-                <Web />
-              </IconButton>
-              <IconButton>
-                <Facebook />
-              </IconButton>
-              <IconButton>
-                <Shop />
-              </IconButton>
+              {e.properties.profiles
+                ?.filter((p: any) => Object.keys(profileIcons).includes(p.type))
+                .map((p: any) => (
+                  <IconButton href={p.link}>{profileIcons[p.type]}</IconButton>
+                ))}
             </CardActions>
           </Card>
         </Box>
@@ -478,8 +525,9 @@ export function FolderGrid() {
   );
 }
 
-export function FolderList() {
+export function FolderList({ data }: any) {
   // add dummy data
+  /*
   list.push(
     ...[...Array(10)].map((_, i) => {
       return {
@@ -489,10 +537,11 @@ export function FolderList() {
       };
     }),
   );
+  */
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-      {list.map((e, i) => (
+      {data.map((e, i) => (
         <>
           <ListSubheader
             sx={{ width: "100%", display: i == 0 || i == 1 ? "block" : "none" }}
@@ -505,7 +554,10 @@ export function FolderList() {
                 <Image />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={e.title} secondary={e.subtitle} />
+            <ListItemText
+              primary={e.properties.name}
+              secondary={e.properties.place?.address?.locality}
+            />
             <ListItemIcon>
               <IconButton>
                 <Add />
