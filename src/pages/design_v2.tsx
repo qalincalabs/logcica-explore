@@ -56,6 +56,7 @@ import {
 } from "@mui/material";
 import { HeadFC, PageProps, graphql } from "gatsby";
 import * as React from "react";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
@@ -161,7 +162,7 @@ const Map: React.FC<PageProps> = () => {
               onClick={handleOpenNavMenu}
               startIcon={<Place />}
             >
-              Paliseul
+              Kilmessan
             </Button>
             <Menu
               id="menu-geo"
@@ -208,7 +209,21 @@ const Map: React.FC<PageProps> = () => {
             {opportunitiesView()}
           </Grid>
           <Grid md={7} lg={8}>
-            <p>New design</p>
+            <MapContainer
+              style={{ height: "100vh" }}
+              center={[53.2, -8.2]}
+              zoom={7}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[51.505, -0.09]}>
+                <Popup>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            </MapContainer>
           </Grid>
         </Grid>
 
@@ -228,16 +243,16 @@ const Map: React.FC<PageProps> = () => {
 
 const opportunitiesFirstMenu = [
   {
-    title: "Se nourrir",
+    title: "Shop", // "Se nourrir",
     icon: <Storefront fontSize="large" />,
     checked: true,
   },
   {
-    title: "Rencontrer",
+    title: "Meet", // "Rencontrer"
     icon: <Event fontSize="large" />,
   },
   {
-    title: "Participer",
+    title: "Volunteer", // "Participer"
     icon: <VolunteerActivism fontSize="large" />,
   },
 ];
@@ -313,19 +328,19 @@ function OpportunitiesBottomBarMenu() {
 function OpportunitiesListMenu() {
   const opportunitiesSecondMenu = [
     {
-      title: "Magasins",
+      title: "Stores", // "Magasins",
       checked: true,
     },
     {
-      title: "Marchés",
+      title: "Markets", // "Marchés",
       checked: true,
     },
     {
-      title: "Groupements",
+      title: "Hubs", // "Groupements",
       checked: true,
     },
     {
-      title: "En ligne",
+      title: "Online", // "En ligne",
     },
   ];
 
@@ -336,7 +351,11 @@ function OpportunitiesListMenu() {
           <IconButton
             size="large"
             color="primary"
-            sx={{ flexDirection: "column", border: m.checked ? 3 : 0 }}
+            sx={{
+              flexDirection: "column",
+              width: "3.5em",
+              border: m.checked ? 3 : 0,
+            }}
           >
             {m.icon}
             <Typography variant="overline">{m.title}</Typography>
@@ -399,8 +418,8 @@ function ListSortMenu(props: ListSortMenuProps) {
 const list = [
   {
     avatar: <Image />,
-    title: "Les dingues du Marais",
-    subtitle: "Paliseul",
+    title: "Swainstown Farm",
+    subtitle: "Kilmessan",
   },
 ];
 
@@ -411,7 +430,7 @@ export function FolderGrid() {
       return {
         avatar: <BeachAccess />,
         title: "Test " + i,
-        subtitle: "Paliseul",
+        subtitle: "Trim",
       };
     }),
   );
@@ -437,11 +456,9 @@ export function FolderGrid() {
               subheader={e.subtitle}
             />
             <CardContent>
-              Implanté à Froidlieu, petit village de la Calestienne situé à
-              Wellin, entre l'Ardenne et la Famenne, le Pressoir d'Hortus est un
-              lieu pour valoriser les fruits de vos vergers. Au-delà du
-              pressage, nous proposons différents services autour de ce lieu si
-              particulier qu'est le verger.
+              In our quirky, rustic barn we have a selection of homegrown
+              Swainstown veg, flowers, 100% pasture fed lamb and a lovely
+              selection of delicious local produce.
             </CardContent>
             <CardActions>
               <IconButton>
@@ -468,7 +485,7 @@ export function FolderList() {
       return {
         avatar: <BeachAccess />,
         title: "Test " + i,
-        subtitle: "Paliseul",
+        subtitle: "Trim",
       };
     }),
   );
@@ -478,9 +495,9 @@ export function FolderList() {
       {list.map((e, i) => (
         <>
           <ListSubheader
-            sx={{ width: "100%", display: i == 0 || i == 5 ? "block" : "none" }}
+            sx={{ width: "100%", display: i == 0 || i == 1 ? "block" : "none" }}
           >
-            Moins de {i * 2 + 5}km
+            Less than {i * 10 + 5}km
           </ListSubheader>
           <ListItem>
             <ListItemAvatar>
