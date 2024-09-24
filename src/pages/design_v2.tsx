@@ -67,6 +67,7 @@ import places from "../data/map_counters.json";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
+  height: "100vh",
 };
 
 const theme = createTheme({
@@ -144,20 +145,10 @@ const Map: React.FC<PageProps> = () => {
     setAnchorElUser(null);
   };
 
-  const customMarkerIcon = (name: string) =>
-    divIcon({
-      html: ReactDOMServer.renderToString(activityIconsWithLinks[name]?.[0]),
-      className: "icon",
-    });
-
-  const setIcon = ({ properties }: any, latlng: any) => {
-    return L.marker(latlng, { icon: customMarkerIcon(properties.icon) });
-  };
-
   return (
     <main style={pageStyles}>
       <ThemeProvider theme={theme}>
-        <AppBar>
+        <AppBar position="fixed">
           <Toolbar color="secondary">
             <Button color="secondary" startIcon={<Hexagon></Hexagon>}>
               Explore
@@ -223,11 +214,11 @@ const Map: React.FC<PageProps> = () => {
           </Toolbar>
         </AppBar>
         <Toolbar />
-        <Grid container>
+        <Grid sx={{ height: { xs: "80vh", md: "88vh" } }} container>
           <Grid md={5} lg={4} sx={{ display: { xs: "none", md: "block" } }}>
             {opportunitiesView()}
           </Grid>
-          <Grid md={7} lg={8}>
+          <Grid xs={12} md={7} lg={8}>
             <GlobalStyles
               styles={() => ({
                 ".logcicaSvgIcon": {
@@ -240,38 +231,7 @@ const Map: React.FC<PageProps> = () => {
                 },
               })}
             />
-            <MapContainer
-              style={{ height: "100vh" }}
-              center={[53.2, -8.2]}
-              zoom={7}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <MarkerClusterGroup>
-                <GeoJSON
-                  data={visibleMarkers}
-                  pointToLayer={setIcon}
-                  onEachFeature={(feature, leafletLayer) => {
-                    const popupOptions = {
-                      minWidth: 100,
-                      maxWidth: 250,
-                      className: "popup-classname",
-                    };
-
-                    leafletLayer.bindPopup(() => {
-                      return `<b>${feature.properties.name}</b>`;
-                    }, popupOptions);
-                  }}
-                  style={(reference) => {
-                    return {
-                      color: "blue",
-                    };
-                  }}
-                ></GeoJSON>
-              </MarkerClusterGroup>
-            </MapContainer>
+            <ListMap data={visibleMarkers} />
           </Grid>
         </Grid>
 
@@ -347,6 +307,49 @@ function MainBottomListDrawer(
         {props.children}
       </Drawer>
     </Box>
+  );
+}
+
+function ListMap({ data }: any) {
+  const customMarkerIcon = (name: string) =>
+    divIcon({
+      html: ReactDOMServer.renderToString(activityIconsWithLinks[name]?.[0]),
+      className: "icon",
+    });
+
+  const setIcon = ({ properties }: any, latlng: any) => {
+    return L.marker(latlng, { icon: customMarkerIcon(properties.icon) });
+  };
+
+  return (
+    <MapContainer style={{ height: "100%" }} center={[53.2, -8.2]} zoom={7}>
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <MarkerClusterGroup>
+        <GeoJSON
+          data={data}
+          pointToLayer={setIcon}
+          onEachFeature={(feature, leafletLayer) => {
+            const popupOptions = {
+              minWidth: 100,
+              maxWidth: 250,
+              className: "popup-classname",
+            };
+
+            leafletLayer.bindPopup(() => {
+              return `<b>${feature.properties.name}</b>`;
+            }, popupOptions);
+          }}
+          style={(reference) => {
+            return {
+              color: "blue",
+            };
+          }}
+        ></GeoJSON>
+      </MarkerClusterGroup>
+    </MapContainer>
   );
 }
 
@@ -466,14 +469,6 @@ function ListSortMenu(props: ListSortMenuProps) {
     </Box>
   );
 }
-
-const list = [
-  {
-    avatar: <Image />,
-    title: "Swainstown Farm",
-    subtitle: "Kilmessan",
-  },
-];
 
 export function FolderGrid({ data }: any) {
   // add dummy data
