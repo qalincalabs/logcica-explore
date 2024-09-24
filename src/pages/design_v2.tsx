@@ -55,12 +55,16 @@ import {
 } from "@mui/material";
 import { HeadFC, PageProps, graphql } from "gatsby";
 import L, { divIcon } from "leaflet";
+
+import "leaflet/dist/leaflet.css";
 import * as React from "react";
 import { useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import { activityIconsWithLinks } from "../assets/activity-icons";
+import MarkerClusterGroup from "../components/MarkerClusterGroup";
 import places from "../data/map_counters.json";
+
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
 };
@@ -245,26 +249,28 @@ const Map: React.FC<PageProps> = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <GeoJSON
-                data={visibleMarkers}
-                pointToLayer={setIcon}
-                onEachFeature={(feature, leafletLayer) => {
-                  const popupOptions = {
-                    minWidth: 100,
-                    maxWidth: 250,
-                    className: "popup-classname",
-                  };
+              <MarkerClusterGroup>
+                <GeoJSON
+                  data={visibleMarkers}
+                  pointToLayer={setIcon}
+                  onEachFeature={(feature, leafletLayer) => {
+                    const popupOptions = {
+                      minWidth: 100,
+                      maxWidth: 250,
+                      className: "popup-classname",
+                    };
 
-                  leafletLayer.bindPopup(() => {
-                    return `<b>${feature.properties.name}</b>`;
-                  }, popupOptions);
-                }}
-                style={(reference) => {
-                  return {
-                    color: "blue",
-                  };
-                }}
-              ></GeoJSON>
+                    leafletLayer.bindPopup(() => {
+                      return `<b>${feature.properties.name}</b>`;
+                    }, popupOptions);
+                  }}
+                  style={(reference) => {
+                    return {
+                      color: "blue",
+                    };
+                  }}
+                ></GeoJSON>
+              </MarkerClusterGroup>
             </MapContainer>
           </Grid>
         </Grid>
