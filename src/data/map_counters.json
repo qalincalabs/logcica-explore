@@ -1,0 +1,60 @@
+[
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-6.649800416928506, 53.55072501782128]
+    },
+    "properties": {
+      "name": "Swainstown Farm",
+      "icon": "farm",
+      "place": {
+        "address": {
+          "locality": "Kilmessan"
+        }
+      },
+      "profiles": [
+        {
+          "type": "website",
+          "link": "https://www.swainstownfarm.com/"
+        },
+        {
+          "type": "facebook",
+          "link": "https://www.facebook.com/swainstownsfarmandgardens/"
+        }
+      ],
+      "description": {
+        "short": {
+          "markdown": "In our quirky, rustic barn we have a selection of homegrown Swainstown veg, flowers, 100% pasture fed lamb and a lovely selection of delicious local produce."
+        }
+      }
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [-6.79152209436396, 53.55902262261269]
+    },
+    "properties": {
+      "name": "Trim Farmers Market",
+      "icon": "market",
+      "place": {
+        "address": {
+          "locality": "Trim"
+        }
+      },
+      "profiles": [
+        {
+          "type": "facebook",
+          "link": "https://www.facebook.com/p/Trim-Farmers-Market-100057164841370/"
+        }
+      ],
+      "description": {
+        "short": {
+          "markdown": "Trim farmers market organic fruit, vegetable, eggs, cheese olives - local meat fishmonger homemade jams & chutneys homemade indian cuisine zero waste lifestyle & homewares, organic loose bulk food. Refils"
+        }
+      }
+    }
+  }
+]

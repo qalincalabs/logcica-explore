@@ -3,7 +3,6 @@ import {
   Add,
   ArrowDropDown,
   ArrowDropUp,
-  BeachAccess,
   Event,
   Facebook,
   FilterAlt,
@@ -13,7 +12,6 @@ import {
   MyLocation,
   Place,
   Settings,
-  Shop,
   Sort,
   Star,
   Storefront,
@@ -35,6 +33,7 @@ import {
   CardHeader,
   Chip,
   Drawer,
+  GlobalStyles,
   Grid,
   IconButton,
   InputBase,
@@ -55,10 +54,21 @@ import {
   createTheme,
 } from "@mui/material";
 import { HeadFC, PageProps, graphql } from "gatsby";
+import L, { divIcon } from "leaflet";
+
+import "leaflet/dist/leaflet.css";
 import * as React from "react";
+import { useState } from "react";
+import ReactDOMServer from "react-dom/server";
+import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import { activityIconsWithLinks } from "../assets/activity-icons";
+import AddLocate from "../components/AddLocate";
+import MarkerClusterGroup from "../components/MarkerClusterGroup";
+import places from "../data/map_counters.json";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
+  height: "100vh",
 };
 
 const theme = createTheme({
@@ -105,10 +115,12 @@ const theme = createTheme({
 const Map: React.FC<PageProps> = () => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
+  const [visibleMarkers, setVisibleMarkers] = useState(places);
+
   const opportunitiesView = () => (
     <Stack alignItems="center" overflow="auto">
       <OpportunitiesListMenu />
-      <ListGrid />
+      <ListGrid data={visibleMarkers} />
     </Stack>
   );
 
@@ -137,7 +149,7 @@ const Map: React.FC<PageProps> = () => {
   return (
     <main style={pageStyles}>
       <ThemeProvider theme={theme}>
-        <AppBar>
+        <AppBar position="fixed">
           <Toolbar color="secondary">
             <Button color="secondary" startIcon={<Hexagon></Hexagon>}>
               Explore
@@ -161,7 +173,7 @@ const Map: React.FC<PageProps> = () => {
               onClick={handleOpenNavMenu}
               startIcon={<Place />}
             >
-              Paliseul
+              Kilmessan
             </Button>
             <Menu
               id="menu-geo"
@@ -191,24 +203,36 @@ const Map: React.FC<PageProps> = () => {
                 <IconButton>
                   <Star></Star>
                 </IconButton>
-                <p>Favoris</p>
+                <p>Favorites</p>
               </MenuItem>
               <MenuItem>
                 <IconButton>
                   <Settings></Settings>
                 </IconButton>
-                <p>Préférences</p>
+                <p>Preferences</p>
               </MenuItem>
             </Menu>
           </Toolbar>
         </AppBar>
         <Toolbar />
-        <Grid container>
+        <Grid sx={{ height: { xs: "80vh", md: "88vh" } }} container>
           <Grid md={5} lg={4} sx={{ display: { xs: "none", md: "block" } }}>
             {opportunitiesView()}
           </Grid>
-          <Grid md={7} lg={8}>
-            <p>New design</p>
+          <Grid xs={12} md={7} lg={8}>
+            <GlobalStyles
+              styles={() => ({
+                ".logcicaSvgIcon": {
+                  color: "white",
+                  width: "1.8rem",
+                  height: "1.8rem",
+                  background: "white",
+                  padding: "3px",
+                  borderRadius: "10px",
+                },
+              })}
+            />
+            <ListMap data={visibleMarkers} />
           </Grid>
         </Grid>
 
@@ -228,16 +252,16 @@ const Map: React.FC<PageProps> = () => {
 
 const opportunitiesFirstMenu = [
   {
-    title: "Se nourrir",
+    title: "Shop", // "Se nourrir",
     icon: <Storefront fontSize="large" />,
     checked: true,
   },
   {
-    title: "Rencontrer",
+    title: "Meet", // "Rencontrer"
     icon: <Event fontSize="large" />,
   },
   {
-    title: "Participer",
+    title: "Volunteer", // "Participer"
     icon: <VolunteerActivism fontSize="large" />,
   },
 ];
@@ -287,13 +311,61 @@ function MainBottomListDrawer(
   );
 }
 
-function ListGrid() {
+function ListMap({ data }: any) {
+  const customMarkerIcon = (name: string) =>
+    divIcon({
+      html: ReactDOMServer.renderToString(activityIconsWithLinks[name]?.[0]),
+      className: "icon",
+    });
+
+  const setIcon = ({ properties }: any, latlng: any) => {
+    return L.marker(latlng, { icon: customMarkerIcon(properties.icon) });
+  };
+
+  return (
+    <MapContainer style={{ height: "100%" }} center={[53.2, -8.2]} zoom={7}>
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <MarkerClusterGroup>
+        <GeoJSON
+          data={data}
+          pointToLayer={setIcon}
+          onEachFeature={(feature, leafletLayer) => {
+            const popupOptions = {
+              minWidth: 100,
+              maxWidth: 250,
+              className: "popup-classname",
+            };
+
+            leafletLayer.bindPopup(() => {
+              return `<b>${feature.properties.name}</b>`;
+            }, popupOptions);
+          }}
+          style={(reference) => {
+            return {
+              color: "blue",
+            };
+          }}
+        ></GeoJSON>
+      </MarkerClusterGroup>
+      <AddLocate />
+    </MapContainer>
+  );
+}
+
+function ListGrid({ data }: any) {
   const [alignement, setAlignment] = React.useState("list");
 
   return (
     <Box sx={{ width: "100%" }}>
       <ListSortMenu alignement={alignement} onAlignementChange={setAlignment} />
-      {alignement == "list" ? <FolderList /> : <FolderGrid />}
+      {alignement == "list" ? (
+        <FolderList data={data} />
+      ) : (
+        <FolderGrid data={data} />
+      )}
     </Box>
   );
 }
@@ -313,19 +385,19 @@ function OpportunitiesBottomBarMenu() {
 function OpportunitiesListMenu() {
   const opportunitiesSecondMenu = [
     {
-      title: "Magasins",
+      title: "Stores", // "Magasins",
       checked: true,
     },
     {
-      title: "Marchés",
+      title: "Markets", // "Marchés",
       checked: true,
     },
     {
-      title: "Groupements",
+      title: "Hubs", // "Groupements",
       checked: true,
     },
     {
-      title: "En ligne",
+      title: "Online", // "En ligne",
     },
   ];
 
@@ -336,7 +408,11 @@ function OpportunitiesListMenu() {
           <IconButton
             size="large"
             color="primary"
-            sx={{ flexDirection: "column", border: m.checked ? 3 : 0 }}
+            sx={{
+              flexDirection: "column",
+              width: "3.5em",
+              border: m.checked ? 3 : 0,
+            }}
           >
             {m.icon}
             <Typography variant="overline">{m.title}</Typography>
@@ -396,29 +472,28 @@ function ListSortMenu(props: ListSortMenuProps) {
   );
 }
 
-const list = [
-  {
-    avatar: <Image />,
-    title: "Les dingues du Marais",
-    subtitle: "Paliseul",
-  },
-];
-
-export function FolderGrid() {
+export function FolderGrid({ data }: any) {
   // add dummy data
+  /*
   list.push(
     ...[...Array(10)].map((_, i) => {
       return {
         avatar: <BeachAccess />,
         title: "Test " + i,
-        subtitle: "Paliseul",
+        subtitle: "Trim",
       };
     }),
   );
+  */
+
+  const profileIcons = {
+    website: <Web />,
+    facebook: <Facebook />,
+  };
 
   return (
     <Box display="flex" flex={1} gap={2} flexWrap="wrap">
-      {list.map((e) => (
+      {data.map((e) => (
         <Box flex={1}>
           <Card sx={{ minWidth: "300px" }}>
             <CardHeader
@@ -433,26 +508,18 @@ export function FolderGrid() {
                   </IconButton>
                 </>
               }
-              title={e.title}
-              subheader={e.subtitle}
+              title={e.properties.name}
+              subheader={e.properties.place?.address?.locality}
             />
             <CardContent>
-              Implanté à Froidlieu, petit village de la Calestienne situé à
-              Wellin, entre l'Ardenne et la Famenne, le Pressoir d'Hortus est un
-              lieu pour valoriser les fruits de vos vergers. Au-delà du
-              pressage, nous proposons différents services autour de ce lieu si
-              particulier qu'est le verger.
+              {e.properties.description?.short?.markdown}
             </CardContent>
             <CardActions>
-              <IconButton>
-                <Web />
-              </IconButton>
-              <IconButton>
-                <Facebook />
-              </IconButton>
-              <IconButton>
-                <Shop />
-              </IconButton>
+              {e.properties.profiles
+                ?.filter((p: any) => Object.keys(profileIcons).includes(p.type))
+                .map((p: any) => (
+                  <IconButton href={p.link}>{profileIcons[p.type]}</IconButton>
+                ))}
             </CardActions>
           </Card>
         </Box>
@@ -461,26 +528,28 @@ export function FolderGrid() {
   );
 }
 
-export function FolderList() {
+export function FolderList({ data }: any) {
   // add dummy data
+  /*
   list.push(
     ...[...Array(10)].map((_, i) => {
       return {
         avatar: <BeachAccess />,
         title: "Test " + i,
-        subtitle: "Paliseul",
+        subtitle: "Trim",
       };
     }),
   );
+  */
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-      {list.map((e, i) => (
+      {data.map((e, i) => (
         <>
           <ListSubheader
-            sx={{ width: "100%", display: i == 0 || i == 5 ? "block" : "none" }}
+            sx={{ width: "100%", display: i == 0 || i == 1 ? "block" : "none" }}
           >
-            Moins de {i * 2 + 5}km
+            Less than {i * 10 + 5}km
           </ListSubheader>
           <ListItem>
             <ListItemAvatar>
@@ -488,7 +557,10 @@ export function FolderList() {
                 <Image />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={e.title} secondary={e.subtitle} />
+            <ListItemText
+              primary={e.properties.name}
+              secondary={e.properties.place?.address?.locality}
+            />
             <ListItemIcon>
               <IconButton>
                 <Add />
