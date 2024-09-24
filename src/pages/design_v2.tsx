@@ -62,6 +62,7 @@ import { useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import { activityIconsWithLinks } from "../assets/activity-icons";
+import AddLocate from "../components/AddLocate";
 import MarkerClusterGroup from "../components/MarkerClusterGroup";
 import places from "../data/map_counters.json";
 
@@ -202,13 +203,13 @@ const Map: React.FC<PageProps> = () => {
                 <IconButton>
                   <Star></Star>
                 </IconButton>
-                <p>Favoris</p>
+                <p>Favorites</p>
               </MenuItem>
               <MenuItem>
                 <IconButton>
                   <Settings></Settings>
                 </IconButton>
-                <p>Préférences</p>
+                <p>Preferences</p>
               </MenuItem>
             </Menu>
           </Toolbar>
@@ -349,6 +350,7 @@ function ListMap({ data }: any) {
           }}
         ></GeoJSON>
       </MarkerClusterGroup>
+      <AddLocate />
     </MapContainer>
   );
 }
