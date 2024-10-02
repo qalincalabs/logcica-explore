@@ -1,3 +1,5 @@
+import fs from "fs";
+
 const path = require("path");
 const { collections } = require("./collections");
 
@@ -57,6 +59,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         actions: [mongodbActions] @link(by:"subject.counter", from: "mongodb_id")
         mainImage: mongodbMedia @link(by: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
+        categories: [mongodbCategories] @link(by: "mongodb_id")
       }
       type mongodbProductsOwner implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -72,6 +75,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
         workspace: mongodbWorkspaces @link(by: "mongodb_id")
         activity: mongodbActivities @link(by: "mongodb_id")
+        partnership: mongodbPartnerships @link(by: "mongodb_id")
       }
       type mongodbReferences implements Node {
         system: mongodbInformation_systems @link(by: "mongodb_id")
@@ -148,6 +152,9 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       }
       type mongodbProfiles implements Node {
         name: String
+      }
+      type mongodbCategories {
+        classification: mongodbClassifications @link(by: "mongodb_id")
       }
     `;
   createTypes(typeDefs1);
@@ -257,4 +264,179 @@ exports.createPages = async function ({ actions, graphql }: any) {
       context: { id: _id },
     });
   });
+};
+
+function writeGeoJson({ conceptName, data }: any) {
+  console.log("Start writing geojson for " + conceptName);
+  const geojson = {
+    type: "FeatureCollection",
+    features: data.map((c: any) => {
+      const f = {
+        type: "Feature",
+        geometry: {
+          type: c.place.center.type,
+          coordinates: [...c.place.center.coordinates],
+        },
+        properties: {},
+      };
+
+      delete c.place.center;
+      f.properties = c;
+      return f;
+    }),
+  };
+
+  const geojsonPath = "./public/" + conceptName;
+
+  if (!fs.existsSync(geojsonPath)) fs.mkdirSync(geojsonPath);
+
+  fs.writeFileSync(`${geojsonPath}/geojson.json`, JSON.stringify(geojson));
+}
+
+exports.onPostBuild = async function ({ graphql }: any) {
+  console.log("Create geojson");
+
+  const { data: countersGeojsonQuery } = await graphql(`
+    {
+      counters: allMongodbCounters(
+        filter: { place: { center: { coordinates: { ne: null } } } }
+      ) {
+        nodes {
+          _id
+          createdAt
+          updatedAt
+          catalog {
+            name
+            description {
+              short {
+                markdown
+              }
+            }
+          }
+          availabilityStatement {
+            short {
+              markdown
+            }
+          }
+          name
+          type
+          place {
+            _id
+            center {
+              coordinates
+              type
+            }
+            gmaps {
+              id
+            }
+            address {
+              street
+              postalCode
+              locality
+              municipality
+            }
+          }
+          manager {
+            activity {
+              _id
+              name
+              description {
+                short {
+                  markdown
+                }
+              }
+            }
+            organisation {
+              _id
+              name
+              number
+              legalFormShort
+            }
+            partnership {
+              _id
+              name
+            }
+          }
+          marketplace {
+            _id
+            name
+          }
+          categories {
+            _id
+            name
+            classification {
+              _id
+              key
+              name
+            }
+          }
+          profiles {
+            _id
+            key
+            link
+          }
+        }
+      }
+    }
+  `);
+
+  const counters = countersGeojsonQuery.counters.nodes;
+  writeGeoJson({ conceptName: "counters", data: counters });
+
+  const { data: activitiesGeojsonQuery } = await graphql(`
+    {
+      activities: allMongodbActivities(
+        filter: { place: { center: { coordinates: { ne: null } } } }
+      ) {
+        nodes {
+          _id
+          createdAt
+          updatedAt
+          name
+          type
+          place {
+            _id
+            center {
+              coordinates
+              type
+            }
+            gmaps {
+              id
+            }
+            address {
+              street
+              postalCode
+              locality
+              municipality
+            }
+          }
+          manager {
+            organisation {
+              _id
+              name
+              number
+              legalFormShort
+            }
+          }
+          categories {
+            _id
+            name
+            classification {
+              _id
+              key
+              name
+            }
+          }
+          profiles {
+            _id
+            key
+            link
+          }
+        }
+      }
+    }
+  `);
+
+  const activities = activitiesGeojsonQuery.activities.nodes;
+  writeGeoJson({ conceptName: "activities", data: activities });
 };
