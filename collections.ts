@@ -22,4 +22,5 @@ export const collections: string[] = [
   "contacts",
   "sessions",
   "media",
+  "classifications",
 ];
