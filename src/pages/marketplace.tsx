@@ -37,13 +37,15 @@ function MarketplaceListItem(m: any) {
         primary={m.name}
         secondary={
           <>
-            <Typography
-              variant="subtitle1"
-              component="span"
-              display="inline-block"
-            >
-              {m.availabilityStatement.short.markdown}
-            </Typography>
+            {m.availabilityStatement && (
+              <Typography
+                variant="subtitle1"
+                component="span"
+                display="inline-block"
+              >
+                {m.availabilityStatement.short.markdown}
+              </Typography>
+            )}
             {m.description && (
               <Typography
                 variant="subtitle2"
