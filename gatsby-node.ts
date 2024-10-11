@@ -1,4 +1,6 @@
+import { flatten } from "flattenjs";
 import fs from "fs";
+import _ from "lodash";
 
 const path = require("path");
 const { collections } = require("./collections");
@@ -266,6 +268,55 @@ exports.createPages = async function ({ actions, graphql }: any) {
   });
 };
 
+exports.onPostBuild = async function ({ graphql }: any) {
+  console.log("Create geojson");
+  await generateGeoJsonApi(graphql);
+};
+
+function flattenCategories(data: any) {
+  if (!data.categories) return data;
+
+  const classificationKeys = [
+    ...new Set(
+      data.categories
+        .map((c: any) => c.classification.key)
+        .filter((k: any) => k)
+    ),
+  ];
+
+  if (classificationKeys.length == 0) return data;
+
+  for (const k of classificationKeys) {
+    const cat = data.categories.filter((c: any) => c.classification?.key == k);
+    cat.forEach((c: any) => delete c.classification);
+    data["categories." + k] = cat;
+  }
+
+  delete data.categories;
+
+  return data;
+}
+
+function flattenProfiles(data: any) {
+  if (!data.profiles) return data;
+
+  const typeKeys = [
+    ...new Set(data.profiles.map((p: any) => p.type).filter((t: any) => t)),
+  ];
+
+  if (typeKeys.length == 0) return data;
+
+  for (const k of typeKeys) {
+    const p = data.profiles.find((p: any) => p.type == k);
+    delete p.type;
+    data["profiles." + k] = p;
+  }
+
+  delete data.profiles;
+
+  return data;
+}
+
 function writeGeoJson({ conceptName, data }: any) {
   console.log("Start writing geojson for " + conceptName);
   const geojson = {
@@ -281,7 +332,10 @@ function writeGeoJson({ conceptName, data }: any) {
       };
 
       delete c.place.center;
-      f.properties = c;
+      f.properties = _.omitBy(
+        flatten(flattenProfiles(flattenCategories(c))),
+        _.isNil
+      );
       return f;
     }),
   };
@@ -290,12 +344,10 @@ function writeGeoJson({ conceptName, data }: any) {
 
   if (!fs.existsSync(geojsonPath)) fs.mkdirSync(geojsonPath);
 
-  fs.writeFileSync(`${geojsonPath}/geojson.json`, JSON.stringify(geojson));
+  fs.writeFileSync(`${geojsonPath}.geojson`, JSON.stringify(geojson));
 }
 
-exports.onPostBuild = async function ({ graphql }: any) {
-  console.log("Create geojson");
-
+async function generateGeoJsonApi(graphql: any) {
   const { data: countersGeojsonQuery } = await graphql(`
     {
       counters: allMongodbCounters(
@@ -372,6 +424,8 @@ exports.onPostBuild = async function ({ graphql }: any) {
           }
           profiles {
             _id
+            type
+            localKey
             key
             link
           }
@@ -429,6 +483,8 @@ exports.onPostBuild = async function ({ graphql }: any) {
           }
           profiles {
             _id
+            type
+            localKey
             key
             link
           }
@@ -439,4 +495,4 @@ exports.onPostBuild = async function ({ graphql }: any) {
 
   const activities = activitiesGeojsonQuery.activities.nodes;
   writeGeoJson({ conceptName: "activities", data: activities });
-};
+}
