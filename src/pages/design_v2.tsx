@@ -339,9 +339,12 @@ function ListMap({ data }: any) {
               className: "popup-classname",
             };
 
-            leafletLayer.bindPopup(() => {
-              return `<b>${feature.properties.name}</b>`;
-            }, popupOptions);
+            leafletLayer.bindPopup(
+              ReactDOMServer.renderToString(
+                <TitleWithLabel data={feature.properties} />,
+              ),
+              popupOptions,
+            );
           }}
           style={(reference) => {
             return {
@@ -401,6 +404,13 @@ function OpportunitiesListMenu() {
     },
   ];
 
+  const opportunitiesThirdMenu = [
+    {
+      title: "organic",
+      checked: false,
+    },
+  ];
+
   return (
     <>
       <Stack direction="row" alignItems="center" spacing={1} useFlexGap>
@@ -420,14 +430,28 @@ function OpportunitiesListMenu() {
         ))}
       </Stack>
 
-      <Stack direction="row" spacing={1} useFlexGap m={2}>
-        {opportunitiesSecondMenu.map((m) => (
-          <Chip
-            label={m.title}
-            variant={m.checked ? "filled" : "outlined"}
-            clickable
-          />
-        ))}
+      <Stack direction="column" m={2}>
+        <Stack direction="row" spacing={1} useFlexGap m={0.5}>
+          {opportunitiesSecondMenu.map((m) => (
+            <Chip
+              label={m.title}
+              variant={m.checked ? "filled" : "outlined"}
+              clickable
+            />
+          ))}
+        </Stack>
+
+        <Stack direction="row" spacing={1} useFlexGap m={0.5}>
+          {opportunitiesThirdMenu.map((m) => (
+            <Chip
+              size="small"
+              label={m.title}
+              color="secondary"
+              variant={m.checked ? "filled" : "outlined"}
+              clickable
+            />
+          ))}
+        </Stack>
       </Stack>
     </>
   );
@@ -508,7 +532,7 @@ export function FolderGrid({ data }: any) {
                   </IconButton>
                 </>
               }
-              title={e.properties.name}
+              title={<TitleWithLabel data={e.properties} />}
               subheader={e.properties.place?.address?.locality}
             />
             <CardContent>
@@ -525,6 +549,22 @@ export function FolderGrid({ data }: any) {
         </Box>
       ))}
     </Box>
+  );
+}
+
+export function TitleWithLabel({ data }: any) {
+  return (
+    <Stack alignItems="center" direction="row" gap={1}>
+      <Typography component="span">{data.name}</Typography>
+      {data.categories?.some(
+        (c: any) => c.key == "logcica.labels.eu.organic",
+      ) && (
+        <img
+          width="25px"
+          src="https://upload.wikimedia.org/wikipedia/commons/2/25/Organic-Logo.svg"
+        ></img>
+      )}
+    </Stack>
   );
 }
 
@@ -558,7 +598,7 @@ export function FolderList({ data }: any) {
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={e.properties.name}
+              primary={<TitleWithLabel data={e.properties} />}
               secondary={e.properties.place?.address?.locality}
             />
             <ListItemIcon>
