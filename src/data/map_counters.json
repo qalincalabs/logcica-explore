@@ -13,6 +13,11 @@
           "locality": "Kilmessan"
         }
       },
+      "categories": [
+        {
+          "key": "logcica.labels.eu.organic"
+        }
+      ],
       "profiles": [
         {
           "type": "website",
