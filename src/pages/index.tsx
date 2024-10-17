@@ -12,6 +12,7 @@ import "leaflet/dist/images/layers-2x.png";
 import "leaflet/dist/images/layers.png";
 import "leaflet/dist/images/marker-icon-2x.png";
 import "leaflet/dist/leaflet.css";
+import _ from "lodash";
 import * as React from "react";
 import { useEffect } from "react";
 import ReactDOMServer from "react-dom/server";
@@ -54,25 +55,14 @@ const ActivityPage = ({ data }: any) => {
 
     data.activities.nodes.forEach((activity: any) => {
       const coordinatesToSwap = activity.place?.center?.coordinates;
-      const activityCategory = activity.categories?.[0]?.key;
-      const activityKeySplit =
-        ReactDOMServer.renderToString(activityCategory).split(".");
-      const activityKeyLastElement =
-        activityKeySplit[activityKeySplit.length - 1];
-
-      const hasCategory = iconsWithLinks.hasOwnProperty(activityKeyLastElement);
-      const activityKeyLastElementCondition = hasCategory
-        ? iconsWithLinks[activityKeyLastElement]?.[0]
-        : iconsWithLinks["other"]?.[0];
+      const { htmlIcon, hasCategory } = getIconForActivity(activity);
 
       if (coordinatesToSwap) {
         const marker = L.marker(
           new LatLng(coordinatesToSwap[1], coordinatesToSwap[0]),
           {
             icon: L.divIcon({
-              html: ReactDOMServer.renderToString(
-                activityKeyLastElementCondition,
-              ),
+              html: ReactDOMServer.renderToString(htmlIcon),
               iconSize: [0, 0],
               iconAnchor: [18, 3],
               className: hasCategory ? "mapIcon" : "defaultMapIcon",
@@ -172,3 +162,22 @@ const getProfileLinkAndIcon = (profiles: any) => {
     </a>
   );
 };
+
+function getIconForActivity(activity: any) {
+  const iconsWithLinks = activityIconsWithLinks;
+  const otherIcon = iconsWithLinks["other"]?.[0];
+
+  if (activity.categories == null || activity.categories.length == 0)
+    return { htmlIcon: otherIcon, hasCategory: false };
+
+  const categoryKeys = activity.categories.map((c: any) => {
+    return _.last(c.key.split("."));
+  });
+
+  for (const k of categoryKeys) {
+    if (iconsWithLinks.hasOwnProperty(k))
+      return { htmlIcon: iconsWithLinks[k]?.[0], hasCategory: true };
+  }
+
+  return { htmlIcon: otherIcon, hasCategory: false };
+}

@@ -206,6 +206,21 @@ export const activityIconsWithLinks: ActivityIconsWithLinks = {
     "https://www.freepik.com/free-vector/user-group-circles-multiple-colours_145857011.htm#fromView=search&page=3&position=21&uuid=33826e37-c14b-4fec-865f-6b7676ed86c9",
     "Juicy_fish",
   ],
+  food_assembly: [
+    <CooperativeIcon />,
+    "https://www.freepik.com/free-vector/user-group-circles-multiple-colours_145857011.htm#fromView=search&page=3&position=21&uuid=33826e37-c14b-4fec-865f-6b7676ed86c9",
+    "Juicy_fish",
+  ],
+  gasap: [
+    <CooperativeIcon />,
+    "https://www.freepik.com/free-vector/user-group-circles-multiple-colours_145857011.htm#fromView=search&page=3&position=21&uuid=33826e37-c14b-4fec-865f-6b7676ed86c9",
+    "Juicy_fish",
+  ],
+  gac: [
+    <CooperativeIcon />,
+    "https://www.freepik.com/free-vector/user-group-circles-multiple-colours_145857011.htm#fromView=search&page=3&position=21&uuid=33826e37-c14b-4fec-865f-6b7676ed86c9",
+    "Juicy_fish",
+  ],
   creamery: [
     <CreameryIcon />,
     "https://www.freepik.com/free-vector/condiments-icon-set_1294531.htm#fromView=search&page=1&position=0&uuid=78d47865-8ef9-4a3b-883b-5a92da7801c5",
