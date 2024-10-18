@@ -171,7 +171,7 @@ function getIconForActivity(activity: any) {
     return { htmlIcon: otherIcon, hasCategory: false };
 
   const categoryKeys = activity.categories.map((c: any) => {
-    return _.last(c.key.split("."));
+    return _.last(c?.key?.split(".") ?? []);
   });
 
   for (const k of categoryKeys) {
