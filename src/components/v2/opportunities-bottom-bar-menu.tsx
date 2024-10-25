@@ -6,7 +6,11 @@ function OpportunitiesBottomBarMenu() {
   return (
     <>
       {opportunitiesFirstMenu.map((m) => (
-        <Button color="inherit" variant={m.checked ? "outlined" : "text"}>
+        <Button
+          key={"opportunities-bottom-bar-menu-" + m.title}
+          color="inherit"
+          variant={m.checked ? "outlined" : "text"}
+        >
           {m.icon}
         </Button>
       ))}

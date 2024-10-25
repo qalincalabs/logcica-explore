@@ -21,7 +21,6 @@ function ListMap({ data, options }: any) {
     });
 
   const setIcon = ({ properties }: any, latlng: any) => {
-    console.log(properties);
     return L.marker(latlng, {
       icon: customMarkerIcon(getIconKeyFromCategories(properties)),
     });

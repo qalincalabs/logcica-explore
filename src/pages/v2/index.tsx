@@ -188,6 +188,7 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
         <Toolbar />
         <Grid sx={{ height: { xs: "80vh", md: "88vh" } }} container>
           <Grid
+            item
             md={5}
             lg={4}
             sx={{
@@ -196,7 +197,7 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
           >
             {opportunitiesView()}
           </Grid>
-          <Grid xs={12} md={7} lg={8}>
+          <Grid item xs={12} md={7} lg={8}>
             <GlobalStyles
               styles={() => ({
                 ".logcicaSvgIcon": {
