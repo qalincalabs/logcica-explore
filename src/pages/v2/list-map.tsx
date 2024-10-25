@@ -1,3 +1,5 @@
+import { Store } from "@mui/icons-material";
+import { Link } from "gatsby";
 import L, { divIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React from "react";
@@ -6,17 +8,23 @@ import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import { activityIconsWithLinks } from "../../assets/activity-icons";
 import AddLocate from "../../components/AddLocate";
 import MarkerClusterGroup from "../../components/MarkerClusterGroup";
+import { getIconKeyFromCategories } from "./icon-for-item";
 import { TitleWithLabel } from "./title-with-label";
 
 function ListMap({ data, options }: any) {
   const customMarkerIcon = (name: string) =>
     divIcon({
-      html: ReactDOMServer.renderToString(activityIconsWithLinks[name]?.[0]),
+      html: ReactDOMServer.renderToString(
+        activityIconsWithLinks[name]?.[0] ?? <Store></Store>,
+      ),
       className: "icon",
     });
 
   const setIcon = ({ properties }: any, latlng: any) => {
-    return L.marker(latlng, { icon: customMarkerIcon(properties.icon) });
+    console.log(properties);
+    return L.marker(latlng, {
+      icon: customMarkerIcon(getIconKeyFromCategories(properties)),
+    });
   };
 
   return (
@@ -42,7 +50,11 @@ function ListMap({ data, options }: any) {
 
             leafletLayer.bindPopup(
               ReactDOMServer.renderToString(
-                <TitleWithLabel data={feature.properties} />,
+                <div>
+                  <Link to={"/activity/" + feature.properties._id}>
+                    <TitleWithLabel data={feature.properties} />
+                  </Link>
+                </div>,
               ),
               popupOptions,
             );

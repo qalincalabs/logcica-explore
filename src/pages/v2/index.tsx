@@ -22,11 +22,10 @@ import {
   Toolbar,
   createTheme,
 } from "@mui/material";
-import { HeadFC, PageProps, graphql } from "gatsby";
+import { PageProps, graphql } from "gatsby";
 
 import * as React from "react";
 import { useState } from "react";
-import places from "../../data/map_counters.json";
 import ListGrid from "./list-grid";
 import ListMap from "./list-map";
 import MainBottomListDrawer from "./main-bottom-list-drawer";
@@ -78,13 +77,19 @@ const theme = createTheme({
   },
 });
 
-const Map: React.FC<PageProps> = () => {
+const Map: React.FC<PageProps> = ({ data }: any) => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
-  const [visibleMarkers, setVisibleMarkers] = useState(places);
+  const [visibleMarkers, setVisibleMarkers] = useState(data.activities.nodes);
 
   const opportunitiesView = () => (
-    <Stack alignItems="center" overflow="auto">
+    <Stack
+      alignItems="center"
+      overflow="auto"
+      sx={{
+        height: { xs: "80vh", md: "88vh" },
+      }}
+    >
       <OpportunitiesListMenu />
       <ListGrid data={visibleMarkers} />
     </Stack>
@@ -139,7 +144,7 @@ const Map: React.FC<PageProps> = () => {
               onClick={handleOpenNavMenu}
               startIcon={<Place />}
             >
-              Kilmessan
+              Carlsbourg
             </Button>
             <Menu
               id="menu-geo"
@@ -182,7 +187,13 @@ const Map: React.FC<PageProps> = () => {
         </AppBar>
         <Toolbar />
         <Grid sx={{ height: { xs: "80vh", md: "88vh" } }} container>
-          <Grid md={5} lg={4} sx={{ display: { xs: "none", md: "block" } }}>
+          <Grid
+            md={5}
+            lg={4}
+            sx={{
+              display: { xs: "none", md: "block" },
+            }}
+          >
             {opportunitiesView()}
           </Grid>
           <Grid xs={12} md={7} lg={8}>
@@ -199,7 +210,19 @@ const Map: React.FC<PageProps> = () => {
               })}
             />
             <ListMap
-              data={visibleMarkers}
+              data={visibleMarkers
+                .filter((a: any) => a.place?.center?.coordinates?.length == 2)
+                .map((a: any) => {
+                  return {
+                    type: "Feature",
+                    geometry: a.place.center,
+                    properties: {
+                      _id: a._id,
+                      name: a.name,
+                      categories: a.categories,
+                    },
+                  };
+                })}
               options={{ center: [50.5, 4.1], zoom: 8 }}
               // options={{ center: [53.2, -8.2], zoom: 7 }}
             />
@@ -222,22 +245,32 @@ const Map: React.FC<PageProps> = () => {
 
 export default Map;
 
-export const Head: HeadFC = () => <title>Map</title>;
-
 export const query = graphql`
   query {
     activities: allMongodbActivities(sort: [{ name: ASC }]) {
       nodes {
         _id
         name
+        description {
+          short {
+            markdown
+          }
+        }
         place {
+          address {
+            locality
+          }
           center {
+            type
             coordinates
           }
         }
         profiles {
           type
           link
+        }
+        categories {
+          key
         }
       }
     }
