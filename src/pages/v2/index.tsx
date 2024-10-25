@@ -26,10 +26,10 @@ import { PageProps, graphql } from "gatsby";
 
 import * as React from "react";
 import { useState } from "react";
-import ListGrid from "./list-grid";
-import ListMap from "./list-map";
-import MainBottomListDrawer from "./main-bottom-list-drawer";
-import OpportunitiesListMenu from "./opportunities-list-menu";
+import ListGrid from "../../components/v2/list-grid";
+import ListMap from "../../components/v2/list-map";
+import MainBottomListDrawer from "../../components/v2/main-bottom-list-drawer";
+import OpportunitiesListMenu from "../../components/v2/opportunities-list-menu";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
