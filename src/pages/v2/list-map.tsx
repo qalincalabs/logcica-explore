@@ -8,7 +8,7 @@ import AddLocate from "../../components/AddLocate";
 import MarkerClusterGroup from "../../components/MarkerClusterGroup";
 import { TitleWithLabel } from "./title-with-label";
 
-function ListMap({ data }: any) {
+function ListMap({ data, options }: any) {
   const customMarkerIcon = (name: string) =>
     divIcon({
       html: ReactDOMServer.renderToString(activityIconsWithLinks[name]?.[0]),
@@ -20,7 +20,11 @@ function ListMap({ data }: any) {
   };
 
   return (
-    <MapContainer style={{ height: "100%" }} center={[53.2, -8.2]} zoom={7}>
+    <MapContainer
+      style={{ height: "100%" }}
+      center={options.center}
+      zoom={options.zoom}
+    >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

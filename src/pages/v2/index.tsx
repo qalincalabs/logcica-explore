@@ -198,7 +198,11 @@ const Map: React.FC<PageProps> = () => {
                 },
               })}
             />
-            <ListMap data={visibleMarkers} />
+            <ListMap
+              data={visibleMarkers}
+              options={{ center: [50.5, 4.1], zoom: 8 }}
+              // options={{ center: [53.2, -8.2], zoom: 7 }}
+            />
           </Grid>
         </Grid>
 
