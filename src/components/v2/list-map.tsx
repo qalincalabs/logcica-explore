@@ -4,12 +4,13 @@ import L, { divIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
-import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { SuperClustering } from "react-leaflet-supercluster";
+import "react-leaflet-supercluster/src/styles.css";
 import { activityIconsWithLinks } from "../../assets/activity-icons";
 import AddLocate from "../../components/AddLocate";
-import MarkerClusterGroup from "../../components/MarkerClusterGroup";
 import { getIconKeyFromCategories } from "./icon-for-item";
-import { TitleWithLabel } from "./title-with-label";
+import TitleWithLabel from "./title-with-label";
 
 function ListMap({ data, options }: any) {
   const customMarkerIcon = (name: string) =>
@@ -36,35 +37,22 @@ function ListMap({ data, options }: any) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <MarkerClusterGroup>
-        <GeoJSON
-          data={data}
-          pointToLayer={setIcon}
-          onEachFeature={(feature, leafletLayer) => {
-            const popupOptions = {
-              minWidth: 100,
-              maxWidth: 250,
-              className: "popup-classname",
-            };
-
-            leafletLayer.bindPopup(
-              ReactDOMServer.renderToString(
-                <div>
-                  <Link to={"/activity/" + feature.properties._id}>
-                    <TitleWithLabel data={feature.properties} />
-                  </Link>
-                </div>,
-              ),
-              popupOptions,
-            );
-          }}
-          style={(reference) => {
-            return {
-              color: "blue",
-            };
-          }}
-        ></GeoJSON>
-      </MarkerClusterGroup>
+      <SuperClustering>
+        {data.map((e: any) => (
+          <Marker
+            key={e.properties._id}
+            title={e.properties.name}
+            position={[e.geometry.coordinates[1], e.geometry.coordinates[0]]}
+            icon={customMarkerIcon(getIconKeyFromCategories(e.properties))}
+          >
+            <Popup>
+              <Link to={"/activity/" + e.properties._id}>
+                <TitleWithLabel data={e.properties} />
+              </Link>
+            </Popup>
+          </Marker>
+        ))}
+      </SuperClustering>
       <AddLocate />
     </MapContainer>
   );
