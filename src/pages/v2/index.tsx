@@ -56,6 +56,7 @@ import {
 import { HeadFC, PageProps, graphql } from "gatsby";
 import L, { divIcon } from "leaflet";
 
+import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 import "leaflet/dist/leaflet.css";
 import * as React from "react";
 import { useState } from "react";
@@ -510,14 +511,18 @@ export function FolderGrid({ data }: any) {
   );
   */
 
-  const profileIcons = {
+  type TProfileIcons = {
+    [dict_key: string]: ReactJSXElement;
+  };
+
+  const profileIcons: TProfileIcons = {
     website: <Web />,
     facebook: <Facebook />,
   };
 
   return (
     <Box display="flex" flex={1} gap={2} flexWrap="wrap">
-      {data.map((e) => (
+      {data.map((e: any) => (
         <Box flex={1}>
           <Card sx={{ minWidth: "300px" }}>
             <CardHeader
@@ -584,7 +589,7 @@ export function FolderList({ data }: any) {
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-      {data.map((e, i) => (
+      {data.map((e: any, i: number) => (
         <>
           <ListSubheader
             sx={{ width: "100%", display: i == 0 || i == 1 ? "block" : "none" }}
