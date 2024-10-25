@@ -61,10 +61,10 @@ import * as React from "react";
 import { useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
-import { activityIconsWithLinks } from "../assets/activity-icons";
-import AddLocate from "../components/AddLocate";
-import MarkerClusterGroup from "../components/MarkerClusterGroup";
-import places from "../data/map_counters.json";
+import { activityIconsWithLinks } from "../../assets/activity-icons";
+import AddLocate from "../../components/AddLocate";
+import MarkerClusterGroup from "../../components/MarkerClusterGroup";
+import places from "../../data/map_counters.json";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
