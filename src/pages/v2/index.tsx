@@ -122,7 +122,13 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
       <ThemeProvider theme={theme}>
         <AppBar position="fixed">
           <Toolbar color="secondary">
-            <Button color="secondary" startIcon={<Hexagon></Hexagon>}>
+            <Button
+              sx={{
+                display: { xs: "none", md: "block" },
+              }}
+              color="secondary"
+              startIcon={<Hexagon></Hexagon>}
+            >
               Explore
             </Button>
             <Box
