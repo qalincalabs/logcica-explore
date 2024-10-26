@@ -1,6 +1,6 @@
 import { Store } from "@mui/icons-material";
 import { Link } from "gatsby";
-import L from "leaflet";
+import { DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -13,13 +13,16 @@ import { getIconKeyFromCategories } from "./icon-for-item";
 import TitleWithLabel from "./title-with-label";
 
 function ListMap({ data, options }: any) {
-  const customMarkerIcon = (name: string) =>
-    L.divIcon({
+  const customMarkerIcon = (name: string) => {
+    if (typeof window == "undefined") return undefined;
+
+    return new DivIcon({
       html: ReactDOMServer.renderToString(
         activityIconsWithLinks[name]?.[0] ?? <Store></Store>,
       ),
       className: "icon",
     });
+  };
 
   return (
     <MapContainer
