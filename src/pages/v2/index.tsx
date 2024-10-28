@@ -22,7 +22,7 @@ import { PageProps, graphql } from "gatsby";
 
 import * as React from "react";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import ListGrid from "../../components/v2/list-grid";
 import ListMap from "../../components/v2/list-map";
 import MainBottomListDrawer from "../../components/v2/main-bottom-list-drawer";
@@ -165,13 +165,17 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
                 <IconButton>
                   <Star></Star>
                 </IconButton>
-                <p>Favorites</p>
+                <p>
+                  <Trans>menu.favorites</Trans>
+                </p>
               </MenuItem>
               <MenuItem>
                 <IconButton>
                   <Settings></Settings>
                 </IconButton>
-                <p>Preferences</p>
+                <p>
+                  <Trans>menu.preferences</Trans>
+                </p>
               </MenuItem>
             </Menu>
           </Toolbar>

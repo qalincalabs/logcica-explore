@@ -1,3 +1,12 @@
 {
-  "shop": "Se nourrir"
+  "actions.feed": "Se nourrir",
+  "actions.meet": "Rencontrer",
+  "actions.contribute": "Contribuer",
+  "actions.search": "Chercher",
+  "counter.type.store_other": "Magasins",
+  "counter.type.market_other": "Marchés",
+  "counter.type.hub_other": "Groupements",
+  "counter.type.online_other": "En ligne",
+  "menu.favorites": "Favoris",
+  "menu.preferences": "Préférences"
 }

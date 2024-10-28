@@ -1,23 +1,24 @@
 import { Chip, IconButton, Stack, Typography } from "@mui/material";
 import React from "react";
+import { Trans } from "react-i18next";
 import { opportunitiesFirstMenu } from "./menu";
 
 function OpportunitiesListMenu() {
   const opportunitiesSecondMenu = [
     {
-      title: "Stores", // "Magasins",
+      title: <Trans>counter.type.store_other</Trans>,
       checked: true,
     },
     {
-      title: "Markets", // "Marchés",
+      title: <Trans>counter.type.market_other</Trans>,
       checked: true,
     },
     {
-      title: "Hubs", // "Groupements",
+      title: <Trans>counter.type.hub_other</Trans>,
       checked: true,
     },
     {
-      title: "Online", // "En ligne",
+      title: <Trans>counter.type.online_other</Trans>,
     },
   ];
 
@@ -38,7 +39,8 @@ function OpportunitiesListMenu() {
             color="primary"
             sx={{
               flexDirection: "column",
-              width: "3.5em",
+              width: "4.5em",
+              height: "4em",
               border: m.checked ? 3 : 0,
             }}
           >

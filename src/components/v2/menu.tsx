@@ -4,16 +4,16 @@ import { Trans } from "react-i18next";
 
 export const opportunitiesFirstMenu = [
   {
-    title: <Trans>shop</Trans>, // "Se nourrir",
+    title: <Trans>actions.feed</Trans>,
     icon: <Storefront fontSize="large" />,
   },
   {
-    title: "Meet", // "Rencontrer"
+    title: <Trans>actions.meet</Trans>, // "Rencontrer"
     icon: <Event fontSize="large" />,
     checked: true,
   },
   {
-    title: "Volunteer", // "Participer"
+    title: <Trans>actions.contribute</Trans>, // "Participer"
     icon: <VolunteerActivism fontSize="large" />,
   },
 ];

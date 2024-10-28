@@ -1,3 +1,12 @@
 {
-  "shop": "Shop"
+  "actions.feed": "Feed",
+  "actions.meet": "Meet",
+  "actions.contribute": "Contribute",
+  "actions.search": "Search",
+  "counter.type.store_other": "Stores",
+  "counter.type.market_other": "Markets",
+  "counter.type.hub_other": "Hubs",
+  "counter.type.online_other": "Online",
+  "menu.favorites": "Favorites",
+  "menu.preferences": "Preferences"
 }
