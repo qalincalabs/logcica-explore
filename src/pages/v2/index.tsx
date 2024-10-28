@@ -1,7 +1,5 @@
 import {
   AccountCircle,
-  FilterAlt,
-  Hexagon,
   MyLocation,
   Place,
   Settings,
@@ -9,12 +7,10 @@ import {
 } from "@mui/icons-material";
 import {
   AppBar,
-  Box,
   Button,
   GlobalStyles,
   Grid,
   IconButton,
-  InputBase,
   Menu,
   MenuItem,
   Stack,
@@ -30,6 +26,7 @@ import ListGrid from "../../components/v2/list-grid";
 import ListMap from "../../components/v2/list-map";
 import MainBottomListDrawer from "../../components/v2/main-bottom-list-drawer";
 import OpportunitiesListMenu from "../../components/v2/opportunities-list-menu";
+import Search from "../../components/v2/search";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
@@ -127,10 +124,11 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
                 display: { xs: "none", md: "block" },
               }}
               color="secondary"
-              startIcon={<Hexagon></Hexagon>}
             >
               Explore
             </Button>
+            <Search />
+            {/*
             <Box
               display="flex"
               sx={{
@@ -145,6 +143,7 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
                 <FilterAlt />
               </IconButton>
             </Box>
+            */}
             <Button
               color="secondary"
               onClick={handleOpenNavMenu}
