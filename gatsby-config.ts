@@ -22,6 +22,27 @@ module.exports = {
      * MongoDB instance
      */
     {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `logCiCa Explore`,
+        short_name: `Explore`,
+        start_url: `/`,
+        background_color: `#FFFFFF`,
+        theme_color: `#ffcb01`,
+        display: `standalone`,
+        icon: `src/images/favicon.svg`,
+        screenshots: [
+          {
+            src: "/img/explore-v2-large.png",
+            sizes: "800x385",
+            type: "image/png",
+            //form_factor: "wide" -> not working
+            label: "Application",
+          },
+        ],
+      },
+    },
+    {
       resolve: `gatsby-plugin-algolia`,
       options: {
         appId: process.env.GATSBY_ALGOLIA_APP_ID,
