@@ -1,7 +1,5 @@
 import {
   AccountCircle,
-  FilterAlt,
-  Hexagon,
   MyLocation,
   Place,
   Settings,
@@ -9,12 +7,10 @@ import {
 } from "@mui/icons-material";
 import {
   AppBar,
-  Box,
   Button,
   GlobalStyles,
   Grid,
   IconButton,
-  InputBase,
   Menu,
   MenuItem,
   Stack,
@@ -26,10 +22,12 @@ import { PageProps, graphql } from "gatsby";
 
 import * as React from "react";
 import { useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import ListGrid from "../../components/v2/list-grid";
 import ListMap from "../../components/v2/list-map";
 import MainBottomListDrawer from "../../components/v2/main-bottom-list-drawer";
 import OpportunitiesListMenu from "../../components/v2/opportunities-list-menu";
+import Search from "../../components/v2/search";
 
 const pageStyles = {
   fontFamily: "-apple-system, Roboto, sans-serif, serif",
@@ -78,6 +76,7 @@ const theme = createTheme({
 });
 
 const Map: React.FC<PageProps> = ({ data }: any) => {
+  const { t } = useTranslation();
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
   const [visibleMarkers, setVisibleMarkers] = useState(data.activities.nodes);
@@ -127,24 +126,10 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
                 display: { xs: "none", md: "block" },
               }}
               color="secondary"
-              startIcon={<Hexagon></Hexagon>}
             >
               Explore
             </Button>
-            <Box
-              display="flex"
-              sx={{
-                flexGrow: 1,
-                m: 1,
-                backgroundColor: "white",
-                borderRadius: 2,
-              }}
-            >
-              <InputBase sx={{ flexGrow: 1 }}></InputBase>
-              <IconButton color="secondary">
-                <FilterAlt />
-              </IconButton>
-            </Box>
+            <Search />
             <Button
               color="secondary"
               onClick={handleOpenNavMenu}
@@ -180,13 +165,17 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
                 <IconButton>
                   <Star></Star>
                 </IconButton>
-                <p>Favorites</p>
+                <p>
+                  <Trans>menu.favorites</Trans>
+                </p>
               </MenuItem>
               <MenuItem>
                 <IconButton>
                   <Settings></Settings>
                 </IconButton>
-                <p>Preferences</p>
+                <p>
+                  <Trans>menu.preferences</Trans>
+                </p>
               </MenuItem>
             </Menu>
           </Toolbar>
@@ -253,7 +242,7 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
 export default Map;
 
 export const query = graphql`
-  query {
+  query ($language: String!) {
     activities: allMongodbActivities(sort: [{ name: ASC }]) {
       nodes {
         _id
@@ -278,6 +267,17 @@ export const query = graphql`
         }
         categories {
           key
+        }
+      }
+    }
+    locales: allLocale(
+      filter: { ns: { in: ["common"] }, language: { eq: $language } }
+    ) {
+      edges {
+        node {
+          ns
+          data
+          language
         }
       }
     }
