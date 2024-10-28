@@ -81,6 +81,51 @@ module.exports = {
         linkStyles: false, // (default: true) Enable/disable loading stylesheets via CDN
       },
     },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/locales`,
+        name: `locale`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-react-i18next`,
+      options: {
+        localeJsonSourceName: `locale`, // name given to `gatsby-source-filesystem` plugin.
+        languages: [`fr`, `en`],
+        defaultLanguage: `fr`,
+        siteUrl: `https://explore.logcica.org/`,
+        // if you are using trailingSlash gatsby config include it here, as well (the default is 'always')
+        trailingSlash: "always",
+        // you can pass any i18next options
+        i18nextOptions: {
+          interpolation: {
+            escapeValue: false, // not needed for react as it escapes by default
+          },
+          keySeparator: false,
+          nsSeparator: false,
+          defaultNS: "common",
+        },
+        pages: [
+          {
+            matchPath: "/v2",
+            languages: ["fr", "en"],
+          },
+          {
+            matchPath: "/:any",
+            languages: ["fr"],
+          },
+          {
+            matchPath: "/:any/:any1",
+            languages: ["fr"],
+          },
+          {
+            matchPath: "/:any/:any1/:any2",
+            languages: ["fr"],
+          },
+        ],
+      },
+    },
   ],
 };
 

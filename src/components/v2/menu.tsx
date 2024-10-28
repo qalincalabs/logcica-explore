@@ -1,15 +1,16 @@
 import { Event, Storefront, VolunteerActivism } from "@mui/icons-material";
 import React from "react";
+import { Trans } from "react-i18next";
 
 export const opportunitiesFirstMenu = [
   {
-    title: "Shop", // "Se nourrir",
+    title: <Trans>shop</Trans>, // "Se nourrir",
     icon: <Storefront fontSize="large" />,
-    checked: true,
   },
   {
     title: "Meet", // "Rencontrer"
     icon: <Event fontSize="large" />,
+    checked: true,
   },
   {
     title: "Volunteer", // "Participer"

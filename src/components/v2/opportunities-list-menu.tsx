@@ -43,7 +43,9 @@ function OpportunitiesListMenu() {
             }}
           >
             {m.icon}
-            <Typography variant="overline">{m.title}</Typography>
+            <Typography lineHeight={1.6} variant="overline">
+              {m.title}
+            </Typography>
           </IconButton>
         ))}
       </Stack>

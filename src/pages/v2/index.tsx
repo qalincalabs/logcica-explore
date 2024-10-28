@@ -22,6 +22,7 @@ import { PageProps, graphql } from "gatsby";
 
 import * as React from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import ListGrid from "../../components/v2/list-grid";
 import ListMap from "../../components/v2/list-map";
 import MainBottomListDrawer from "../../components/v2/main-bottom-list-drawer";
@@ -75,6 +76,7 @@ const theme = createTheme({
 });
 
 const Map: React.FC<PageProps> = ({ data }: any) => {
+  const { t } = useTranslation();
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
   const [visibleMarkers, setVisibleMarkers] = useState(data.activities.nodes);
@@ -236,7 +238,7 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
 export default Map;
 
 export const query = graphql`
-  query {
+  query ($language: String!) {
     activities: allMongodbActivities(sort: [{ name: ASC }]) {
       nodes {
         _id
@@ -261,6 +263,17 @@ export const query = graphql`
         }
         categories {
           key
+        }
+      }
+    }
+    locales: allLocale(
+      filter: { ns: { in: ["common"] }, language: { eq: $language } }
+    ) {
+      edges {
+        node {
+          ns
+          data
+          language
         }
       }
     }
