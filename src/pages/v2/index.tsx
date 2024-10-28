@@ -128,22 +128,6 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
               Explore
             </Button>
             <Search />
-            {/*
-            <Box
-              display="flex"
-              sx={{
-                flexGrow: 1,
-                m: 1,
-                backgroundColor: "white",
-                borderRadius: 2,
-              }}
-            >
-              <InputBase sx={{ flexGrow: 1 }}></InputBase>
-              <IconButton color="secondary">
-                <FilterAlt />
-              </IconButton>
-            </Box>
-            */}
             <Button
               color="secondary"
               onClick={handleOpenNavMenu}
