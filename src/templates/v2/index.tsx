@@ -220,6 +220,7 @@ const Map = ({ data }: PageProps<any>) => {
                     },
                   };
                 })}
+              area={area}
               options={{ center: [50.5, 4.1], zoom: 8 }}
               // options={{ center: [53.2, -8.2], zoom: 7 }}
             />
@@ -277,6 +278,10 @@ export const query = graphql`
     area: mongodbPlaces(_id: { eq: $id }) {
       _id
       name
+      geoShape {
+        type
+        coordinates
+      }
     }
     locales: allLocale(
       filter: { ns: { in: ["common"] }, language: { eq: $language } }

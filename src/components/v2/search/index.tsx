@@ -56,7 +56,7 @@ export default function Search({ area }: any) {
             preserveSharedStateOnUnmount: true,
           }}
         >
-          <Configure filters={`place.within.name:${area.name}`} />
+          <Configure filters={`place.within.name:"${area.name}"`} />
           <SearchBox
             onChange={(query: any) => setQuery(query)}
             onFocus={() => setFocus(true)}

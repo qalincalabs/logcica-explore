@@ -1,6 +1,7 @@
 import { Store } from "@mui/icons-material";
+import * as turf from "@turf/turf";
 import { Link } from "gatsby";
-import { DivIcon } from "leaflet";
+import L, { DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -12,7 +13,7 @@ import AddLocate from "../../components/AddLocate";
 import { getIconKeyFromCategories } from "./icon-for-item";
 import TitleWithLabel from "./title-with-label";
 
-function ListMap({ data, options }: any) {
+function ListMap({ data, options, area }: any) {
   const customMarkerIcon = (name: string) => {
     if (typeof window == "undefined") return undefined;
 
@@ -24,12 +25,24 @@ function ListMap({ data, options }: any) {
     });
   };
 
+  const hasGeoShape = area?.geoShape != null;
+
+  const featureCollection = turf.featureCollection(
+    data.map((e: any) => turf.point(e.geometry.coordinates)),
+  );
+
+  console.log(featureCollection);
+
+  const bbox = hasGeoShape
+    ? turf.bbox(area.geoShape)
+    : turf.bbox(featureCollection);
+  const bounds = L.latLngBounds([
+    [bbox[1], bbox[0]],
+    [bbox[3], bbox[2]],
+  ]);
+
   return (
-    <MapContainer
-      style={{ height: "100%" }}
-      center={options.center}
-      zoom={options.zoom}
-    >
+    <MapContainer style={{ height: "100%" }} bounds={bounds}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
