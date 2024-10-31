@@ -31,8 +31,6 @@ function ListMap({ data, options, area }: any) {
     data.map((e: any) => turf.point(e.geometry.coordinates)),
   );
 
-  console.log(featureCollection);
-
   const bbox = hasGeoShape
     ? turf.bbox(area.geoShape)
     : turf.bbox(featureCollection);
