@@ -34,7 +34,7 @@ function ListMap({ data, options }: any) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <SuperClustering>
+      <SuperClustering maxZoom={14}>
         {data.map((e: any) => (
           <Marker
             key={e.properties._id}

@@ -22,7 +22,7 @@ import { PageProps, graphql } from "gatsby";
 
 import * as React from "react";
 import { useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import ListGrid from "../../components/v2/list-grid";
 import ListMap from "../../components/v2/list-map";
 import MainBottomListDrawer from "../../components/v2/main-bottom-list-drawer";
@@ -75,11 +75,12 @@ const theme = createTheme({
   },
 });
 
-const Map: React.FC<PageProps> = ({ data }: any) => {
-  const { t } = useTranslation();
+const Map = ({ data }: PageProps<any>) => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
   const [visibleMarkers, setVisibleMarkers] = useState(data.activities.nodes);
+
+  const area = data.area;
 
   const opportunitiesView = () => (
     <Stack
@@ -129,13 +130,13 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
             >
               Explore
             </Button>
-            <Search />
+            <Search area={area} />
             <Button
               color="secondary"
               onClick={handleOpenNavMenu}
               startIcon={<Place />}
             >
-              Carlsbourg
+              {area.name}
             </Button>
             <Menu
               id="menu-geo"
@@ -242,8 +243,11 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
 export default Map;
 
 export const query = graphql`
-  query ($language: String!) {
-    activities: allMongodbActivities(sort: [{ name: ASC }]) {
+  query ($id: String!, $language: String!) {
+    activities: allMongodbActivities(
+      filter: { place: { within: { elemMatch: { _id: { eq: $id } } } } }
+      sort: [{ name: ASC }]
+    ) {
       nodes {
         _id
         name
@@ -269,6 +273,10 @@ export const query = graphql`
           key
         }
       }
+    }
+    area: mongodbPlaces(_id: { eq: $id }) {
+      _id
+      name
     }
     locales: allLocale(
       filter: { ns: { in: ["common"] }, language: { eq: $language } }

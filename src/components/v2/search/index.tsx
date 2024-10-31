@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import algoliasearch from "algoliasearch/lite";
 import React, { createRef, useMemo, useState } from "react";
-import { InstantSearch } from "react-instantsearch";
+import { Configure, InstantSearch } from "react-instantsearch";
 import { ThemeProvider } from "styled-components";
 import SearchBox from "./search-box";
 import StyledSearchResult from "./styled-search-result";
@@ -13,7 +13,7 @@ const theme = {
   faded: "#888",
 };
 
-export default function Search() {
+export default function Search({ area }: any) {
   const indices = [
     { name: "activity" },
     { name: "partnership" },
@@ -56,6 +56,7 @@ export default function Search() {
             preserveSharedStateOnUnmount: true,
           }}
         >
+          <Configure filters={`place.within.name:${area.name}`} />
           <SearchBox
             onChange={(query: any) => setQuery(query)}
             onFocus={() => setFocus(true)}

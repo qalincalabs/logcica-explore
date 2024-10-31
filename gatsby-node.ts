@@ -266,6 +266,30 @@ exports.createPages = async function ({ actions, graphql }: any) {
       context: { id: _id },
     });
   });
+
+  const { data: areaQuery } = await graphql(`
+    {
+      areas: allMongodbPlaces(
+        filter: { categories: { eq: "67238cab1301320f7e145427" } }
+      ) {
+        nodes {
+          _id
+          name
+        }
+      }
+    }
+  `);
+
+  areaQuery.areas.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/v2/index.tsx`);
+
+    actions.createPage({
+      path: "/v2/area/" + _id,
+      component: component,
+      context: { id: _id },
+    });
+  });
 };
 
 exports.onPostBuild = async function ({ graphql }: any) {
