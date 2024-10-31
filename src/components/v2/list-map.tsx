@@ -1,7 +1,7 @@
 import { Store } from "@mui/icons-material";
 import * as turf from "@turf/turf";
 import { Link } from "gatsby";
-import { DivIcon, latLngBounds } from "leaflet";
+import { DivIcon, LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -34,7 +34,7 @@ function ListMap({ data, options, area }: any) {
   const bbox = hasGeoShape
     ? turf.bbox(area.geoShape)
     : turf.bbox(featureCollection);
-  const bounds = latLngBounds([
+  const bounds = new LatLngBounds([
     [bbox[1], bbox[0]],
     [bbox[3], bbox[2]],
   ]);
