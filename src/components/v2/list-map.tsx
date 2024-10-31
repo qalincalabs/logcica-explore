@@ -1,7 +1,7 @@
 import { Store } from "@mui/icons-material";
 import * as turf from "@turf/turf";
 import { Link } from "gatsby";
-import { DivIcon, LatLngBounds } from "leaflet";
+import { DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -34,13 +34,15 @@ function ListMap({ data, options, area }: any) {
   const bbox = hasGeoShape
     ? turf.bbox(area.geoShape)
     : turf.bbox(featureCollection);
-  const bounds = new LatLngBounds([
-    [bbox[1], bbox[0]],
-    [bbox[3], bbox[2]],
-  ]);
 
   return (
-    <MapContainer style={{ height: "100%" }} bounds={bounds}>
+    <MapContainer
+      style={{ height: "100%" }}
+      bounds={[
+        [bbox[1], bbox[0]],
+        [bbox[3], bbox[2]],
+      ]}
+    >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
