@@ -5,8 +5,8 @@ export function TitleWithLabel({ data }: any) {
   return (
     <Stack alignItems="center" direction="row" gap={1}>
       <Typography component="span">{data.name}</Typography>
-      {data.categories?.some(
-        (c: any) => c.key == "logcica.labels.eu.organic",
+      {data.productionCategories?.some(
+        (c: any) => c.key == "logcica.consolidation.production.bio", // logcica.labels.eu.organic
       ) && (
         <img
           width="25px"

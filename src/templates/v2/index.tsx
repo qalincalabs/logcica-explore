@@ -273,6 +273,9 @@ export const query = graphql`
         categories {
           key
         }
+        productionCategories {
+          key
+        }
       }
     }
     area: mongodbPlaces(_id: { eq: $id }) {

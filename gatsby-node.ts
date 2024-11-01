@@ -29,6 +29,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
         categories: [mongodbCategories] @link(by: "mongodb_id")
+        productionCategories: [mongodbCategories] @link(by: "mongodb_id")
         distributionsCategories: [mongodbCategories] @link(by: "mongodb_id")
         catalogs: [mongodbCatalogs] @link(by:"seller.activity", from: "mongodb_id")
         mainImage: mongodbMedia @link(by: "mongodb_id")
