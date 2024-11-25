@@ -34,6 +34,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         catalogs: [mongodbCatalogs] @link(by:"seller.activity", from: "mongodb_id")
         mainImage: mongodbMedia @link(by: "mongodb_id")
         mainVideo: mongodbMedia @link(by: "mongodb_id")
+        contributions: [mongodbContributions] @link(by:"contributor.activity.mongodb_id", from: "mongodb_id")
       }
       type mongodbActivitiesManager implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -141,6 +142,10 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         categories: [mongodbCategories] @link(by: "mongodb_id")
         mainImage: mongodbMedia @link(by: "mongodb_id")
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
+      }
+
+      type mongodbContributions implements Node  {
+        categories: [mongodbCategories] @link(by: "mongodb_id")
       }
 
       type mongodbContributionsSubject{
@@ -285,10 +290,57 @@ exports.createPages = async function ({ actions, graphql }: any) {
     const _id = node._id;
     const component = path.resolve(`./src/templates/v2/index.tsx`);
 
+    const filter = { place: { within: { elemMatch: { _id: { eq: _id } } } } };
+
     actions.createPage({
       path: "/v2/area/" + _id,
       component: component,
-      context: { id: _id },
+      context: { areaId: _id, filter: filter },
+    });
+  });
+
+  const { data: partnershipQuery } = await graphql(`
+    {
+      partnerships: allMongodbPartnerships(
+        filter: {
+          categories: { elemMatch: { _id: { eq: "674483572284c187dce347cb" } } }
+        }
+      ) {
+        nodes {
+          _id
+          name
+          area {
+            _id
+          }
+        }
+      }
+    }
+  `);
+
+  partnershipQuery.partnerships.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/v2/index.tsx`);
+
+    const filter = {
+      contributions: {
+        elemMatch: {
+          subject: { partnership: { _id: { eq: _id } } },
+        },
+      },
+    };
+
+    actions.createPage({
+      path: "/v2/partnership/" + _id + "/map",
+      component: component,
+      context: { areaId: node.area?._id, filter: filter },
+    });
+
+    actions.createRedirect({
+      fromPath: `/v2/`,
+      toPath: `/v2/area/6509bb9a94bcb52b76132d6a/`,
+      isPermanent: true,
+      force: true,
+      redirectInBrowser: true,
     });
   });
 };

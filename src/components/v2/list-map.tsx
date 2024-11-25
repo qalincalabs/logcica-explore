@@ -14,6 +14,8 @@ import { getIconKeyFromCategories } from "./icon-for-item";
 import TitleWithLabel from "./title-with-label";
 
 function ListMap({ data, options, area }: any) {
+  if (data.length == 0) return <></>;
+
   const customMarkerIcon = (name: string) => {
     if (typeof window == "undefined") return undefined;
 

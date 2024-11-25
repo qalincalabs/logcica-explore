@@ -80,6 +80,8 @@ const Map = ({ data }: PageProps<any>) => {
 
   const [visibleMarkers, setVisibleMarkers] = useState(data.activities.nodes);
 
+  console.log(visibleMarkers);
+
   const area = data.area;
 
   const opportunitiesView = () => (
@@ -243,12 +245,15 @@ const Map = ({ data }: PageProps<any>) => {
 
 export default Map;
 
+// filter: { place: { within: { elemMatch: { _id: { eq: $areaId } } } } }
+
 export const query = graphql`
-  query ($id: String!, $language: String!) {
-    activities: allMongodbActivities(
-      filter: { place: { within: { elemMatch: { _id: { eq: $id } } } } }
-      sort: [{ name: ASC }]
-    ) {
+  query (
+    $filter: mongodbActivitiesFilterInput!
+    $areaId: String!
+    $language: String!
+  ) {
+    activities: allMongodbActivities(filter: $filter, sort: [{ name: ASC }]) {
       nodes {
         _id
         name
@@ -278,7 +283,7 @@ export const query = graphql`
         }
       }
     }
-    area: mongodbPlaces(_id: { eq: $id }) {
+    area: mongodbPlaces(_id: { eq: $areaId }) {
       _id
       name
       geoShape {
