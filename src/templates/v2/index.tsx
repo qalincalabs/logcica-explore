@@ -22,7 +22,7 @@ import { PageProps, graphql } from "gatsby";
 
 import * as React from "react";
 import { useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import ListGrid from "../../components/v2/list-grid";
 import ListMap from "../../components/v2/list-map";
 import MainBottomListDrawer from "../../components/v2/main-bottom-list-drawer";
@@ -75,11 +75,14 @@ const theme = createTheme({
   },
 });
 
-const Map: React.FC<PageProps> = ({ data }: any) => {
-  const { t } = useTranslation();
+const Map = ({ data }: PageProps<any>) => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = React.useState(false);
 
   const [visibleMarkers, setVisibleMarkers] = useState(data.activities.nodes);
+
+  console.log(visibleMarkers);
+
+  const area = data.area;
 
   const opportunitiesView = () => (
     <Stack
@@ -129,13 +132,13 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
             >
               Explore
             </Button>
-            <Search />
+            <Search area={area} />
             <Button
               color="secondary"
               onClick={handleOpenNavMenu}
               startIcon={<Place />}
             >
-              Carlsbourg
+              {area.name}
             </Button>
             <Menu
               id="menu-geo"
@@ -219,6 +222,7 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
                     },
                   };
                 })}
+              area={area}
               options={{ center: [50.5, 4.1], zoom: 8 }}
               // options={{ center: [53.2, -8.2], zoom: 7 }}
             />
@@ -241,9 +245,15 @@ const Map: React.FC<PageProps> = ({ data }: any) => {
 
 export default Map;
 
+// filter: { place: { within: { elemMatch: { _id: { eq: $areaId } } } } }
+
 export const query = graphql`
-  query ($language: String!) {
-    activities: allMongodbActivities(sort: [{ name: ASC }]) {
+  query (
+    $filter: mongodbActivitiesFilterInput!
+    $areaId: String!
+    $language: String!
+  ) {
+    activities: allMongodbActivities(filter: $filter, sort: [{ name: ASC }]) {
       nodes {
         _id
         name
@@ -268,6 +278,17 @@ export const query = graphql`
         categories {
           key
         }
+        productionCategories {
+          key
+        }
+      }
+    }
+    area: mongodbPlaces(_id: { eq: $areaId }) {
+      _id
+      name
+      geoShape {
+        type
+        coordinates
       }
     }
     locales: allLocale(

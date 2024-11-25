@@ -1,4 +1,5 @@
 import { Store } from "@mui/icons-material";
+import * as turf from "@turf/turf";
 import { Link } from "gatsby";
 import { DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -12,7 +13,9 @@ import AddLocate from "../../components/AddLocate";
 import { getIconKeyFromCategories } from "./icon-for-item";
 import TitleWithLabel from "./title-with-label";
 
-function ListMap({ data, options }: any) {
+function ListMap({ data, options, area }: any) {
+  if (data.length == 0) return <></>;
+
   const customMarkerIcon = (name: string) => {
     if (typeof window == "undefined") return undefined;
 
@@ -24,17 +27,29 @@ function ListMap({ data, options }: any) {
     });
   };
 
+  const hasGeoShape = area?.geoShape != null;
+
+  const featureCollection = turf.featureCollection(
+    data.map((e: any) => turf.point(e.geometry.coordinates)),
+  );
+
+  const bbox = hasGeoShape
+    ? turf.bbox(area.geoShape)
+    : turf.bbox(featureCollection);
+
   return (
     <MapContainer
       style={{ height: "100%" }}
-      center={options.center}
-      zoom={options.zoom}
+      bounds={[
+        [bbox[1], bbox[0]],
+        [bbox[3], bbox[2]],
+      ]}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <SuperClustering>
+      <SuperClustering maxZoom={14}>
         {data.map((e: any) => (
           <Marker
             key={e.properties._id}

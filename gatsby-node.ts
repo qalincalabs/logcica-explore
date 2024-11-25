@@ -29,10 +29,12 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
         categories: [mongodbCategories] @link(by: "mongodb_id")
+        productionCategories: [mongodbCategories] @link(by: "mongodb_id")
         distributionsCategories: [mongodbCategories] @link(by: "mongodb_id")
         catalogs: [mongodbCatalogs] @link(by:"seller.activity", from: "mongodb_id")
         mainImage: mongodbMedia @link(by: "mongodb_id")
         mainVideo: mongodbMedia @link(by: "mongodb_id")
+        contributions: [mongodbContributions] @link(by:"contributor.activity.mongodb_id", from: "mongodb_id")
       }
       type mongodbActivitiesManager implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -140,6 +142,10 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         categories: [mongodbCategories] @link(by: "mongodb_id")
         mainImage: mongodbMedia @link(by: "mongodb_id")
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
+      }
+
+      type mongodbContributions implements Node  {
+        categories: [mongodbCategories] @link(by: "mongodb_id")
       }
 
       type mongodbContributionsSubject{
@@ -265,6 +271,78 @@ exports.createPages = async function ({ actions, graphql }: any) {
       component: component,
       context: { id: _id },
     });
+  });
+
+  const { data: areaQuery } = await graphql(`
+    {
+      areas: allMongodbPlaces(
+        filter: { categories: { eq: "67238cab1301320f7e145427" } }
+      ) {
+        nodes {
+          _id
+          name
+        }
+      }
+    }
+  `);
+
+  areaQuery.areas.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/v2/index.tsx`);
+
+    const filter = { place: { within: { elemMatch: { _id: { eq: _id } } } } };
+
+    const pageCreation = {
+      path: "/v2/area/" + _id,
+      component: component,
+      context: { areaId: _id, filter: filter },
+    };
+
+    actions.createPage(pageCreation);
+
+    if (_id == "6509bb9a94bcb52b76132d6a") {
+      pageCreation.path = "/v2";
+      actions.createPage(pageCreation);
+    }
+  });
+
+  const { data: partnershipQuery } = await graphql(`
+    {
+      partnerships: allMongodbPartnerships(
+        filter: {
+          categories: { elemMatch: { _id: { eq: "674483572284c187dce347cb" } } }
+        }
+      ) {
+        nodes {
+          _id
+          name
+          area {
+            _id
+          }
+        }
+      }
+    }
+  `);
+
+  partnershipQuery.partnerships.nodes.forEach((node: any) => {
+    const _id = node._id;
+    const component = path.resolve(`./src/templates/v2/index.tsx`);
+
+    const filter = {
+      contributions: {
+        elemMatch: {
+          subject: { partnership: { _id: { eq: _id } } },
+        },
+      },
+    };
+
+    const pageCreation = {
+      path: "/v2/partnership/" + _id + "/map",
+      component: component,
+      context: { areaId: node.area?._id, filter: filter },
+    };
+
+    actions.createPage(pageCreation);
   });
 };
 
