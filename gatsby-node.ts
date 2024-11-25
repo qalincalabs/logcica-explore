@@ -292,11 +292,18 @@ exports.createPages = async function ({ actions, graphql }: any) {
 
     const filter = { place: { within: { elemMatch: { _id: { eq: _id } } } } };
 
-    actions.createPage({
+    const pageCreation = {
       path: "/v2/area/" + _id,
       component: component,
       context: { areaId: _id, filter: filter },
-    });
+    };
+
+    actions.createPage(pageCreation);
+
+    if (_id == "6509bb9a94bcb52b76132d6a") {
+      pageCreation.path = "/v2";
+      actions.createPage(pageCreation);
+    }
   });
 
   const { data: partnershipQuery } = await graphql(`
@@ -329,19 +336,13 @@ exports.createPages = async function ({ actions, graphql }: any) {
       },
     };
 
-    actions.createPage({
+    const pageCreation = {
       path: "/v2/partnership/" + _id + "/map",
       component: component,
       context: { areaId: node.area?._id, filter: filter },
-    });
+    };
 
-    actions.createRedirect({
-      fromPath: `/v2/`,
-      toPath: `/v2/area/6509bb9a94bcb52b76132d6a/`,
-      isPermanent: true,
-      force: true,
-      redirectInBrowser: true,
-    });
+    actions.createPage(pageCreation);
   });
 };
 
