@@ -35,6 +35,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         mainImage: mongodbMedia @link(by: "mongodb_id")
         mainVideo: mongodbMedia @link(by: "mongodb_id")
         contributions: [mongodbContributions] @link(by:"contributor.activity.mongodb_id", from: "mongodb_id")
+        sectors: [mongodbSectors] @link(by: "mongodb_id")
       }
       type mongodbActivitiesManager implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -64,6 +65,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         mainImage: mongodbMedia @link(by: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
         categories: [mongodbCategories] @link(by: "mongodb_id")
+        sectors: [mongodbSectors] @link(by: "mongodb_id")
       }
       type mongodbProductsOwner implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
@@ -290,7 +292,10 @@ exports.createPages = async function ({ actions, graphql }: any) {
     const _id = node._id;
     const component = path.resolve(`./src/templates/v2/index.tsx`);
 
-    const filter = { place: { within: { elemMatch: { _id: { eq: _id } } } } };
+    const filter = {
+      sectors: { elemMatch: { _id: { eq: "6735c232a0b8898c1db18b27" } } },
+      place: { within: { elemMatch: { _id: { eq: _id } } } },
+    };
 
     const pageCreation = {
       path: "/v2/area/" + _id,
@@ -443,6 +448,10 @@ async function generateGeoJsonApi(graphql: any) {
               }
             }
           }
+          sectors {
+            _id
+            name
+          }
           availabilityStatement {
             short {
               markdown
@@ -526,6 +535,10 @@ async function generateGeoJsonApi(graphql: any) {
           updatedAt
           name
           type
+          sectors {
+            _id
+            name
+          }
           place {
             _id
             center {
