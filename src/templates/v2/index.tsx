@@ -80,8 +80,6 @@ const Map = ({ data }: PageProps<any>) => {
 
   const [visibleMarkers, setVisibleMarkers] = useState(data.activities.nodes);
 
-  console.log(visibleMarkers);
-
   const area = data.area;
 
   const opportunitiesView = () => (
