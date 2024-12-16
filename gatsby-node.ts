@@ -65,6 +65,7 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         mainImage: mongodbMedia @link(by: "mongodb_id")
         contacts: [mongodbContacts] @link(by: "mongodb_id")
         categories: [mongodbCategories] @link(by: "mongodb_id")
+        sectors: [mongodbSectors] @link(by: "mongodb_id")
       }
       type mongodbProductsOwner implements Node {
         organisation: mongodbOrganisations @link(by: "mongodb_id")
