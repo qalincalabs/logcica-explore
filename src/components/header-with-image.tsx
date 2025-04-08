@@ -14,7 +14,7 @@ export function HeaderWithImage({ data, type }: any) {
       my={4}
       mx={2}
     >
-      {data.mainImage?.filename && <ImageCard media={data.mainImage} />}
+      {data.mainImage && <ImageCard media={data.mainImage} />}
       <Box
         sx={{
           display: "flex",

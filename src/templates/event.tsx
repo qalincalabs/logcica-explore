@@ -205,7 +205,7 @@ export const query = graphql`
         }
       }
       mainImage {
-        filename
+        url
       }
       timeRange {
         from

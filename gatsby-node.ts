@@ -9,7 +9,7 @@ function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-exports.createSchemaCustomization = ({ actions }: any) => {
+exports.createSchemaCustomization = ({ actions, schema }: any) => {
   const { createTypes } = actions;
 
   const mongoIdTypeDefs = collections
@@ -23,7 +23,18 @@ exports.createSchemaCustomization = ({ actions }: any) => {
 
   createTypes(mongoIdTypeDefs);
 
-  const typeDefs1 = `
+  const typeDefs1 = [
+    schema.buildObjectType({
+      name: "mongodbMedia",
+      fields: {
+        url: {
+          type: "String",
+          resolve: (source: any) =>
+            source.filename ? process.env.CDN_URL + source.filename : null,
+        },
+      },
+    }),
+    `
       type mongodbActivities implements Node {
         place: mongodbPlaces @link(by: "mongodb_id")
         profiles: [mongodbProfiles] @link(by: "mongodb_id")
@@ -90,12 +101,14 @@ exports.createSchemaCustomization = ({ actions }: any) => {
         categories: [mongodbCategories] @link(by: "mongodb_id")
         availabilities: [mongodbAvailabilities] @link(by: "mongodb_id")
         references: [mongodbReferences] @link(by:"target", from: "mongodb_id")
+        mainImage: mongodbMedia @link(by: "mongodb_id")
       }
       type mongodbAvailabilities implements Node {
         season: mongodbSeason_availabilities @link(by: "mongodb_id")
       }
       type mongodbOrganisations implements Node {
         place: mongodbPlaces @link(by: "mongodb_id")
+        mainImage: mongodbMedia @link(by: "mongodb_id")
       }
       type mongodbProductsAllergenList implements Node {
         allergen: mongodbCodes @link(by: "mongodb_id")
@@ -166,7 +179,9 @@ exports.createSchemaCustomization = ({ actions }: any) => {
       type mongodbCategories {
         classification: mongodbClassifications @link(by: "mongodb_id")
       }
-    `;
+    `,
+  ];
+
   createTypes(typeDefs1);
 };
 

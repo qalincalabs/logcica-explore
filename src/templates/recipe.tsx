@@ -466,7 +466,7 @@ export const query = graphql`
         }
       }
       mainImage {
-        filename
+        url
       }
       allergenList {
         allergen {
@@ -489,7 +489,7 @@ export const query = graphql`
         }
       }
       mainImage {
-        filename
+        url
       }
       profiles {
         link
