@@ -62,7 +62,7 @@ module.exports = {
           appName: "Cluster0",
         },
         query: {},
-        preserveObjectIds: false,
+        preserveObjectIds: true,
       },
 
       //query: { documents: { as_of: { $gte: 1604397088013 } } },
