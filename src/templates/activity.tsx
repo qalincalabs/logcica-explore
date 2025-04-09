@@ -295,7 +295,7 @@ export const query = graphql`
         }
       }
       mainImage {
-        filename
+        url
       }
       mainVideo {
         filename
