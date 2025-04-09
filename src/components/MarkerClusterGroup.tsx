@@ -15,7 +15,12 @@ const MarkerClusterGroup = createPathComponent(
     );
 
     // Creating markerClusterGroup Leaflet element
-    const markerClusterGroup = L.markerClusterGroup(clusterProps);
+    const markerClusterGroup = L.markerClusterGroup({
+      ...clusterProps,
+      ...{
+        chunkedLoading: true,
+      },
+    });
 
     // Initializing event listeners
     Object.entries(clusterEvents).forEach(([eventAsProp, callback]) => {

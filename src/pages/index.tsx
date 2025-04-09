@@ -115,7 +115,12 @@ export const Head: HeadFC = () => <title>Groupements</title>;
 
 export const query = graphql`
   query {
-    activities: allMongodbActivities(sort: [{ name: ASC }]) {
+    activities: allMongodbActivities(
+      filter: {
+        sectors: { elemMatch: { _id: { eq: "6735c232a0b8898c1db18b27" } } }
+      }
+      sort: [{ name: ASC }]
+    ) {
       nodes {
         _id
         name

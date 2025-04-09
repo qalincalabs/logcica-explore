@@ -5,7 +5,7 @@ export function ImageCard({ media }: any) {
   return (
     <Box
       component="img"
-      src={"https://cms.logcica.org/media/" + media?.filename}
+      src={media?.url}
       alt="image"
       loading="lazy"
       sx={{

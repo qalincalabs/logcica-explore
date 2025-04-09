@@ -31,10 +31,8 @@ function RecipeListItem(p: any) {
   return (
     <ListItemButton onClick={() => navigate("/recipe/" + p._id)}>
       <ListItemAvatar>
-        {p.mainImage?.filename ? (
-          <Avatar
-            src={"https://cms.logcica.org/media/" + p.mainImage?.filename}
-          ></Avatar>
+        {p.mainImage?.url ? (
+          <Avatar src={p.mainImage?.url}></Avatar>
         ) : (
           <Avatar>
             <RestaurantIcon />
